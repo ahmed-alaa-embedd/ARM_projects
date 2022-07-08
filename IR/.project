@@ -1,0 +1,34 @@
+/**********************************************************/
+/* Author    : Ahmed Assaf                                */
+/* Date      : 19 August 2020                             */
+/* Version   : V01                                        */
+/**********************************************************/
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
+
+#include "NVIC_interface.h"
+#include "NVIC_private.h"
+#include "NVIC_config.h"
+
+
+void MNVIC_voidInit(void)
+{
+    #define SCB_AIRCR  *((u32*)0xE000ED0C)
+	SCB_AIRCR = MNVIC_GROUP_SUB_DISTRIBUTION;
+}
+
+
+void MNVIC_voidSetPriority(u8 Copy_PeripheralIdx, u8 Copy_u8Priority)
+{
+	if (Copy_PeripheralIdx < 60)
+	{
+		NVIC_IPR[Copy_PeripheralIdx] = Copy_u8Priority;
+	}
+
+	else
+	{
+		/* Report Error */
+	}
+}
+
+void MNVIC_voidEnableInterrupt (u8 Copy_u8IntNumber)

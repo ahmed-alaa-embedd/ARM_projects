@@ -1,0 +1,17 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 22/8/2020 		*/
+/*version : v02			*/
+/***************************/
+
+
+#ifndef EXTI_INTERFACE_H
+#define EXTI_INTERFACE_H
+
+void MEXTI_VoidInit(void);
+void MEXTI_VoidSetSignalLatch(void);
+
+
+
+
+#endif

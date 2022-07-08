@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Hello_NVIC/src/SysTick_program.c&apos; to &apos;STk_program.c&apos;" description="Rename resource &apos;SysTick_program.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/SysTick_program.c" name="STk_program.c" stamp="1598474295535" updateReferences="true"/>
+</session>

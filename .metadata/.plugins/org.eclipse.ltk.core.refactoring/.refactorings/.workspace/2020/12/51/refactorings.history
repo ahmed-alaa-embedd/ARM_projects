@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;06_FreeRTOS_Hello&apos; to &apos;06_FreeRTOS_OldvTest&apos;" description="Rename resource &apos;06_FreeRTOS_Hello&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/06_FreeRTOS_Hello" name="06_FreeRTOS_OldvTest" stamp="1608034555642" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;07_FreeRTOS_QueueTest&apos; to &apos;07_FreeRTOS_NewvTest&apos;" description="Rename resource &apos;07_FreeRTOS_QueueTest&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/07_FreeRTOS_QueueTest" name="07_FreeRTOS_NewvTest" stamp="1608034600753" updateReferences="true"/>
+</session>

@@ -1,0 +1,19 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 26/8/2020 		*/
+/*version : v01			*/
+/***************************/
+
+#ifndef SYSTICK_PRIVATE_H
+#define SYSTICK_PRIVATE_H
+
+
+#define STK_BASE_ADDRESS		 0xE000E010
+#define STK_CTRL				*((u32*)STK_BASE_ADDRESS)
+#define STK_LOAD				*((u32*)STK_BASE_ADDRESS+0x04)
+
+
+
+
+#endif
+

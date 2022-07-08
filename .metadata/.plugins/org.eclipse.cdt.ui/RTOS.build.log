@@ -1,0 +1,11 @@
+21:04:30 **** Incremental Build of configuration Debug for project RTOS ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "RTOS.elf"
+   text	   data	    bss	    dec	    hex	filename
+   5343	    176	    464	   5983	   175f	RTOS.elf
+Finished building: RTOS.siz
+ 
+
+21:04:31 Build Finished (took 1s.127ms)
+

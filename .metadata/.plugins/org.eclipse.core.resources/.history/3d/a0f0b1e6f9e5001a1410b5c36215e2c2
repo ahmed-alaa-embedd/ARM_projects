@@ -1,0 +1,30 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 22/8/2020 		*/
+/*version : v01			*/
+/***************************/
+
+
+#ifndef EXTI_interface_H
+#define EXTI_interface_H
+
+/*Line and mode*/
+void MEXTI_Init();
+
+void MEXTI_VoidEnableEXTI(u8 copy_u8Line);
+void MEXTI_VoidDisableEXTI(u8 copy_u8Line);
+void MEXTI_VoidEnableEXTI(u8 copy_u8Line);
+void MEXTI_VoidSwTrigger(u8 copy_u8Line);
+
+
+
+
+
+
+
+#endif
+
+
+
+
+

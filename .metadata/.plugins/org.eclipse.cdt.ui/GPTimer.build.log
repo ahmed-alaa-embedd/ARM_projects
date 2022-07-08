@@ -1,0 +1,11 @@
+22:26:43 **** Incremental Build of configuration Debug for project GPTimer ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "GPTimer.elf"
+   text	   data	    bss	    dec	    hex	filename
+   6803	    180	    500	   7483	   1d3b	GPTimer.elf
+Finished building: GPTimer.siz
+ 
+
+22:26:43 Build Finished (took 448ms)
+

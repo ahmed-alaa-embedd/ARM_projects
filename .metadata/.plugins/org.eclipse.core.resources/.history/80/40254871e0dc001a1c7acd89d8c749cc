@@ -1,0 +1,122 @@
+/*
+ * main.c
+ *
+ *  Created on: Mar 17, 2020
+ *      Author: Boon
+ */
+
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
+
+#include "RCC_INTERFACE.h"
+#include "GPIO_INTERFACE.h"
+
+u8 x = 3;
+int main()
+{
+	MRCC_VidInit();
+	MRCC_VidEnablePeripheralClock(APB2_BUS ,GPIOA );
+	MRCC_VidEnablePeripheralClock(APB2_BUS ,GPIOB );
+	MRCC_VidEnablePeripheralClock(APB2_BUS ,GPIOC );
+
+	MGPIO_VidSetPinDirection(GPIOA , PIN0 , INPUT_PULLUP_PULLDOWN);
+	//for pull up
+	MGPIO_VidSetPinValue(GPIOA , PIN0 , HIGH);
+/*
+
+
+	MGPIO_enumSetPinDirection(PORTB , PIN0 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN0 , HIGH);
+	MGPIO_enumSetPinDirection(PORTB , PIN1 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_2MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN1 , LOW);
+	MGPIO_enumSetPinDirection(PORTB , PIN2 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_50MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN2 , HIGH);
+	MGPIO_enumSetPinDirection(PORTB , PIN3 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN3 , LOW);
+	MGPIO_enumSetPinDirection(PORTB , PIN4 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_2MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN4 , HIGH);
+
+	MGPIO_enumSetPinDirection(PORTB , PIN5 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_50MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN5 , LOW);
+	MGPIO_enumSetPinDirection(PORTB , PIN6 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN6 , HIGH);
+	MGPIO_enumSetPinDirection(PORTB , PIN7 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_2MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN7 , LOW);
+	MGPIO_enumSetPinDirection(PORTB , PIN8 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_50MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN8 , HIGH);
+	MGPIO_enumSetPinDirection(PORTB , PIN9 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN9 , LOW);
+
+	MGPIO_enumSetPinDirection(PORTB , PIN10 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_2MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN10 , HIGH);
+	MGPIO_enumSetPinDirection(PORTB , PIN11 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_50MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN11 , LOW);
+	MGPIO_enumSetPinDirection(PORTB , PIN12 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN12 , HIGH);
+	MGPIO_enumSetPinDirection(PORTB , PIN13 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_2MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN13 , LOW);
+
+	MGPIO_enumSetPinDirection(PORTB , PIN14 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_50MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN14 , HIGH);
+
+	MGPIO_enumSetPinDirection(PORTB , PIN15 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+	MGPIO_enumSetPinPinValue(PORTB , PIN15 , LOW);
+
+
+	MGPIO_enumSetPinDirection(PORTC , PIN13 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_2MHZ);
+//	MGPIO_enumSetPinPinValue(PORTC , PIN13 , LOW);
+	MGPIO_enumSetPinDirection(PORTC , PIN14 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_50MHZ);
+//	MGPIO_enumSetPinPinValue(PORTC , PIN14 , HIGH);
+	MGPIO_enumSetPinDirection(PORTC , PIN15 , OUTPUT ,OUTPUT_PUSHPULL ,SPEED_10MHZ);
+//	MGPIO_enumSetPinPinValue(PORTC , PIN15 , LOW);
+
+	MGPIO_enumSetPinDirection(PORTA , PIN0 , INPUT , INPUT_PULLDOWN ,SPEED_INPUT);
+*/
+//int w = 600;
+	while(1)
+	{
+		if(MGPIO_u8GetPinValue(GPIOA, PIN0)==0 )
+				{
+					MGPIO_VidSetPinValue(GPIOA , PIN1 , HIGH);
+				}
+
+		/*
+//		MGPIO_enumGetPinValue(PORTA , PIN0 , &x);
+//		MGPIO_enumSetPinPinValue(PORTC , PIN15 , x);*/
+//		MGPIO_VidSetPinValue(GPIOA , PIN0 , LOW);
+//		MGPIO_VidSetPinValue(GPIOA , PIN1 , HIGH);
+//		MGPIO_VidSetPinValue(GPIOA , PIN2 , HIGH);
+//		MGPIO_VidSetPinValue(GPIOA , PIN3 , LOW);
+//		MGPIO_VidSetPinValue(GPIOA , PIN4 , LOW);
+//		MGPIO_VidSetPinValue(GPIOA , PIN5 , LOW);
+//		MGPIO_VidSetPinValue(GPIOA , PIN6 , LOW);
+//		MGPIO_VidSetPinValue(GPIOA , PIN7 , LOW);
+//
+////		for(int i = 0 ; i < w ; i++ )
+//		{
+//			for(int j = 0 ; j < w ; j++ )
+//			{
+//				asm("NOP");
+//			}
+//		}
+//		MGPIO_VidSetPinValue(GPIOA , PIN0 , LOW);
+//		MGPIO_VidSetPinValue(GPIOA , PIN1 , LOW);
+//
+//		for(int i = 0 ; i < w ; i++ )
+//				{
+//					for(int j = 0 ; j < w ; j++ )
+//					{
+//						asm("NOP");
+//					}
+//				}
+//		if(MGPIO_u8GetPinValue(GPIOA , PIN7) == 0)
+//		{
+//			MGPIO_VidSetPinValue(GPIOA , PIN3 , HIGH);
+//		}
+//		else
+//		{
+//			MGPIO_VidSetPinValue(GPIOA , PIN3 , LOW);
+//		}
+	}
+	return 0 ;
+}

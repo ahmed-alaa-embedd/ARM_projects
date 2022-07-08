@@ -1,0 +1,11 @@
+19:35:18 **** Incremental Build of configuration Debug for project PWM_New ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "PWM_New.elf"
+   text	   data	    bss	    dec	    hex	filename
+   1988	     76	    276	   2340	    924	PWM_New.elf
+Finished building: PWM_New.siz
+ 
+
+19:35:19 Build Finished (took 638ms)
+

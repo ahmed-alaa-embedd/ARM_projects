@@ -1,0 +1,11 @@
+12:53:00 **** Incremental Build of configuration Debug for project 22-IOT ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "22-IOT.elf"
+   text	   data	    bss	    dec	    hex	filename
+   6031	    180	    420	   6631	   19e7	22-IOT.elf
+Finished building: 22-IOT.siz
+ 
+
+12:53:01 Build Finished (took 330ms)
+

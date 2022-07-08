@@ -1,0 +1,373 @@
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"RCC_program.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.RCC_voidInitSysClock,"ax",%progbits
+  16              		.align	1
+  17              		.global	RCC_voidInitSysClock
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	RCC_voidInitSysClock:
+  24              	.LFB0:
+  25              		.file 1 "../src/RCC_program.c"
+   1:../src/RCC_program.c **** /***********************************/
+   2:../src/RCC_program.c **** /* Author : Ahmed Alaa			   */
+   3:../src/RCC_program.c **** /* Date : 8 August 2020			   */
+   4:../src/RCC_program.c **** /* version : V02 				   */
+   5:../src/RCC_program.c **** /***********************************/
+   6:../src/RCC_program.c **** #include "STD_TYPES.h"
+   7:../src/RCC_program.c **** #include "BIT_MATH.h"
+   8:../src/RCC_program.c **** 
+   9:../src/RCC_program.c **** #include "RCC_interface.h"
+  10:../src/RCC_program.c **** #include "RCC_private.h"
+  11:../src/RCC_program.c **** #include "RCC_config.h"
+  12:../src/RCC_program.c **** 
+  13:../src/RCC_program.c **** 
+  14:../src/RCC_program.c **** 
+  15:../src/RCC_program.c **** void RCC_voidInitSysClock(void)
+  16:../src/RCC_program.c **** {
+  26              		.loc 1 16 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  17:../src/RCC_program.c **** 	#if RCC_CLOCK_TYPE == RCC_HSE_CRYSTAL
+  18:../src/RCC_program.c **** 	RCC_CR   = 0x00010000; /*Enable HSI with no bypass*/
+  31              		.loc 1 18 0
+  32 0000 064B     		ldr	r3, .L3
+  33 0002 4FF48032 		mov	r2, #65536
+  34 0006 1A60     		str	r2, [r3]
+  19:../src/RCC_program.c **** 	RCC_CFGR = 0x00000001; //select HSE clock as system clock 
+  35              		.loc 1 19 0
+  36 0008 0433     		adds	r3, r3, #4
+  37 000a 0122     		movs	r2, #1
+  38 000c 1A60     		str	r2, [r3]
+  39              	.L2:
+  20:../src/RCC_program.c **** 	/*	wait until the HSE to be stable	*/
+  21:../src/RCC_program.c **** 	while(GET_BIT(RCC_CR,17) == 0 );
+  40              		.loc 1 21 0 discriminator 1
+  41 000e 034B     		ldr	r3, .L3
+  42 0010 1B68     		ldr	r3, [r3]
+  43 0012 13F4003F 		tst	r3, #131072
+  44 0016 FAD0     		beq	.L2
+  22:../src/RCC_program.c **** 	
+  23:../src/RCC_program.c **** 	#elif  RCC_CLOCK_TYPE == RCC_HSE_RC
+  24:../src/RCC_program.c **** 	RCC_CR   = 0x00050000;  /*Enable HSI with bypass*/
+  25:../src/RCC_program.c **** 	RCC_CFGR = 0x00000001;	//select HSE clock as system clock 
+  26:../src/RCC_program.c **** 	
+  27:../src/RCC_program.c **** 	#elif  RCC_CLOCK_TYPE == RCC_HSI
+  28:../src/RCC_program.c **** 	RCC_CR = 0x00000081; /*HSI Enable Trimming= 0*/
+  29:../src/RCC_program.c **** 	RCC_CFGR = 0x00000000;	//select HSI clock as system clock 
+  30:../src/RCC_program.c **** 	
+  31:../src/RCC_program.c **** 	#elif  RCC_CLOCK_TYPE == RCC_PLL
+  32:../src/RCC_program.c **** 	
+  33:../src/RCC_program.c **** 	
+  34:../src/RCC_program.c **** 	 #if RCC_PLL_INPUT == RCC_PLL_IN_HSI_DIV_2
+  35:../src/RCC_program.c **** 		RCC_CFGR = 0x00000000; // HSI oscillator clock/2 selected as PLL input clock 
+  36:../src/RCC_program.c **** 							   //HSI selected as system clock
+  37:../src/RCC_program.c **** 							   
+  38:../src/RCC_program.c **** 		switch(RCC_PLL_MUL_VAL)/*PLL multiplication factor 
+  39:../src/RCC_program.c **** 								Caution: The PLL output frequency must not exceed 72 MHz*/
+  40:../src/RCC_program.c **** 		{
+  41:../src/RCC_program.c **** 			case 2:  RCC_CFGR = 0x00000000; break;
+  42:../src/RCC_program.c **** 			case 3:  RCC_CFGR = 0x00040000; break;
+  43:../src/RCC_program.c **** 			case 4:  RCC_CFGR = 0x00080000; break;
+  44:../src/RCC_program.c **** 			case 5:  RCC_CFGR = 0x000c0000; break;
+  45:../src/RCC_program.c **** 			case 6:  RCC_CFGR = 0x00100000; break;
+  46:../src/RCC_program.c **** 			case 7:  RCC_CFGR = 0x00140000; break;
+  47:../src/RCC_program.c **** 			case 8:  RCC_CFGR = 0x00180000; break;
+  48:../src/RCC_program.c **** 			case 9:  RCC_CFGR = 0x001c0000; break;
+  49:../src/RCC_program.c **** 			case 10: RCC_CFGR = 0x00200000; break;
+  50:../src/RCC_program.c **** 			case 11: RCC_CFGR = 0x00240000; break;
+  51:../src/RCC_program.c **** 			case 12: RCC_CFGR = 0x00280000; break;
+  52:../src/RCC_program.c **** 			case 13: RCC_CFGR = 0x002c0000; break;
+  53:../src/RCC_program.c **** 			case 14: RCC_CFGR = 0x00300000; break;
+  54:../src/RCC_program.c **** 			case 15: RCC_CFGR = 0x00340000; break;
+  55:../src/RCC_program.c **** 			case 16: RCC_CFGR = 0x00380000; break;
+  56:../src/RCC_program.c **** 			//case 16: RCC_CFGR = 0x0000003c; break;
+  57:../src/RCC_program.c **** 		}
+  58:../src/RCC_program.c **** 
+  59:../src/RCC_program.c **** 	
+  60:../src/RCC_program.c **** 	 #elif RCC_PLL_INPUT == RCC_PLL_IN_HSE_DIV_2
+  61:../src/RCC_program.c **** 		RCC_CFGR = 0x00030002;	/*HSE clock divided by 2 and HSE oscillator clock selected
+  62:../src/RCC_program.c **** 								as PLL input clock and PLL selected as system clock*/
+  63:../src/RCC_program.c **** 								
+  64:../src/RCC_program.c **** 		switch(RCC_PLL_MUL_VAL)/*PLL multiplication factor 
+  65:../src/RCC_program.c **** 								Caution: The PLL output frequency must not exceed 72 MHz*/
+  66:../src/RCC_program.c **** 		{
+  67:../src/RCC_program.c **** 			case 2:  RCC_CFGR = 0x00030002; break;
+  68:../src/RCC_program.c **** 			case 3:  RCC_CFGR = 0x00070000; break;
+  69:../src/RCC_program.c **** 			case 4:  RCC_CFGR = 0x000b0000; break;
+  70:../src/RCC_program.c **** 			case 5:  RCC_CFGR = 0x000f0000; break;
+  71:../src/RCC_program.c **** 			case 6:  RCC_CFGR = 0x00130000; break;
+  72:../src/RCC_program.c **** 			case 7:  RCC_CFGR = 0x00170000; break;
+  73:../src/RCC_program.c **** 			case 8:  RCC_CFGR = 0x001b0000; break;
+  74:../src/RCC_program.c **** 			case 9:  RCC_CFGR = 0x001f0000; break;
+  75:../src/RCC_program.c **** 			case 10: RCC_CFGR = 0x00230000; break;
+  76:../src/RCC_program.c **** 			case 11: RCC_CFGR = 0x00270000; break;
+  77:../src/RCC_program.c **** 			case 12: RCC_CFGR = 0x002b0000; break;
+  78:../src/RCC_program.c **** 			case 13: RCC_CFGR = 0x002f0000; break;
+  79:../src/RCC_program.c **** 			case 14: RCC_CFGR = 0x00330000; break;
+  80:../src/RCC_program.c **** 			case 15: RCC_CFGR = 0x00370000; break;
+  81:../src/RCC_program.c **** 			case 16: RCC_CFGR = 0x003b0000; break;
+  82:../src/RCC_program.c **** 			//case 16: RCC_CFGR = 0x003f0000; break;
+  83:../src/RCC_program.c **** 		}
+  84:../src/RCC_program.c **** 	 
+  85:../src/RCC_program.c **** 	 #elif RCC_PLL_INPUT == RCC_PLL_IN_HSE
+  86:../src/RCC_program.c **** 		RCC_CFGR = 0x00010002; /* HSE clock not divided and HSE oscillator clock selected
+  87:../src/RCC_program.c **** 							   as PLL input clock and PLL selected as system clock*/
+  88:../src/RCC_program.c **** 							   
+  89:../src/RCC_program.c **** 		switch(RCC_PLL_MUL_VAL)/*PLL multiplication factor 
+  90:../src/RCC_program.c **** 								Caution: The PLL output frequency must not exceed 72 MHz*/
+  91:../src/RCC_program.c **** 		{
+  92:../src/RCC_program.c **** 			case 2:  RCC_CFGR = 0x00010000; break;
+  93:../src/RCC_program.c **** 			case 3:  RCC_CFGR = 0x00050000; break;
+  94:../src/RCC_program.c **** 			case 4:  RCC_CFGR = 0x00090000; break;
+  95:../src/RCC_program.c **** 			case 5:  RCC_CFGR = 0x000d0000; break;
+  96:../src/RCC_program.c **** 			case 6:  RCC_CFGR = 0x00110000; break;
+  97:../src/RCC_program.c **** 			case 7:  RCC_CFGR = 0x00150000; break;
+  98:../src/RCC_program.c **** 			case 8:  RCC_CFGR = 0x00190000; break;
+  99:../src/RCC_program.c **** 			case 9:  RCC_CFGR = 0x001d0000; break;
+ 100:../src/RCC_program.c **** 			case 10: RCC_CFGR = 0x00210000; break;
+ 101:../src/RCC_program.c **** 			case 11: RCC_CFGR = 0x00250000; break;
+ 102:../src/RCC_program.c **** 			case 12: RCC_CFGR = 0x00290000; break;
+ 103:../src/RCC_program.c **** 			case 13: RCC_CFGR = 0x002d0000; break;
+ 104:../src/RCC_program.c **** 			case 14: RCC_CFGR = 0x00310000; break;
+ 105:../src/RCC_program.c **** 			case 15: RCC_CFGR = 0x00350000; break;
+ 106:../src/RCC_program.c **** 			case 16: RCC_CFGR = 0x00390000; break;
+ 107:../src/RCC_program.c **** 			//case 16: RCC_CFGR = 0x003d003c; break;
+ 108:../src/RCC_program.c **** 		}
+ 109:../src/RCC_program.c **** 								
+ 110:../src/RCC_program.c **** 		RCC_CR   = 0x01000000; /*Enable PLL */
+ 111:../src/RCC_program.c **** 		
+ 112:../src/RCC_program.c **** 		#else
+ 113:../src/RCC_program.c **** 			#warning "Wrong Multiplication Factor"
+ 114:../src/RCC_program.c **** 	 #endif
+ 115:../src/RCC_program.c **** 	
+ 116:../src/RCC_program.c **** 	#else  
+ 117:../src/RCC_program.c **** 		#error("you choose wrong clock type")
+ 118:../src/RCC_program.c **** 	
+ 119:../src/RCC_program.c **** 	#endif 
+ 120:../src/RCC_program.c **** }
+  45              		.loc 1 120 0
+  46 0018 7047     		bx	lr
+  47              	.L4:
+  48 001a 00BF     		.align	2
+  49              	.L3:
+  50 001c 00100240 		.word	1073876992
+  51              		.cfi_endproc
+  52              	.LFE0:
+  54              		.section	.text.RCC_voidEnableClock,"ax",%progbits
+  55              		.align	1
+  56              		.global	RCC_voidEnableClock
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  60              		.fpu softvfp
+  62              	RCC_voidEnableClock:
+  63              	.LFB1:
+ 121:../src/RCC_program.c **** 
+ 122:../src/RCC_program.c **** 
+ 123:../src/RCC_program.c **** void RCC_voidEnableClock(u8 Copy_u8BusId, u8 Copy_u8PerId)
+ 124:../src/RCC_program.c **** {
+  64              		.loc 1 124 0
+  65              		.cfi_startproc
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68              		@ link register save eliminated.
+  69              	.LVL0:
+ 125:../src/RCC_program.c **** 	if(Copy_u8PerId <= 31)
+  70              		.loc 1 125 0
+  71 0000 1F29     		cmp	r1, #31
+  72 0002 1CD8     		bhi	.L5
+ 126:../src/RCC_program.c **** 	{
+ 127:../src/RCC_program.c **** 		switch(Copy_u8BusId)
+  73              		.loc 1 127 0
+  74 0004 0128     		cmp	r0, #1
+  75 0006 0BD0     		beq	.L7
+  76 0008 10B1     		cbz	r0, .L8
+  77 000a 0228     		cmp	r0, #2
+  78 000c 10D0     		beq	.L9
+  79 000e 7047     		bx	lr
+  80              	.L8:
+ 128:../src/RCC_program.c **** 		{
+ 129:../src/RCC_program.c **** 			case RCC_AHB 	: SET_BIT(RCC_AHBENR , Copy_u8PerId); break;
+  81              		.loc 1 129 0
+  82 0010 0B48     		ldr	r0, .L10
+  83              	.LVL1:
+  84 0012 0368     		ldr	r3, [r0]
+  85 0014 0122     		movs	r2, #1
+  86 0016 02FA01F1 		lsl	r1, r2, r1
+  87              	.LVL2:
+  88 001a 1943     		orrs	r1, r1, r3
+  89 001c 0160     		str	r1, [r0]
+  90 001e 7047     		bx	lr
+  91              	.LVL3:
+  92              	.L7:
+ 130:../src/RCC_program.c **** 			case RCC_APB1 	: SET_BIT(RCC_APB1ENR , Copy_u8PerId); break;
+  93              		.loc 1 130 0
+  94 0020 0848     		ldr	r0, .L10+4
+  95              	.LVL4:
+  96 0022 0368     		ldr	r3, [r0]
+  97 0024 0122     		movs	r2, #1
+  98 0026 02FA01F1 		lsl	r1, r2, r1
+  99              	.LVL5:
+ 100 002a 1943     		orrs	r1, r1, r3
+ 101 002c 0160     		str	r1, [r0]
+ 102 002e 7047     		bx	lr
+ 103              	.LVL6:
+ 104              	.L9:
+ 131:../src/RCC_program.c **** 			case RCC_APB2 	: SET_BIT(RCC_APB2ENR , Copy_u8PerId); break;
+ 105              		.loc 1 131 0
+ 106 0030 0548     		ldr	r0, .L10+8
+ 107              	.LVL7:
+ 108 0032 0368     		ldr	r3, [r0]
+ 109 0034 0122     		movs	r2, #1
+ 110 0036 02FA01F1 		lsl	r1, r2, r1
+ 111              	.LVL8:
+ 112 003a 1943     		orrs	r1, r1, r3
+ 113 003c 0160     		str	r1, [r0]
+ 114              	.L5:
+ 132:../src/RCC_program.c **** 			//default 	 	: /*Return Error*/   break; // 34an b3d el compilar m4 by7bo defult fdya
+ 133:../src/RCC_program.c **** 		}
+ 134:../src/RCC_program.c **** 		
+ 135:../src/RCC_program.c **** 	}
+ 136:../src/RCC_program.c **** 	
+ 137:../src/RCC_program.c **** 	else
+ 138:../src/RCC_program.c **** 	{
+ 139:../src/RCC_program.c **** 		/*Return Error*/
+ 140:../src/RCC_program.c **** 	}
+ 141:../src/RCC_program.c **** }
+ 115              		.loc 1 141 0
+ 116 003e 7047     		bx	lr
+ 117              	.L11:
+ 118              		.align	2
+ 119              	.L10:
+ 120 0040 14100240 		.word	1073877012
+ 121 0044 1C100240 		.word	1073877020
+ 122 0048 18100240 		.word	1073877016
+ 123              		.cfi_endproc
+ 124              	.LFE1:
+ 126              		.section	.text.RCC_voidDisableClock,"ax",%progbits
+ 127              		.align	1
+ 128              		.global	RCC_voidDisableClock
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 132              		.fpu softvfp
+ 134              	RCC_voidDisableClock:
+ 135              	.LFB2:
+ 142:../src/RCC_program.c **** 
+ 143:../src/RCC_program.c **** void RCC_voidDisableClock(u8 Copy_u8BusId, u8 Copy_u8PerId)
+ 144:../src/RCC_program.c **** {
+ 136              		.loc 1 144 0
+ 137              		.cfi_startproc
+ 138              		@ args = 0, pretend = 0, frame = 0
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+ 140              		@ link register save eliminated.
+ 141              	.LVL9:
+ 145:../src/RCC_program.c **** 	if(Copy_u8PerId <= 31)
+ 142              		.loc 1 145 0
+ 143 0000 1F29     		cmp	r1, #31
+ 144 0002 1FD8     		bhi	.L12
+ 146:../src/RCC_program.c **** 	{
+ 147:../src/RCC_program.c **** 		switch(Copy_u8BusId)
+ 145              		.loc 1 147 0
+ 146 0004 0128     		cmp	r0, #1
+ 147 0006 0CD0     		beq	.L14
+ 148 0008 10B1     		cbz	r0, .L15
+ 149 000a 0228     		cmp	r0, #2
+ 150 000c 12D0     		beq	.L16
+ 151 000e 7047     		bx	lr
+ 152              	.L15:
+ 148:../src/RCC_program.c **** 		{
+ 149:../src/RCC_program.c **** 			case RCC_AHB 	: CLR_BIT(RCC_AHBENR , Copy_u8PerId); break;
+ 153              		.loc 1 149 0
+ 154 0010 0D48     		ldr	r0, .L17
+ 155              	.LVL10:
+ 156 0012 0368     		ldr	r3, [r0]
+ 157 0014 0122     		movs	r2, #1
+ 158 0016 02FA01F1 		lsl	r1, r2, r1
+ 159              	.LVL11:
+ 160 001a 23EA0101 		bic	r1, r3, r1
+ 161 001e 0160     		str	r1, [r0]
+ 162 0020 7047     		bx	lr
+ 163              	.LVL12:
+ 164              	.L14:
+ 150:../src/RCC_program.c **** 			case RCC_APB1 	: CLR_BIT(RCC_APB1ENR , Copy_u8PerId); break;
+ 165              		.loc 1 150 0
+ 166 0022 0A48     		ldr	r0, .L17+4
+ 167              	.LVL13:
+ 168 0024 0368     		ldr	r3, [r0]
+ 169 0026 0122     		movs	r2, #1
+ 170 0028 02FA01F1 		lsl	r1, r2, r1
+ 171              	.LVL14:
+ 172 002c 23EA0101 		bic	r1, r3, r1
+ 173 0030 0160     		str	r1, [r0]
+ 174 0032 7047     		bx	lr
+ 175              	.LVL15:
+ 176              	.L16:
+ 151:../src/RCC_program.c **** 			case RCC_APB2 	: CLR_BIT(RCC_APB2ENR , Copy_u8PerId); break;
+ 177              		.loc 1 151 0
+ 178 0034 0648     		ldr	r0, .L17+8
+ 179              	.LVL16:
+ 180 0036 0368     		ldr	r3, [r0]
+ 181 0038 0122     		movs	r2, #1
+ 182 003a 02FA01F1 		lsl	r1, r2, r1
+ 183              	.LVL17:
+ 184 003e 23EA0101 		bic	r1, r3, r1
+ 185 0042 0160     		str	r1, [r0]
+ 186              	.L12:
+ 152:../src/RCC_program.c **** 			//default 	 	: /*Return Error*/   break; // 34an b3d el compilar m4 by7bo defult fdya
+ 153:../src/RCC_program.c **** 		}
+ 154:../src/RCC_program.c **** 		
+ 155:../src/RCC_program.c **** 	}
+ 156:../src/RCC_program.c **** 	
+ 157:../src/RCC_program.c **** 	else
+ 158:../src/RCC_program.c **** 	{
+ 159:../src/RCC_program.c **** 		/*Return Error*/
+ 160:../src/RCC_program.c **** 	}
+ 161:../src/RCC_program.c **** }
+ 187              		.loc 1 161 0
+ 188 0044 7047     		bx	lr
+ 189              	.L18:
+ 190 0046 00BF     		.align	2
+ 191              	.L17:
+ 192 0048 14100240 		.word	1073877012
+ 193 004c 1C100240 		.word	1073877020
+ 194 0050 18100240 		.word	1073877016
+ 195              		.cfi_endproc
+ 196              	.LFE2:
+ 198              		.text
+ 199              	.Letext0:
+ 200              		.file 2 "../include/STD_TYPES.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 RCC_program.c
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:16     .text.RCC_voidInitSysClock:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:23     .text.RCC_voidInitSysClock:00000000 RCC_voidInitSysClock
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:50     .text.RCC_voidInitSysClock:0000001c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:55     .text.RCC_voidEnableClock:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:62     .text.RCC_voidEnableClock:00000000 RCC_voidEnableClock
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:120    .text.RCC_voidEnableClock:00000040 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:127    .text.RCC_voidDisableClock:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:134    .text.RCC_voidDisableClock:00000000 RCC_voidDisableClock
+C:\Users\AHMEDA~1\AppData\Local\Temp\cciRRjCd.s:192    .text.RCC_voidDisableClock:00000048 $d
+                           .group:00000000 wm4.0.c450a18b2a29049e2cbb4137d58ca9b1
+                           .group:00000000 wm4.BIT_MATH.h.8.0385af17eb3d24c1ce205d0ed1b8762b
+                           .group:00000000 wm4.RCC_interface.h.8.5138a41d5741806f19ac37f49995ed87
+                           .group:00000000 wm4.RCC_private.h.8.c3a965b3d07edebf6f0f79caedc3a7a9
+                           .group:00000000 wm4.RCC_config.h.8.8f9c420b1773fa4a2751989079da82bd
+
+NO UNDEFINED SYMBOLS

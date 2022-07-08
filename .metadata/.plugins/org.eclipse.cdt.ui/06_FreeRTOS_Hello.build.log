@@ -1,0 +1,11 @@
+10:31:23 **** Build of configuration Debug for project 06_FreeRTOS_Hello ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "06_FreeRTOS_Hello.elf"
+   text	   data	    bss	    dec	    hex	filename
+  10987	    184	  18216	  29387	   72cb	06_FreeRTOS_Hello.elf
+Finished building: 06_FreeRTOS_Hello.siz
+ 
+
+10:31:28 Build Finished (took 5s.3ms)
+

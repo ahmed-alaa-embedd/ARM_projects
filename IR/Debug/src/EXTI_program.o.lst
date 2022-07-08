@@ -1,0 +1,394 @@
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"EXTI_program.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MEXTI_VoidInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	MEXTI_VoidInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	MEXTI_VoidInit:
+  24              	.LFB0:
+  25              		.file 1 "../src/EXTI_program.c"
+   1:../src/EXTI_program.c **** /***************************/
+   2:../src/EXTI_program.c **** /*Author : ahmed alaa	*/
+   3:../src/EXTI_program.c **** /*date : 22/8/2020 		*/
+   4:../src/EXTI_program.c **** /*version : v02			*/
+   5:../src/EXTI_program.c **** /***************************/
+   6:../src/EXTI_program.c **** 
+   7:../src/EXTI_program.c **** 
+   8:../src/EXTI_program.c **** #include "STD_TYPES.h"
+   9:../src/EXTI_program.c **** #include "BIT_MATH.h"
+  10:../src/EXTI_program.c **** 
+  11:../src/EXTI_program.c **** #include "EXTI_interface.h"
+  12:../src/EXTI_program.c **** #include "EXTI_private.h"
+  13:../src/EXTI_program.c **** #include "EXTI_config.h"
+  14:../src/EXTI_program.c **** 
+  15:../src/EXTI_program.c **** 
+  16:../src/EXTI_program.c **** #define NULL		(void * )0		//POINTER TO VOID
+  17:../src/EXTI_program.c **** //global variable
+  18:../src/EXTI_program.c **** static void (*EXTI0_CallBack) (void)= NULL;
+  19:../src/EXTI_program.c **** 
+  20:../src/EXTI_program.c **** 
+  21:../src/EXTI_program.c **** 
+  22:../src/EXTI_program.c **** void MEXTI_VoidInit(void)
+  23:../src/EXTI_program.c **** {
+  26              		.loc 1 23 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  24:../src/EXTI_program.c **** #if EXTI_LINE==EXTI_LINE0
+  25:../src/EXTI_program.c **** 	SET_BIT(EXTI -> IMR , EXTI_LINE0);
+  31              		.loc 1 25 0
+  32 0000 044B     		ldr	r3, .L2
+  33 0002 1A68     		ldr	r2, [r3]
+  34 0004 42F00102 		orr	r2, r2, #1
+  35 0008 1A60     		str	r2, [r3]
+  26:../src/EXTI_program.c **** #elif EXTI_LINE==EXTI_LINE1
+  27:../src/EXTI_program.c **** 	SET_BIT(EXTI -> IMR , EXTI_LINE1);
+  28:../src/EXTI_program.c **** #elif EXTI_LINE==EXTI_LINE2
+  29:../src/EXTI_program.c **** 	SET_BIT(EXTI -> IMR , EXTI_LINE2);
+  30:../src/EXTI_program.c **** 
+  31:../src/EXTI_program.c **** #else
+  32:../src/EXTI_program.c **** #error("Wrong External interrupt line")
+  33:../src/EXTI_program.c **** 
+  34:../src/EXTI_program.c **** #endif
+  35:../src/EXTI_program.c **** 
+  36:../src/EXTI_program.c **** #if EXTI_SENSE_MODE==FALLING_EDGE
+  37:../src/EXTI_program.c **** 	SET_BIT(EXTI -> FTSR , EXTI_LINE);
+  36              		.loc 1 37 0
+  37 000a DA68     		ldr	r2, [r3, #12]
+  38 000c 42F00102 		orr	r2, r2, #1
+  39 0010 DA60     		str	r2, [r3, #12]
+  38:../src/EXTI_program.c **** #elif EXTI_SENSE_MODE==RISING_EDGE
+  39:../src/EXTI_program.c **** 	SET_BIT(EXTI -> RTSR , EXTI_LINE);
+  40:../src/EXTI_program.c **** #elif EXTI_SENSE_MODE==ON_CHANGE
+  41:../src/EXTI_program.c **** 	SET_BIT(EXTI -> RTSR , EXTI_LINE);
+  42:../src/EXTI_program.c **** 	SET_BIT(EXTI -> FTSR , EXTI_LINE);
+  43:../src/EXTI_program.c **** 
+  44:../src/EXTI_program.c **** #else
+  45:../src/EXTI_program.c **** #error("Wrong External interrupt Mode")
+  46:../src/EXTI_program.c **** 
+  47:../src/EXTI_program.c **** #endif
+  48:../src/EXTI_program.c **** }
+  40              		.loc 1 48 0
+  41 0012 7047     		bx	lr
+  42              	.L3:
+  43              		.align	2
+  44              	.L2:
+  45 0014 00040140 		.word	1073808384
+  46              		.cfi_endproc
+  47              	.LFE0:
+  49              		.section	.text.MEXTI_VoidSetSignalLatch,"ax",%progbits
+  50              		.align	1
+  51              		.global	MEXTI_VoidSetSignalLatch
+  52              		.syntax unified
+  53              		.thumb
+  54              		.thumb_func
+  55              		.fpu softvfp
+  57              	MEXTI_VoidSetSignalLatch:
+  58              	.LFB1:
+  49:../src/EXTI_program.c **** void MEXTI_VoidSetSignalLatch(u8 Copy_U8EXTILine, u8 Copy_U8EXTISenseMode)
+  50:../src/EXTI_program.c **** {
+  59              		.loc 1 50 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              		@ link register save eliminated.
+  64              	.LVL0:
+  51:../src/EXTI_program.c **** 	switch(Copy_U8EXTISenseMode)
+  65              		.loc 1 51 0
+  66 0000 0329     		cmp	r1, #3
+  67 0002 12D0     		beq	.L6
+  68 0004 0529     		cmp	r1, #5
+  69 0006 17D0     		beq	.L7
+  70 0008 0129     		cmp	r1, #1
+  71 000a 07D0     		beq	.L9
+  72              	.LVL1:
+  73              	.L5:
+  52:../src/EXTI_program.c **** 		{
+  53:../src/EXTI_program.c **** 		case RISING_EDGE	:SET_BIT(EXTI -> RTSR , Copy_U8EXTILine);			/*Rising edge*/ break;
+  54:../src/EXTI_program.c **** 		case FALLING_EDGE	:SET_BIT(EXTI -> FTSR , Copy_U8EXTILine);			/*FALLING edge*/ break;
+  55:../src/EXTI_program.c **** 		case ON_CHANGE		:SET_BIT(EXTI -> RTSR , Copy_U8EXTILine);			/*Rising edge*/
+  56:../src/EXTI_program.c **** 							 SET_BIT(EXTI -> FTSR , Copy_U8EXTILine);			/*Rising edge*/ break;
+  57:../src/EXTI_program.c **** 		}
+  58:../src/EXTI_program.c **** 	SET_BIT(EXTI->IMR ,Copy_U8EXTILine);
+  74              		.loc 1 58 0
+  75 000c 0F49     		ldr	r1, .L10
+  76 000e 0B68     		ldr	r3, [r1]
+  77 0010 0122     		movs	r2, #1
+  78 0012 02FA00F0 		lsl	r0, r2, r0
+  79              	.LVL2:
+  80 0016 1843     		orrs	r0, r0, r3
+  81 0018 0860     		str	r0, [r1]
+  59:../src/EXTI_program.c **** }
+  82              		.loc 1 59 0
+  83 001a 7047     		bx	lr
+  84              	.LVL3:
+  85              	.L9:
+  53:../src/EXTI_program.c **** 		case FALLING_EDGE	:SET_BIT(EXTI -> FTSR , Copy_U8EXTILine);			/*FALLING edge*/ break;
+  86              		.loc 1 53 0
+  87 001c 0B49     		ldr	r1, .L10
+  88              	.LVL4:
+  89 001e 8B68     		ldr	r3, [r1, #8]
+  90 0020 0122     		movs	r2, #1
+  91 0022 8240     		lsls	r2, r2, r0
+  92 0024 1343     		orrs	r3, r3, r2
+  93 0026 8B60     		str	r3, [r1, #8]
+  94 0028 F0E7     		b	.L5
+  95              	.LVL5:
+  96              	.L6:
+  54:../src/EXTI_program.c **** 		case ON_CHANGE		:SET_BIT(EXTI -> RTSR , Copy_U8EXTILine);			/*Rising edge*/
+  97              		.loc 1 54 0
+  98 002a 0849     		ldr	r1, .L10
+  99              	.LVL6:
+ 100 002c CB68     		ldr	r3, [r1, #12]
+ 101 002e 0122     		movs	r2, #1
+ 102 0030 8240     		lsls	r2, r2, r0
+ 103 0032 1343     		orrs	r3, r3, r2
+ 104 0034 CB60     		str	r3, [r1, #12]
+ 105 0036 E9E7     		b	.L5
+ 106              	.LVL7:
+ 107              	.L7:
+  55:../src/EXTI_program.c **** 							 SET_BIT(EXTI -> FTSR , Copy_U8EXTILine);			/*Rising edge*/ break;
+ 108              		.loc 1 55 0
+ 109 0038 044A     		ldr	r2, .L10
+ 110 003a 9168     		ldr	r1, [r2, #8]
+ 111              	.LVL8:
+ 112 003c 0123     		movs	r3, #1
+ 113 003e 8340     		lsls	r3, r3, r0
+ 114 0040 1943     		orrs	r1, r1, r3
+ 115 0042 9160     		str	r1, [r2, #8]
+  56:../src/EXTI_program.c **** 		}
+ 116              		.loc 1 56 0
+ 117 0044 D168     		ldr	r1, [r2, #12]
+ 118 0046 0B43     		orrs	r3, r3, r1
+ 119 0048 D360     		str	r3, [r2, #12]
+ 120 004a DFE7     		b	.L5
+ 121              	.L11:
+ 122              		.align	2
+ 123              	.L10:
+ 124 004c 00040140 		.word	1073808384
+ 125              		.cfi_endproc
+ 126              	.LFE1:
+ 128              		.section	.text.MEXTI_VoidEnable,"ax",%progbits
+ 129              		.align	1
+ 130              		.global	MEXTI_VoidEnable
+ 131              		.syntax unified
+ 132              		.thumb
+ 133              		.thumb_func
+ 134              		.fpu softvfp
+ 136              	MEXTI_VoidEnable:
+ 137              	.LFB2:
+  60:../src/EXTI_program.c **** void MEXTI_VoidEnable(u8 Copy_U8EXTILine)
+  61:../src/EXTI_program.c **** {
+ 138              		.loc 1 61 0
+ 139              		.cfi_startproc
+ 140              		@ args = 0, pretend = 0, frame = 0
+ 141              		@ frame_needed = 0, uses_anonymous_args = 0
+ 142              		@ link register save eliminated.
+ 143              	.LVL9:
+  62:../src/EXTI_program.c **** 	SET_BIT(EXTI->IMR ,Copy_U8EXTILine);
+ 144              		.loc 1 62 0
+ 145 0000 0349     		ldr	r1, .L13
+ 146 0002 0B68     		ldr	r3, [r1]
+ 147 0004 0122     		movs	r2, #1
+ 148 0006 02FA00F0 		lsl	r0, r2, r0
+ 149              	.LVL10:
+ 150 000a 0343     		orrs	r3, r3, r0
+ 151 000c 0B60     		str	r3, [r1]
+  63:../src/EXTI_program.c **** 
+  64:../src/EXTI_program.c **** }
+ 152              		.loc 1 64 0
+ 153 000e 7047     		bx	lr
+ 154              	.L14:
+ 155              		.align	2
+ 156              	.L13:
+ 157 0010 00040140 		.word	1073808384
+ 158              		.cfi_endproc
+ 159              	.LFE2:
+ 161              		.section	.text.MEXTI_VoidDisnable,"ax",%progbits
+ 162              		.align	1
+ 163              		.global	MEXTI_VoidDisnable
+ 164              		.syntax unified
+ 165              		.thumb
+ 166              		.thumb_func
+ 167              		.fpu softvfp
+ 169              	MEXTI_VoidDisnable:
+ 170              	.LFB3:
+  65:../src/EXTI_program.c **** void MEXTI_VoidDisnable(u8 Copy_U8EXTILine)
+  66:../src/EXTI_program.c **** {
+ 171              		.loc 1 66 0
+ 172              		.cfi_startproc
+ 173              		@ args = 0, pretend = 0, frame = 0
+ 174              		@ frame_needed = 0, uses_anonymous_args = 0
+ 175              		@ link register save eliminated.
+ 176              	.LVL11:
+  67:../src/EXTI_program.c **** 	CLR_BIT(EXTI->IMR ,Copy_U8EXTILine);
+ 177              		.loc 1 67 0
+ 178 0000 0449     		ldr	r1, .L16
+ 179 0002 0B68     		ldr	r3, [r1]
+ 180 0004 0122     		movs	r2, #1
+ 181 0006 02FA00F0 		lsl	r0, r2, r0
+ 182              	.LVL12:
+ 183 000a 23EA0003 		bic	r3, r3, r0
+ 184 000e 0B60     		str	r3, [r1]
+  68:../src/EXTI_program.c **** }
+ 185              		.loc 1 68 0
+ 186 0010 7047     		bx	lr
+ 187              	.L17:
+ 188 0012 00BF     		.align	2
+ 189              	.L16:
+ 190 0014 00040140 		.word	1073808384
+ 191              		.cfi_endproc
+ 192              	.LFE3:
+ 194              		.section	.text.MEXTI_VoidSoftwareTrigger,"ax",%progbits
+ 195              		.align	1
+ 196              		.global	MEXTI_VoidSoftwareTrigger
+ 197              		.syntax unified
+ 198              		.thumb
+ 199              		.thumb_func
+ 200              		.fpu softvfp
+ 202              	MEXTI_VoidSoftwareTrigger:
+ 203              	.LFB4:
+  69:../src/EXTI_program.c **** void MEXTI_VoidSoftwareTrigger(u8 Copy_U8EXTILine)
+  70:../src/EXTI_program.c **** {
+ 204              		.loc 1 70 0
+ 205              		.cfi_startproc
+ 206              		@ args = 0, pretend = 0, frame = 0
+ 207              		@ frame_needed = 0, uses_anonymous_args = 0
+ 208              		@ link register save eliminated.
+ 209              	.LVL13:
+  71:../src/EXTI_program.c **** 
+  72:../src/EXTI_program.c **** }
+ 210              		.loc 1 72 0
+ 211 0000 7047     		bx	lr
+ 212              		.cfi_endproc
+ 213              	.LFE4:
+ 215              		.section	.text.MEXTI_VoidSetCallBack,"ax",%progbits
+ 216              		.align	1
+ 217              		.global	MEXTI_VoidSetCallBack
+ 218              		.syntax unified
+ 219              		.thumb
+ 220              		.thumb_func
+ 221              		.fpu softvfp
+ 223              	MEXTI_VoidSetCallBack:
+ 224              	.LFB5:
+  73:../src/EXTI_program.c **** 
+  74:../src/EXTI_program.c **** void MEXTI_VoidSetCallBack(void (*ptr) (void))
+  75:../src/EXTI_program.c **** {
+ 225              		.loc 1 75 0
+ 226              		.cfi_startproc
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 229              		@ link register save eliminated.
+ 230              	.LVL14:
+  76:../src/EXTI_program.c **** 
+  77:../src/EXTI_program.c **** 	EXTI0_CallBack= ptr;
+ 231              		.loc 1 77 0
+ 232 0000 014B     		ldr	r3, .L20
+ 233 0002 1860     		str	r0, [r3]
+  78:../src/EXTI_program.c **** }
+ 234              		.loc 1 78 0
+ 235 0004 7047     		bx	lr
+ 236              	.L21:
+ 237 0006 00BF     		.align	2
+ 238              	.L20:
+ 239 0008 00000000 		.word	.LANCHOR0
+ 240              		.cfi_endproc
+ 241              	.LFE5:
+ 243              		.section	.text.EXTI0_IRQHandler,"ax",%progbits
+ 244              		.align	1
+ 245              		.global	EXTI0_IRQHandler
+ 246              		.syntax unified
+ 247              		.thumb
+ 248              		.thumb_func
+ 249              		.fpu softvfp
+ 251              	EXTI0_IRQHandler:
+ 252              	.LFB6:
+  79:../src/EXTI_program.c **** 
+  80:../src/EXTI_program.c **** void EXTI0_IRQHandler(void)
+  81:../src/EXTI_program.c **** {
+ 253              		.loc 1 81 0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257 0000 08B5     		push	{r3, lr}
+ 258              		.cfi_def_cfa_offset 8
+ 259              		.cfi_offset 3, -8
+ 260              		.cfi_offset 14, -4
+  82:../src/EXTI_program.c **** 	EXTI0_CallBack();
+ 261              		.loc 1 82 0
+ 262 0002 044B     		ldr	r3, .L24
+ 263 0004 1B68     		ldr	r3, [r3]
+ 264 0006 9847     		blx	r3
+ 265              	.LVL15:
+  83:../src/EXTI_program.c **** 	SET_BIT(EXTI->PR , 0);	//clear pending bit
+ 266              		.loc 1 83 0
+ 267 0008 034A     		ldr	r2, .L24+4
+ 268 000a 5369     		ldr	r3, [r2, #20]
+ 269 000c 43F00103 		orr	r3, r3, #1
+ 270 0010 5361     		str	r3, [r2, #20]
+  84:../src/EXTI_program.c **** }
+ 271              		.loc 1 84 0
+ 272 0012 08BD     		pop	{r3, pc}
+ 273              	.L25:
+ 274              		.align	2
+ 275              	.L24:
+ 276 0014 00000000 		.word	.LANCHOR0
+ 277 0018 00040140 		.word	1073808384
+ 278              		.cfi_endproc
+ 279              	.LFE6:
+ 281              		.section	.bss.EXTI0_CallBack,"aw",%nobits
+ 282              		.align	2
+ 283              		.set	.LANCHOR0,. + 0
+ 286              	EXTI0_CallBack:
+ 287 0000 00000000 		.space	4
+ 288              		.text
+ 289              	.Letext0:
+ 290              		.file 2 "../include/STD_TYPES.h"
+ 291              		.file 3 "../include/EXTI_private.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 EXTI_program.c
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:16     .text.MEXTI_VoidInit:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:23     .text.MEXTI_VoidInit:00000000 MEXTI_VoidInit
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:45     .text.MEXTI_VoidInit:00000014 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:50     .text.MEXTI_VoidSetSignalLatch:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:57     .text.MEXTI_VoidSetSignalLatch:00000000 MEXTI_VoidSetSignalLatch
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:124    .text.MEXTI_VoidSetSignalLatch:0000004c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:129    .text.MEXTI_VoidEnable:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:136    .text.MEXTI_VoidEnable:00000000 MEXTI_VoidEnable
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:157    .text.MEXTI_VoidEnable:00000010 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:162    .text.MEXTI_VoidDisnable:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:169    .text.MEXTI_VoidDisnable:00000000 MEXTI_VoidDisnable
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:190    .text.MEXTI_VoidDisnable:00000014 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:195    .text.MEXTI_VoidSoftwareTrigger:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:202    .text.MEXTI_VoidSoftwareTrigger:00000000 MEXTI_VoidSoftwareTrigger
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:216    .text.MEXTI_VoidSetCallBack:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:223    .text.MEXTI_VoidSetCallBack:00000000 MEXTI_VoidSetCallBack
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:239    .text.MEXTI_VoidSetCallBack:00000008 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:244    .text.EXTI0_IRQHandler:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:251    .text.EXTI0_IRQHandler:00000000 EXTI0_IRQHandler
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:276    .text.EXTI0_IRQHandler:00000014 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:282    .bss.EXTI0_CallBack:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccbU3ohL.s:286    .bss.EXTI0_CallBack:00000000 EXTI0_CallBack
+                           .group:00000000 wm4.0.c450a18b2a29049e2cbb4137d58ca9b1
+                           .group:00000000 wm4.BIT_MATH.h.8.0385af17eb3d24c1ce205d0ed1b8762b
+                           .group:00000000 wm4.EXTI_interface.h.9.e1c6d63d0bc618e58233ec97d77d783a
+                           .group:00000000 wm4.EXTI_private.h.10.253f680b0b778446c424d3a01c23bcc5
+                           .group:00000000 wm4.EXTI_config.h.9.f9b89b83b0e8fab0a36ba869d13ead1b
+
+NO UNDEFINED SYMBOLS

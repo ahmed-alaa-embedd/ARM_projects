@@ -1,0 +1,11 @@
+12:55:44 **** Incremental Build of configuration Debug for project 23-IOT(mosaad) ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "23-IOT(mosaad).elf"
+   text	   data	    bss	    dec	    hex	filename
+   6287	    224	    420	   6931	   1b13	23-IOT(mosaad).elf
+Finished building: 23-IOT(mosaad).siz
+ 
+
+12:55:44 Build Finished (took 430ms)
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Hello_DIO/src/AFIO.c&apos; to &apos;AFIO_program.c&apos;" description="Rename resource &apos;AFIO.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/AFIO.c" name="AFIO_program.c" stamp="1598268643639" updateReferences="true"/>
+</session>

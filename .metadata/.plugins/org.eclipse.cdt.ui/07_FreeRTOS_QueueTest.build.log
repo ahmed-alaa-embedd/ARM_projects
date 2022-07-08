@@ -1,0 +1,11 @@
+15:10:09 **** Incremental Build of configuration Debug for project 07_FreeRTOS_QueueTest ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "07_FreeRTOS_QueueTest.elf"
+   text	   data	    bss	    dec	    hex	filename
+  10847	    188	  18216	  29251	   7243	07_FreeRTOS_QueueTest.elf
+Finished building: 07_FreeRTOS_QueueTest.siz
+ 
+
+15:10:09 Build Finished (took 410ms)
+

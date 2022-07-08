@@ -1,0 +1,24 @@
+/*  Created on: 24 Aug 2020
+  *      Author: ahmed alaa
+  *     version:	01
+  */
+
+#ifndef AFIO_PRIVATE_H_
+#define AFIO_PRIVATE_H_
+
+typedef struct
+{
+	 u32 EVCR;
+	 u32 EMR;
+	 u32 RSTR;
+	 u32 FTSR;
+	 u32 SWIER;
+	 u32 PR;
+
+
+}AFIO_t;
+
+
+
+
+#endif /* AFIO_PRIVATE_H_ */

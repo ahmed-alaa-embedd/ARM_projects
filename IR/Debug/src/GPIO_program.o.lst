@@ -1,0 +1,816 @@
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"GPIO_program.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MGPIO_VoidSetPinDirection,"ax",%progbits
+  16              		.align	1
+  17              		.global	MGPIO_VoidSetPinDirection
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	MGPIO_VoidSetPinDirection:
+  24              	.LFB0:
+  25              		.file 1 "../src/GPIO_program.c"
+   1:../src/GPIO_program.c **** /***********************************/
+   2:../src/GPIO_program.c **** /* Author : Ahmed Alaa			   */
+   3:../src/GPIO_program.c **** /* Date : 12 8 2020			  	   */
+   4:../src/GPIO_program.c **** /* version : V02				   */
+   5:../src/GPIO_program.c **** /***********************************/
+   6:../src/GPIO_program.c **** 
+   7:../src/GPIO_program.c **** #include "STD_TYPES.h"
+   8:../src/GPIO_program.c **** #include "BIT_MATH.h"
+   9:../src/GPIO_program.c **** 
+  10:../src/GPIO_program.c **** #include "GPIO_private.h"
+  11:../src/GPIO_program.c **** #include "GPIO_int.h"
+  12:../src/GPIO_program.c **** 
+  13:../src/GPIO_program.c **** 
+  14:../src/GPIO_program.c **** 
+  15:../src/GPIO_program.c **** void MGPIO_VoidSetPinDirection(u8 copy_u8PORT, u8 copy_u8PIN, u8 copy_u8MODE)
+  16:../src/GPIO_program.c **** {
+  26              		.loc 1 16 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  31              	.LVL0:
+  32 0000 10B4     		push	{r4}
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 4, -4
+  17:../src/GPIO_program.c **** 	switch(copy_u8PORT)
+  35              		.loc 1 17 0
+  36 0002 0128     		cmp	r0, #1
+  37 0004 27D0     		beq	.L3
+  38 0006 18B1     		cbz	r0, .L4
+  39 0008 0228     		cmp	r0, #2
+  40 000a 47D0     		beq	.L5
+  41              	.LVL1:
+  42              	.L1:
+  18:../src/GPIO_program.c **** 	{
+  19:../src/GPIO_program.c **** 		case GPIOA:
+  20:../src/GPIO_program.c **** 			if(copy_u8PIN <= 7)			/* if PIN<7 CRH is not activated as else cancel 
+  21:../src/GPIO_program.c **** 										   the 2nd condition  */
+  22:../src/GPIO_program.c **** 				{
+  23:../src/GPIO_program.c **** 					GPIOA_CRL &= ~((0b1111)<<(copy_u8PIN*4));  /*we CLR first as 0 OR 1 will 
+  24:../src/GPIO_program.c **** 															 always be 1 so we cant overwrite */
+  25:../src/GPIO_program.c **** 					GPIOA_CRL |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  26:../src/GPIO_program.c **** 				}
+  27:../src/GPIO_program.c **** 			else if(copy_u8PIN <= 15)	
+  28:../src/GPIO_program.c **** 				{
+  29:../src/GPIO_program.c **** 					copy_u8PIN = copy_u8PIN-8;
+  30:../src/GPIO_program.c **** 					GPIOA_CRH &= ~((0b1111)<<(copy_u8PIN*4));  
+  31:../src/GPIO_program.c **** 					GPIOA_CRH |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  32:../src/GPIO_program.c **** 				}
+  33:../src/GPIO_program.c **** 				break;
+  34:../src/GPIO_program.c **** 		case GPIOB:
+  35:../src/GPIO_program.c **** 			if(copy_u8PIN <= 7)		/* if PIN<7 CRH is not activated as else cancel 
+  36:../src/GPIO_program.c **** 										   the 2nd condition  */
+  37:../src/GPIO_program.c **** 				{
+  38:../src/GPIO_program.c **** 					GPIOB_CRL &= ~((0b1111)<<(copy_u8PIN*4));  /*we CLR first as 0 OR 1 will 
+  39:../src/GPIO_program.c **** 															  always be 1 so we cant overwrite*/ 
+  40:../src/GPIO_program.c **** 					GPIOB_CRL |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  41:../src/GPIO_program.c **** 				}
+  42:../src/GPIO_program.c **** 			else if(copy_u8PIN <= 15)
+  43:../src/GPIO_program.c **** 				{
+  44:../src/GPIO_program.c **** 					copy_u8PIN = copy_u8PIN-8;	/*pins enters is more than 7 so we use PIN-8
+  45:../src/GPIO_program.c **** 												to start in CRH from pin 0*/
+  46:../src/GPIO_program.c **** 					GPIOB_CRH &= ~((0b1111)<<(copy_u8PIN*4));  
+  47:../src/GPIO_program.c **** 					GPIOB_CRH |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  48:../src/GPIO_program.c **** 				}
+  49:../src/GPIO_program.c **** 				break;
+  50:../src/GPIO_program.c **** 		
+  51:../src/GPIO_program.c **** 		case GPIOC:
+  52:../src/GPIO_program.c **** 			if(copy_u8PIN <= 7)  /* if PIN<7 CRH is not activated as else cancel 
+  53:../src/GPIO_program.c **** 										   the 2nd condition  */ 
+  54:../src/GPIO_program.c **** 				{
+  55:../src/GPIO_program.c **** 					GPIOC_CRL &= ~((0b1111)<<(copy_u8PIN*4));  /*we CLR first as 0 OR 1 will 
+  56:../src/GPIO_program.c **** 															   always be 1 so we cant overwrite*/
+  57:../src/GPIO_program.c **** 					GPIOC_CRL |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  58:../src/GPIO_program.c **** 				}
+  59:../src/GPIO_program.c **** 			else if(copy_u8PIN <= 15)
+  60:../src/GPIO_program.c **** 				{
+  61:../src/GPIO_program.c **** 					copy_u8PIN = copy_u8PIN-8;
+  62:../src/GPIO_program.c **** 					GPIOC_CRH &= ~((0b1111)<<(copy_u8PIN*4));  
+  63:../src/GPIO_program.c **** 					GPIOC_CRH |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  64:../src/GPIO_program.c **** 				}
+  65:../src/GPIO_program.c **** 				break;
+  66:../src/GPIO_program.c **** 		default: break;
+  67:../src/GPIO_program.c **** 	}
+  68:../src/GPIO_program.c **** }
+  43              		.loc 1 68 0
+  44 000c 10BC     		pop	{r4}
+  45              		.cfi_remember_state
+  46              		.cfi_restore 4
+  47              		.cfi_def_cfa_offset 0
+  48 000e 7047     		bx	lr
+  49              	.LVL2:
+  50              	.L4:
+  51              		.cfi_restore_state
+  20:../src/GPIO_program.c **** 										   the 2nd condition  */
+  52              		.loc 1 20 0
+  53 0010 0729     		cmp	r1, #7
+  54 0012 12D9     		bls	.L10
+  27:../src/GPIO_program.c **** 				{
+  55              		.loc 1 27 0
+  56 0014 0F29     		cmp	r1, #15
+  57 0016 F9D8     		bhi	.L1
+  29:../src/GPIO_program.c **** 					GPIOA_CRH &= ~((0b1111)<<(copy_u8PIN*4));  
+  58              		.loc 1 29 0
+  59 0018 A1F10804 		sub	r4, r1, #8
+  60 001c E4B2     		uxtb	r4, r4
+  61              	.LVL3:
+  30:../src/GPIO_program.c **** 					GPIOA_CRH |= ((copy_u8MODE)<<(copy_u8PIN*4));
+  62              		.loc 1 30 0
+  63 001e 314B     		ldr	r3, .L13
+  64 0020 1968     		ldr	r1, [r3]
+  65 0022 A400     		lsls	r4, r4, #2
+  66              	.LVL4:
+  67 0024 0F20     		movs	r0, #15
+  68              	.LVL5:
+  69 0026 A040     		lsls	r0, r0, r4
+  70 0028 21EA0001 		bic	r1, r1, r0
+  71 002c 1960     		str	r1, [r3]
+  31:../src/GPIO_program.c **** 				}
+  72              		.loc 1 31 0
+  73 002e 1868     		ldr	r0, [r3]
+  74 0030 02FA04F1 		lsl	r1, r2, r4
+  75 0034 0143     		orrs	r1, r1, r0
+  76 0036 1960     		str	r1, [r3]
+  77 0038 E8E7     		b	.L1
+  78              	.LVL6:
+  79              	.L10:
+  23:../src/GPIO_program.c **** 															 always be 1 so we cant overwrite */
+  80              		.loc 1 23 0
+  81 003a 2B4B     		ldr	r3, .L13+4
+  82 003c 1868     		ldr	r0, [r3]
+  83              	.LVL7:
+  84 003e 8900     		lsls	r1, r1, #2
+  85              	.LVL8:
+  86 0040 0F24     		movs	r4, #15
+  87 0042 8C40     		lsls	r4, r4, r1
+  88 0044 20EA0400 		bic	r0, r0, r4
+  89 0048 1860     		str	r0, [r3]
+  25:../src/GPIO_program.c **** 				}
+  90              		.loc 1 25 0
+  91 004a 1868     		ldr	r0, [r3]
+  92 004c 02FA01F1 		lsl	r1, r2, r1
+  93 0050 0143     		orrs	r1, r1, r0
+  94 0052 1960     		str	r1, [r3]
+  95 0054 DAE7     		b	.L1
+  96              	.LVL9:
+  97              	.L3:
+  35:../src/GPIO_program.c **** 										   the 2nd condition  */
+  98              		.loc 1 35 0
+  99 0056 0729     		cmp	r1, #7
+ 100 0058 12D9     		bls	.L11
+  42:../src/GPIO_program.c **** 				{
+ 101              		.loc 1 42 0
+ 102 005a 0F29     		cmp	r1, #15
+ 103 005c D6D8     		bhi	.L1
+  44:../src/GPIO_program.c **** 												to start in CRH from pin 0*/
+ 104              		.loc 1 44 0
+ 105 005e A1F10800 		sub	r0, r1, #8
+ 106              	.LVL10:
+ 107 0062 C0B2     		uxtb	r0, r0
+ 108              	.LVL11:
+  46:../src/GPIO_program.c **** 					GPIOB_CRH |= ((copy_u8MODE)<<(copy_u8PIN*4));
+ 109              		.loc 1 46 0
+ 110 0064 214B     		ldr	r3, .L13+8
+ 111 0066 1968     		ldr	r1, [r3]
+ 112 0068 8000     		lsls	r0, r0, #2
+ 113              	.LVL12:
+ 114 006a 0F24     		movs	r4, #15
+ 115 006c 8440     		lsls	r4, r4, r0
+ 116 006e 21EA0401 		bic	r1, r1, r4
+ 117 0072 1960     		str	r1, [r3]
+  47:../src/GPIO_program.c **** 				}
+ 118              		.loc 1 47 0
+ 119 0074 1C68     		ldr	r4, [r3]
+ 120 0076 02FA00F1 		lsl	r1, r2, r0
+ 121 007a 2143     		orrs	r1, r1, r4
+ 122 007c 1960     		str	r1, [r3]
+ 123 007e C5E7     		b	.L1
+ 124              	.LVL13:
+ 125              	.L11:
+  38:../src/GPIO_program.c **** 															  always be 1 so we cant overwrite*/ 
+ 126              		.loc 1 38 0
+ 127 0080 1B4B     		ldr	r3, .L13+12
+ 128 0082 1868     		ldr	r0, [r3]
+ 129              	.LVL14:
+ 130 0084 8900     		lsls	r1, r1, #2
+ 131              	.LVL15:
+ 132 0086 0F24     		movs	r4, #15
+ 133 0088 8C40     		lsls	r4, r4, r1
+ 134 008a 20EA0400 		bic	r0, r0, r4
+ 135 008e 1860     		str	r0, [r3]
+  40:../src/GPIO_program.c **** 				}
+ 136              		.loc 1 40 0
+ 137 0090 1868     		ldr	r0, [r3]
+ 138 0092 02FA01F1 		lsl	r1, r2, r1
+ 139 0096 0143     		orrs	r1, r1, r0
+ 140 0098 1960     		str	r1, [r3]
+ 141 009a B7E7     		b	.L1
+ 142              	.LVL16:
+ 143              	.L5:
+  52:../src/GPIO_program.c **** 										   the 2nd condition  */ 
+ 144              		.loc 1 52 0
+ 145 009c 0729     		cmp	r1, #7
+ 146 009e 12D9     		bls	.L12
+  59:../src/GPIO_program.c **** 				{
+ 147              		.loc 1 59 0
+ 148 00a0 0F29     		cmp	r1, #15
+ 149 00a2 B3D8     		bhi	.L1
+  61:../src/GPIO_program.c **** 					GPIOC_CRH &= ~((0b1111)<<(copy_u8PIN*4));  
+ 150              		.loc 1 61 0
+ 151 00a4 A1F10803 		sub	r3, r1, #8
+ 152 00a8 DBB2     		uxtb	r3, r3
+ 153              	.LVL17:
+  62:../src/GPIO_program.c **** 					GPIOC_CRH |= ((copy_u8MODE)<<(copy_u8PIN*4));
+ 154              		.loc 1 62 0
+ 155 00aa 1248     		ldr	r0, .L13+16
+ 156              	.LVL18:
+ 157 00ac 0168     		ldr	r1, [r0]
+ 158 00ae 9B00     		lsls	r3, r3, #2
+ 159              	.LVL19:
+ 160 00b0 0F24     		movs	r4, #15
+ 161 00b2 9C40     		lsls	r4, r4, r3
+ 162 00b4 21EA0401 		bic	r1, r1, r4
+ 163 00b8 0160     		str	r1, [r0]
+  63:../src/GPIO_program.c **** 				}
+ 164              		.loc 1 63 0
+ 165 00ba 0468     		ldr	r4, [r0]
+ 166 00bc 02FA03F1 		lsl	r1, r2, r3
+ 167 00c0 2143     		orrs	r1, r1, r4
+ 168 00c2 0160     		str	r1, [r0]
+ 169              		.loc 1 68 0
+ 170 00c4 A2E7     		b	.L1
+ 171              	.LVL20:
+ 172              	.L12:
+  55:../src/GPIO_program.c **** 															   always be 1 so we cant overwrite*/
+ 173              		.loc 1 55 0
+ 174 00c6 0C4B     		ldr	r3, .L13+20
+ 175 00c8 1868     		ldr	r0, [r3]
+ 176              	.LVL21:
+ 177 00ca 8900     		lsls	r1, r1, #2
+ 178              	.LVL22:
+ 179 00cc 0F24     		movs	r4, #15
+ 180 00ce 8C40     		lsls	r4, r4, r1
+ 181 00d0 20EA0400 		bic	r0, r0, r4
+ 182 00d4 1860     		str	r0, [r3]
+  57:../src/GPIO_program.c **** 				}
+ 183              		.loc 1 57 0
+ 184 00d6 1868     		ldr	r0, [r3]
+ 185 00d8 02FA01F1 		lsl	r1, r2, r1
+ 186 00dc 0143     		orrs	r1, r1, r0
+ 187 00de 1960     		str	r1, [r3]
+ 188 00e0 94E7     		b	.L1
+ 189              	.L14:
+ 190 00e2 00BF     		.align	2
+ 191              	.L13:
+ 192 00e4 04080140 		.word	1073809412
+ 193 00e8 00080140 		.word	1073809408
+ 194 00ec 040C0140 		.word	1073810436
+ 195 00f0 000C0140 		.word	1073810432
+ 196 00f4 04100140 		.word	1073811460
+ 197 00f8 00100140 		.word	1073811456
+ 198              		.cfi_endproc
+ 199              	.LFE0:
+ 201              		.section	.text.MGPIO_VoidSetPortDirection,"ax",%progbits
+ 202              		.align	1
+ 203              		.global	MGPIO_VoidSetPortDirection
+ 204              		.syntax unified
+ 205              		.thumb
+ 206              		.thumb_func
+ 207              		.fpu softvfp
+ 209              	MGPIO_VoidSetPortDirection:
+ 210              	.LFB1:
+  69:../src/GPIO_program.c **** 
+  70:../src/GPIO_program.c **** void MGPIO_VoidSetPortDirection(u8 copy_u8PORT, u32 copy_u32MODE)
+  71:../src/GPIO_program.c **** {
+ 211              		.loc 1 71 0
+ 212              		.cfi_startproc
+ 213              		@ args = 0, pretend = 0, frame = 0
+ 214              		@ frame_needed = 0, uses_anonymous_args = 0
+ 215              		@ link register save eliminated.
+ 216              	.LVL23:
+  72:../src/GPIO_program.c **** 	switch(copy_u8PORT)
+ 217              		.loc 1 72 0
+ 218 0000 0128     		cmp	r0, #1
+ 219 0002 11D0     		beq	.L17
+ 220 0004 10B1     		cbz	r0, .L18
+ 221 0006 0228     		cmp	r0, #2
+ 222 0008 1CD0     		beq	.L19
+ 223 000a 7047     		bx	lr
+ 224              	.L18:
+  73:../src/GPIO_program.c **** 		{
+  74:../src/GPIO_program.c **** 			case GPIOA:
+  75:../src/GPIO_program.c **** 
+  76:../src/GPIO_program.c **** 
+  77:../src/GPIO_program.c **** 						GPIOA_CRL &= 0;  /*we CLR first as 0 OR 1 will
+ 225              		.loc 1 77 0
+ 226 000c 144B     		ldr	r3, .L20
+ 227 000e 1A68     		ldr	r2, [r3]
+ 228 0010 0020     		movs	r0, #0
+ 229              	.LVL24:
+ 230 0012 1860     		str	r0, [r3]
+  78:../src/GPIO_program.c **** 																 always be 1 so we cant overwrite */
+  79:../src/GPIO_program.c **** 						GPIOA_CRL |= copy_u32MODE;
+ 231              		.loc 1 79 0
+ 232 0014 1A68     		ldr	r2, [r3]
+ 233 0016 0A43     		orrs	r2, r2, r1
+ 234 0018 1A60     		str	r2, [r3]
+  80:../src/GPIO_program.c **** 
+  81:../src/GPIO_program.c **** 
+  82:../src/GPIO_program.c **** 
+  83:../src/GPIO_program.c **** 
+  84:../src/GPIO_program.c **** 						GPIOA_CRH &= 0;  /*we CLR first as 0 OR 1 will
+ 235              		.loc 1 84 0
+ 236 001a 0433     		adds	r3, r3, #4
+ 237 001c 1A68     		ldr	r2, [r3]
+ 238 001e 1860     		str	r0, [r3]
+  85:../src/GPIO_program.c **** 													 always be 1 so we cant overwrite */
+  86:../src/GPIO_program.c **** 						GPIOA_CRH |= copy_u32MODE;
+ 239              		.loc 1 86 0
+ 240 0020 1A68     		ldr	r2, [r3]
+ 241 0022 1143     		orrs	r1, r1, r2
+ 242              	.LVL25:
+ 243 0024 1960     		str	r1, [r3]
+  87:../src/GPIO_program.c **** 
+  88:../src/GPIO_program.c **** 					break;
+ 244              		.loc 1 88 0
+ 245 0026 7047     		bx	lr
+ 246              	.LVL26:
+ 247              	.L17:
+  89:../src/GPIO_program.c **** 			case GPIOB:
+  90:../src/GPIO_program.c **** 
+  91:../src/GPIO_program.c **** 						GPIOB_CRL &= 0;  /*we CLR first as 0 OR 1 will
+ 248              		.loc 1 91 0
+ 249 0028 0E4B     		ldr	r3, .L20+4
+ 250 002a 1A68     		ldr	r2, [r3]
+ 251 002c 0020     		movs	r0, #0
+ 252              	.LVL27:
+ 253 002e 1860     		str	r0, [r3]
+  92:../src/GPIO_program.c **** 																  always be 1 so we cant overwrite*/
+  93:../src/GPIO_program.c **** 						GPIOB_CRL |= copy_u32MODE;
+ 254              		.loc 1 93 0
+ 255 0030 1A68     		ldr	r2, [r3]
+ 256 0032 0A43     		orrs	r2, r2, r1
+ 257 0034 1A60     		str	r2, [r3]
+  94:../src/GPIO_program.c **** 
+  95:../src/GPIO_program.c **** 
+  96:../src/GPIO_program.c **** 
+  97:../src/GPIO_program.c **** 						GPIOB_CRH &= 0;
+ 258              		.loc 1 97 0
+ 259 0036 0433     		adds	r3, r3, #4
+ 260 0038 1A68     		ldr	r2, [r3]
+ 261 003a 1860     		str	r0, [r3]
+  98:../src/GPIO_program.c **** 						GPIOB_CRH |= copy_u32MODE;
+ 262              		.loc 1 98 0
+ 263 003c 1A68     		ldr	r2, [r3]
+ 264 003e 1143     		orrs	r1, r1, r2
+ 265              	.LVL28:
+ 266 0040 1960     		str	r1, [r3]
+  99:../src/GPIO_program.c **** 
+ 100:../src/GPIO_program.c **** 					break;
+ 267              		.loc 1 100 0
+ 268 0042 7047     		bx	lr
+ 269              	.LVL29:
+ 270              	.L19:
+ 101:../src/GPIO_program.c **** 
+ 102:../src/GPIO_program.c **** 			case GPIOC:
+ 103:../src/GPIO_program.c **** 
+ 104:../src/GPIO_program.c **** 						GPIOC_CRL &= 0;  /*we CLR first as 0 OR 1 will
+ 271              		.loc 1 104 0
+ 272 0044 084B     		ldr	r3, .L20+8
+ 273 0046 1A68     		ldr	r2, [r3]
+ 274 0048 0020     		movs	r0, #0
+ 275              	.LVL30:
+ 276 004a 1860     		str	r0, [r3]
+ 105:../src/GPIO_program.c **** 																   always be 1 so we cant overwrite*/
+ 106:../src/GPIO_program.c **** 						GPIOC_CRL |= copy_u32MODE;
+ 277              		.loc 1 106 0
+ 278 004c 1A68     		ldr	r2, [r3]
+ 279 004e 0A43     		orrs	r2, r2, r1
+ 280 0050 1A60     		str	r2, [r3]
+ 107:../src/GPIO_program.c **** 
+ 108:../src/GPIO_program.c **** 
+ 109:../src/GPIO_program.c **** 
+ 110:../src/GPIO_program.c **** 						GPIOC_CRH &= 0;
+ 281              		.loc 1 110 0
+ 282 0052 0433     		adds	r3, r3, #4
+ 283 0054 1A68     		ldr	r2, [r3]
+ 284 0056 1860     		str	r0, [r3]
+ 111:../src/GPIO_program.c **** 						GPIOC_CRH |= copy_u32MODE;
+ 285              		.loc 1 111 0
+ 286 0058 1A68     		ldr	r2, [r3]
+ 287 005a 1143     		orrs	r1, r1, r2
+ 288              	.LVL31:
+ 289 005c 1960     		str	r1, [r3]
+ 112:../src/GPIO_program.c **** 
+ 113:../src/GPIO_program.c **** 					break;
+ 114:../src/GPIO_program.c **** 			default: break;
+ 115:../src/GPIO_program.c **** 		}
+ 116:../src/GPIO_program.c **** }
+ 290              		.loc 1 116 0
+ 291 005e 7047     		bx	lr
+ 292              	.L21:
+ 293              		.align	2
+ 294              	.L20:
+ 295 0060 00080140 		.word	1073809408
+ 296 0064 000C0140 		.word	1073810432
+ 297 0068 00100140 		.word	1073811456
+ 298              		.cfi_endproc
+ 299              	.LFE1:
+ 301              		.section	.text.MGPIO_VoidSetPortValue,"ax",%progbits
+ 302              		.align	1
+ 303              		.global	MGPIO_VoidSetPortValue
+ 304              		.syntax unified
+ 305              		.thumb
+ 306              		.thumb_func
+ 307              		.fpu softvfp
+ 309              	MGPIO_VoidSetPortValue:
+ 310              	.LFB2:
+ 117:../src/GPIO_program.c **** 
+ 118:../src/GPIO_program.c **** void MGPIO_VoidSetPortValue(u8 copy_u8PORT, u16 copy_u16VALUE)
+ 119:../src/GPIO_program.c **** {
+ 311              		.loc 1 119 0
+ 312              		.cfi_startproc
+ 313              		@ args = 0, pretend = 0, frame = 0
+ 314              		@ frame_needed = 0, uses_anonymous_args = 0
+ 315              		@ link register save eliminated.
+ 316              	.LVL32:
+ 120:../src/GPIO_program.c **** 	switch(copy_u8PORT)
+ 317              		.loc 1 120 0
+ 318 0000 0128     		cmp	r0, #1
+ 319 0002 0BD0     		beq	.L24
+ 320 0004 10B1     		cbz	r0, .L25
+ 321 0006 0228     		cmp	r0, #2
+ 322 0008 10D0     		beq	.L26
+ 323 000a 7047     		bx	lr
+ 324              	.L25:
+ 121:../src/GPIO_program.c **** 		{
+ 122:../src/GPIO_program.c **** 			case GPIOA:
+ 123:../src/GPIO_program.c **** 
+ 124:../src/GPIO_program.c **** 				GPIOA_ODR &= 0;
+ 325              		.loc 1 124 0
+ 326 000c 0B4B     		ldr	r3, .L27
+ 327 000e 1A68     		ldr	r2, [r3]
+ 328 0010 0022     		movs	r2, #0
+ 329 0012 1A60     		str	r2, [r3]
+ 125:../src/GPIO_program.c **** 				GPIOA_ODR |= copy_u16VALUE;
+ 330              		.loc 1 125 0
+ 331 0014 1A68     		ldr	r2, [r3]
+ 332 0016 1143     		orrs	r1, r1, r2
+ 333              	.LVL33:
+ 334 0018 1960     		str	r1, [r3]
+ 126:../src/GPIO_program.c **** 
+ 127:../src/GPIO_program.c **** 
+ 128:../src/GPIO_program.c **** 						break;
+ 335              		.loc 1 128 0
+ 336 001a 7047     		bx	lr
+ 337              	.LVL34:
+ 338              	.L24:
+ 129:../src/GPIO_program.c **** 			case GPIOB:
+ 130:../src/GPIO_program.c **** 
+ 131:../src/GPIO_program.c **** 				GPIOB_ODR &= 0;
+ 339              		.loc 1 131 0
+ 340 001c 084B     		ldr	r3, .L27+4
+ 341 001e 1A68     		ldr	r2, [r3]
+ 342 0020 0022     		movs	r2, #0
+ 343 0022 1A60     		str	r2, [r3]
+ 132:../src/GPIO_program.c **** 				GPIOB_ODR |= copy_u16VALUE;
+ 344              		.loc 1 132 0
+ 345 0024 1A68     		ldr	r2, [r3]
+ 346 0026 1143     		orrs	r1, r1, r2
+ 347              	.LVL35:
+ 348 0028 1960     		str	r1, [r3]
+ 133:../src/GPIO_program.c **** 
+ 134:../src/GPIO_program.c **** 						break;
+ 349              		.loc 1 134 0
+ 350 002a 7047     		bx	lr
+ 351              	.LVL36:
+ 352              	.L26:
+ 135:../src/GPIO_program.c **** 
+ 136:../src/GPIO_program.c **** 			case GPIOC:
+ 137:../src/GPIO_program.c **** 
+ 138:../src/GPIO_program.c **** 				GPIOC_ODR &= 0;
+ 353              		.loc 1 138 0
+ 354 002c 054B     		ldr	r3, .L27+8
+ 355 002e 1A68     		ldr	r2, [r3]
+ 356 0030 0022     		movs	r2, #0
+ 357 0032 1A60     		str	r2, [r3]
+ 139:../src/GPIO_program.c **** 				GPIOC_ODR |= copy_u16VALUE;
+ 358              		.loc 1 139 0
+ 359 0034 1A68     		ldr	r2, [r3]
+ 360 0036 1143     		orrs	r1, r1, r2
+ 361              	.LVL37:
+ 362 0038 1960     		str	r1, [r3]
+ 140:../src/GPIO_program.c **** 
+ 141:../src/GPIO_program.c **** 
+ 142:../src/GPIO_program.c **** 						break;
+ 143:../src/GPIO_program.c **** 			default: break;
+ 144:../src/GPIO_program.c **** 		}
+ 145:../src/GPIO_program.c **** }
+ 363              		.loc 1 145 0
+ 364 003a 7047     		bx	lr
+ 365              	.L28:
+ 366              		.align	2
+ 367              	.L27:
+ 368 003c 0C080140 		.word	1073809420
+ 369 0040 0C0C0140 		.word	1073810444
+ 370 0044 0C100140 		.word	1073811468
+ 371              		.cfi_endproc
+ 372              	.LFE2:
+ 374              		.section	.text.MGPIO_VoidSetPinValue,"ax",%progbits
+ 375              		.align	1
+ 376              		.global	MGPIO_VoidSetPinValue
+ 377              		.syntax unified
+ 378              		.thumb
+ 379              		.thumb_func
+ 380              		.fpu softvfp
+ 382              	MGPIO_VoidSetPinValue:
+ 383              	.LFB3:
+ 146:../src/GPIO_program.c **** 
+ 147:../src/GPIO_program.c **** void MGPIO_VoidSetPinValue(u8 copy_u8PORT, u8 copy_u8PIN, u8 copy_u8VALUE)
+ 148:../src/GPIO_program.c **** {
+ 384              		.loc 1 148 0
+ 385              		.cfi_startproc
+ 386              		@ args = 0, pretend = 0, frame = 0
+ 387              		@ frame_needed = 0, uses_anonymous_args = 0
+ 388              		@ link register save eliminated.
+ 389              	.LVL38:
+ 149:../src/GPIO_program.c **** 	switch(copy_u8PORT)
+ 390              		.loc 1 149 0
+ 391 0000 0128     		cmp	r0, #1
+ 392 0002 17D0     		beq	.L31
+ 393 0004 10B1     		cbz	r0, .L32
+ 394 0006 0228     		cmp	r0, #2
+ 395 0008 27D0     		beq	.L33
+ 396 000a 7047     		bx	lr
+ 397              	.L32:
+ 150:../src/GPIO_program.c **** 	{
+ 151:../src/GPIO_program.c **** 		case GPIOA:
+ 152:../src/GPIO_program.c **** 			if(copy_u8VALUE == HIGH)	 	//set pin value high
+ 398              		.loc 1 152 0
+ 399 000c 012A     		cmp	r2, #1
+ 400 000e 0AD0     		beq	.L37
+ 153:../src/GPIO_program.c **** 				{
+ 154:../src/GPIO_program.c **** 					SET_BIT(GPIOA_ODR , copy_u8PIN);
+ 155:../src/GPIO_program.c **** 				}
+ 156:../src/GPIO_program.c **** 			else if(copy_u8VALUE == LOW)	//set pin value low
+ 401              		.loc 1 156 0
+ 402 0010 002A     		cmp	r2, #0
+ 403 0012 2DD1     		bne	.L29
+ 157:../src/GPIO_program.c **** 				{
+ 158:../src/GPIO_program.c **** 					CLR_BIT(GPIOA_ODR , copy_u8PIN);
+ 404              		.loc 1 158 0
+ 405 0014 1A48     		ldr	r0, .L40
+ 406              	.LVL39:
+ 407 0016 0368     		ldr	r3, [r0]
+ 408 0018 0122     		movs	r2, #1
+ 409              	.LVL40:
+ 410 001a 02FA01F1 		lsl	r1, r2, r1
+ 411              	.LVL41:
+ 412 001e 23EA0101 		bic	r1, r3, r1
+ 413 0022 0160     		str	r1, [r0]
+ 414 0024 7047     		bx	lr
+ 415              	.LVL42:
+ 416              	.L37:
+ 154:../src/GPIO_program.c **** 				}
+ 417              		.loc 1 154 0
+ 418 0026 1648     		ldr	r0, .L40
+ 419              	.LVL43:
+ 420 0028 0368     		ldr	r3, [r0]
+ 421 002a 02FA01F1 		lsl	r1, r2, r1
+ 422              	.LVL44:
+ 423 002e 1943     		orrs	r1, r1, r3
+ 424 0030 0160     		str	r1, [r0]
+ 425 0032 7047     		bx	lr
+ 426              	.LVL45:
+ 427              	.L31:
+ 159:../src/GPIO_program.c **** 				}
+ 160:../src/GPIO_program.c **** 					break;
+ 161:../src/GPIO_program.c **** 		case GPIOB:
+ 162:../src/GPIO_program.c **** 			if(copy_u8VALUE == HIGH)		//set pin value high
+ 428              		.loc 1 162 0
+ 429 0034 012A     		cmp	r2, #1
+ 430 0036 09D0     		beq	.L38
+ 163:../src/GPIO_program.c **** 				{
+ 164:../src/GPIO_program.c **** 					SET_BIT(GPIOB_ODR , copy_u8PIN);
+ 165:../src/GPIO_program.c **** 				}
+ 166:../src/GPIO_program.c **** 			else if(copy_u8VALUE == LOW)	//set pin value LOW
+ 431              		.loc 1 166 0
+ 432 0038 D2B9     		cbnz	r2, .L29
+ 167:../src/GPIO_program.c **** 				{
+ 168:../src/GPIO_program.c **** 					CLR_BIT(GPIOB_ODR , copy_u8PIN);
+ 433              		.loc 1 168 0
+ 434 003a 1248     		ldr	r0, .L40+4
+ 435              	.LVL46:
+ 436 003c 0368     		ldr	r3, [r0]
+ 437 003e 0122     		movs	r2, #1
+ 438              	.LVL47:
+ 439 0040 02FA01F1 		lsl	r1, r2, r1
+ 440              	.LVL48:
+ 441 0044 23EA0101 		bic	r1, r3, r1
+ 442 0048 0160     		str	r1, [r0]
+ 443 004a 7047     		bx	lr
+ 444              	.LVL49:
+ 445              	.L38:
+ 164:../src/GPIO_program.c **** 				}
+ 446              		.loc 1 164 0
+ 447 004c 0D48     		ldr	r0, .L40+4
+ 448              	.LVL50:
+ 449 004e 0368     		ldr	r3, [r0]
+ 450 0050 02FA01F1 		lsl	r1, r2, r1
+ 451              	.LVL51:
+ 452 0054 1943     		orrs	r1, r1, r3
+ 453 0056 0160     		str	r1, [r0]
+ 454 0058 7047     		bx	lr
+ 455              	.LVL52:
+ 456              	.L33:
+ 169:../src/GPIO_program.c **** 				}
+ 170:../src/GPIO_program.c **** 					break;
+ 171:../src/GPIO_program.c **** 		
+ 172:../src/GPIO_program.c **** 		case GPIOC:
+ 173:../src/GPIO_program.c **** 			if(copy_u8VALUE == HIGH)		//set pin value high
+ 457              		.loc 1 173 0
+ 458 005a 012A     		cmp	r2, #1
+ 459 005c 09D0     		beq	.L39
+ 174:../src/GPIO_program.c **** 				{
+ 175:../src/GPIO_program.c **** 					SET_BIT(GPIOC_ODR , copy_u8PIN);
+ 176:../src/GPIO_program.c **** 				}
+ 177:../src/GPIO_program.c **** 			else if(copy_u8VALUE == LOW)	//set pin value low
+ 460              		.loc 1 177 0
+ 461 005e 3AB9     		cbnz	r2, .L29
+ 178:../src/GPIO_program.c **** 				{
+ 179:../src/GPIO_program.c **** 					CLR_BIT(GPIOC_ODR , copy_u8PIN);
+ 462              		.loc 1 179 0
+ 463 0060 0948     		ldr	r0, .L40+8
+ 464              	.LVL53:
+ 465 0062 0368     		ldr	r3, [r0]
+ 466 0064 0122     		movs	r2, #1
+ 467              	.LVL54:
+ 468 0066 02FA01F1 		lsl	r1, r2, r1
+ 469              	.LVL55:
+ 470 006a 23EA0101 		bic	r1, r3, r1
+ 471 006e 0160     		str	r1, [r0]
+ 472              	.L29:
+ 180:../src/GPIO_program.c **** 				}
+ 181:../src/GPIO_program.c **** 					break;
+ 182:../src/GPIO_program.c **** 		default: break;
+ 183:../src/GPIO_program.c **** 	}
+ 184:../src/GPIO_program.c **** }
+ 473              		.loc 1 184 0
+ 474 0070 7047     		bx	lr
+ 475              	.LVL56:
+ 476              	.L39:
+ 175:../src/GPIO_program.c **** 				}
+ 477              		.loc 1 175 0
+ 478 0072 0548     		ldr	r0, .L40+8
+ 479              	.LVL57:
+ 480 0074 0368     		ldr	r3, [r0]
+ 481 0076 02FA01F1 		lsl	r1, r2, r1
+ 482              	.LVL58:
+ 483 007a 1943     		orrs	r1, r1, r3
+ 484 007c 0160     		str	r1, [r0]
+ 485 007e 7047     		bx	lr
+ 486              	.L41:
+ 487              		.align	2
+ 488              	.L40:
+ 489 0080 0C080140 		.word	1073809420
+ 490 0084 0C0C0140 		.word	1073810444
+ 491 0088 0C100140 		.word	1073811468
+ 492              		.cfi_endproc
+ 493              	.LFE3:
+ 495              		.section	.text.MGPIO_u8GetPinValue,"ax",%progbits
+ 496              		.align	1
+ 497              		.global	MGPIO_u8GetPinValue
+ 498              		.syntax unified
+ 499              		.thumb
+ 500              		.thumb_func
+ 501              		.fpu softvfp
+ 503              	MGPIO_u8GetPinValue:
+ 504              	.LFB4:
+ 185:../src/GPIO_program.c **** 
+ 186:../src/GPIO_program.c **** 
+ 187:../src/GPIO_program.c **** u8 MGPIO_u8GetPinValue(u8 copy_u8PORT, u8 copy_u8PIN)
+ 188:../src/GPIO_program.c **** {
+ 505              		.loc 1 188 0
+ 506              		.cfi_startproc
+ 507              		@ args = 0, pretend = 0, frame = 0
+ 508              		@ frame_needed = 0, uses_anonymous_args = 0
+ 509              		@ link register save eliminated.
+ 510              	.LVL59:
+ 189:../src/GPIO_program.c **** 	u8 LOC_u8Result = 0;
+ 190:../src/GPIO_program.c **** 	
+ 191:../src/GPIO_program.c **** 	switch(copy_u8PORT)
+ 511              		.loc 1 191 0
+ 512 0000 0128     		cmp	r0, #1
+ 513 0002 0AD0     		beq	.L44
+ 514 0004 18B1     		cbz	r0, .L45
+ 515 0006 0228     		cmp	r0, #2
+ 516 0008 0DD0     		beq	.L46
+ 189:../src/GPIO_program.c **** 	u8 LOC_u8Result = 0;
+ 517              		.loc 1 189 0
+ 518 000a 0020     		movs	r0, #0
+ 519              	.LVL60:
+ 192:../src/GPIO_program.c **** 	{
+ 193:../src/GPIO_program.c **** 		case GPIOA:
+ 194:../src/GPIO_program.c **** 					LOC_u8Result = GET_BIT(GPIOA_IDR , copy_u8PIN);
+ 195:../src/GPIO_program.c **** 					break;
+ 196:../src/GPIO_program.c **** 		case GPIOB:
+ 197:../src/GPIO_program.c **** 					LOC_u8Result = GET_BIT(GPIOB_IDR , copy_u8PIN);
+ 198:../src/GPIO_program.c **** 					break;
+ 199:../src/GPIO_program.c **** 		
+ 200:../src/GPIO_program.c **** 		case GPIOC:
+ 201:../src/GPIO_program.c **** 					LOC_u8Result = GET_BIT(GPIOC_IDR , copy_u8PIN);
+ 202:../src/GPIO_program.c **** 					break;
+ 203:../src/GPIO_program.c **** 		default: break;
+ 204:../src/GPIO_program.c **** 	}
+ 205:../src/GPIO_program.c **** 	return LOC_u8Result;
+ 206:../src/GPIO_program.c **** }
+ 520              		.loc 1 206 0
+ 521 000c 7047     		bx	lr
+ 522              	.LVL61:
+ 523              	.L45:
+ 194:../src/GPIO_program.c **** 					break;
+ 524              		.loc 1 194 0
+ 525 000e 094B     		ldr	r3, .L49
+ 526 0010 1868     		ldr	r0, [r3]
+ 527              	.LVL62:
+ 528 0012 C840     		lsrs	r0, r0, r1
+ 529 0014 00F00100 		and	r0, r0, #1
+ 530              	.LVL63:
+ 195:../src/GPIO_program.c **** 		case GPIOB:
+ 531              		.loc 1 195 0
+ 532 0018 7047     		bx	lr
+ 533              	.LVL64:
+ 534              	.L44:
+ 197:../src/GPIO_program.c **** 					break;
+ 535              		.loc 1 197 0
+ 536 001a 074B     		ldr	r3, .L49+4
+ 537 001c 1868     		ldr	r0, [r3]
+ 538              	.LVL65:
+ 539 001e C840     		lsrs	r0, r0, r1
+ 540 0020 00F00100 		and	r0, r0, #1
+ 541              	.LVL66:
+ 198:../src/GPIO_program.c **** 		
+ 542              		.loc 1 198 0
+ 543 0024 7047     		bx	lr
+ 544              	.LVL67:
+ 545              	.L46:
+ 201:../src/GPIO_program.c **** 					break;
+ 546              		.loc 1 201 0
+ 547 0026 054B     		ldr	r3, .L49+8
+ 548 0028 1868     		ldr	r0, [r3]
+ 549              	.LVL68:
+ 550 002a C840     		lsrs	r0, r0, r1
+ 551 002c 00F00100 		and	r0, r0, #1
+ 552              	.LVL69:
+ 202:../src/GPIO_program.c **** 		default: break;
+ 553              		.loc 1 202 0
+ 554 0030 7047     		bx	lr
+ 555              	.L50:
+ 556 0032 00BF     		.align	2
+ 557              	.L49:
+ 558 0034 08080140 		.word	1073809416
+ 559 0038 080C0140 		.word	1073810440
+ 560 003c 08100140 		.word	1073811464
+ 561              		.cfi_endproc
+ 562              	.LFE4:
+ 564              		.text
+ 565              	.Letext0:
+ 566              		.file 2 "../include/STD_TYPES.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 GPIO_program.c
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:16     .text.MGPIO_VoidSetPinDirection:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:23     .text.MGPIO_VoidSetPinDirection:00000000 MGPIO_VoidSetPinDirection
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:192    .text.MGPIO_VoidSetPinDirection:000000e4 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:202    .text.MGPIO_VoidSetPortDirection:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:209    .text.MGPIO_VoidSetPortDirection:00000000 MGPIO_VoidSetPortDirection
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:295    .text.MGPIO_VoidSetPortDirection:00000060 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:302    .text.MGPIO_VoidSetPortValue:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:309    .text.MGPIO_VoidSetPortValue:00000000 MGPIO_VoidSetPortValue
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:368    .text.MGPIO_VoidSetPortValue:0000003c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:375    .text.MGPIO_VoidSetPinValue:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:382    .text.MGPIO_VoidSetPinValue:00000000 MGPIO_VoidSetPinValue
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:489    .text.MGPIO_VoidSetPinValue:00000080 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:496    .text.MGPIO_u8GetPinValue:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:503    .text.MGPIO_u8GetPinValue:00000000 MGPIO_u8GetPinValue
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccpl6zh9.s:558    .text.MGPIO_u8GetPinValue:00000034 $d
+                           .group:00000000 wm4.0.c450a18b2a29049e2cbb4137d58ca9b1
+                           .group:00000000 wm4.BIT_MATH.h.8.0385af17eb3d24c1ce205d0ed1b8762b
+                           .group:00000000 wm4.GPIO_private.h.9.342832a1bfbf462c5284a12a5a3b7b69
+                           .group:00000000 wm4.GPIO_int.h.9.912c8a44b51b492659014d2a4df9f992
+
+NO UNDEFINED SYMBOLS

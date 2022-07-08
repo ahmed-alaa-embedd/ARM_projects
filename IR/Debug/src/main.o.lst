@@ -1,0 +1,594 @@
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"main.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.VoidGetFrame,"ax",%progbits
+  16              		.align	1
+  17              		.global	VoidGetFrame
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	VoidGetFrame:
+  24              	.LFB2:
+  25              		.file 1 "../src/main.c"
+   1:../src/main.c **** /*
+   2:../src/main.c ****  * main.c
+   3:../src/main.c ****  *
+   4:../src/main.c ****  *  Created on: 24 Aug 2020
+   5:../src/main.c ****  *      Author: ahmed alaa
+   6:../src/main.c ****  */
+   7:../src/main.c **** 
+   8:../src/main.c **** 
+   9:../src/main.c **** #include "STD_TYPES.h"
+  10:../src/main.c **** #include "BIT_MATH.h"
+  11:../src/main.c **** 
+  12:../src/main.c **** #include "GPIO_int.h"
+  13:../src/main.c **** #include "RCC_interface.h"
+  14:../src/main.c **** #include "NVIC_interface.h"
+  15:../src/main.c **** #include "EXTI_interface.h"
+  16:../src/main.c **** #include "STk_interface.h"
+  17:../src/main.c **** #include "GPTIM_interface.h"
+  18:../src/main.c **** #include "AFIO_interface.h"
+  19:../src/main.c **** 
+  20:../src/main.c **** volatile u8 U8StartFlag=0;
+  21:../src/main.c **** volatile u32 U32FramData[50]={0};
+  22:../src/main.c **** volatile u8 U8EdgeCounter=0;
+  23:../src/main.c **** volatile u8 U8Data=0;
+  24:../src/main.c **** 
+  25:../src/main.c **** void VoidPlay(void)
+  26:../src/main.c **** {
+  27:../src/main.c **** 	/*71 -> no sound
+  28:../src/main.c **** 	 *70 -> mode
+  29:../src/main.c **** 	 *69 -> Power
+  30:../src/main.c **** 	 *68 -> play
+  31:../src/main.c **** 	 *64 -> <<
+  32:../src/main.c **** 	 *67 -> <<
+  33:../src/main.c **** 	 *22 -> 0
+  34:../src/main.c **** 	 *12 -> 1
+  35:../src/main.c **** 	 *24 -> 2
+  36:../src/main.c **** 	 *94 ->	3
+  37:../src/main.c **** 	 *8  -> 4
+  38:../src/main.c **** 	 *28 -> 5
+  39:../src/main.c **** 	 *90  -> 6
+  40:../src/main.c **** 	 *66  -> 7
+  41:../src/main.c **** 	 *82  -> 8
+  42:../src/main.c **** 	 *74  -> 9*/
+  43:../src/main.c **** 	switch(U8Data)
+  44:../src/main.c **** 	{
+  45:../src/main.c **** 	case 71 : MGPIO_VoidSetPinValue(GPIOA,PIN2,HIGH); break;
+  46:../src/main.c **** 	case 70 : MGPIO_VoidSetPinValue(GPIOA,PIN2,LOW); break;
+  47:../src/main.c **** 	case 69 : MGPIO_VoidSetPinValue(GPIOA,PIN1,HIGH); break;
+  48:../src/main.c **** 	case 68 : MGPIO_VoidSetPinValue(GPIOA,PIN1,LOW); break;
+  49:../src/main.c **** 	}
+  50:../src/main.c **** }
+  51:../src/main.c **** 
+  52:../src/main.c **** void VoidTakeAction (void)
+  53:../src/main.c **** {
+  54:../src/main.c **** 	u8 i=0;
+  55:../src/main.c **** 	U8Data=0;
+  56:../src/main.c **** 	if((U32FramData[0]>=10000) && (U32FramData[0]<=14000))
+  57:../src/main.c **** 	{
+  58:../src/main.c **** 		for(i=0;i<8;i++)
+  59:../src/main.c **** 		{
+  60:../src/main.c **** 			if((U32FramData[17+i]>=2000) && (U32FramData[17+i]<=2300))
+  61:../src/main.c **** 			{
+  62:../src/main.c **** 				SET_BIT(U8Data,i);
+  63:../src/main.c **** 			}
+  64:../src/main.c **** 
+  65:../src/main.c **** 			else
+  66:../src/main.c **** 			{
+  67:../src/main.c **** 				CLR_BIT(U8Data,i);
+  68:../src/main.c **** 			}
+  69:../src/main.c **** 		}
+  70:../src/main.c **** 		VoidPlay();
+  71:../src/main.c **** 	}
+  72:../src/main.c **** 	else
+  73:../src/main.c **** 	{
+  74:../src/main.c **** 		/*invalid frame*/
+  75:../src/main.c **** 	}
+  76:../src/main.c **** 
+  77:../src/main.c **** 	U8StartFlag		= 0;
+  78:../src/main.c **** 	U32FramData[0]	= 0;
+  79:../src/main.c **** 	U8EdgeCounter	= 0;
+  80:../src/main.c **** 
+  81:../src/main.c **** }
+  82:../src/main.c **** 
+  83:../src/main.c **** void VoidGetFrame (void)
+  84:../src/main.c **** {
+  26              		.loc 1 84 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30 0000 38B5     		push	{r3, r4, r5, lr}
+  31              		.cfi_def_cfa_offset 16
+  32              		.cfi_offset 3, -16
+  33              		.cfi_offset 4, -12
+  34              		.cfi_offset 5, -8
+  35              		.cfi_offset 14, -4
+  85:../src/main.c **** 	if(U8StartFlag == 0)
+  36              		.loc 1 85 0
+  37 0002 0E4B     		ldr	r3, .L6
+  38 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  39 0006 83B1     		cbz	r3, .L5
+  86:../src/main.c **** 	{
+  87:../src/main.c **** 		//Start timer
+  88:../src/main.c **** 		// high ticks which is bigger than time of any bit send to ensure no overflow
+  89:../src/main.c **** 		MSTK_VoidSetIntervalSingle(1000000,VoidTakeAction);
+  90:../src/main.c **** 		U8StartFlag=1;
+  91:../src/main.c **** 	}
+  92:../src/main.c **** 	else
+  93:../src/main.c **** 	{
+  94:../src/main.c **** 		U32FramData[U8EdgeCounter]=MSTK_U32GetElapsedTime();
+  40              		.loc 1 94 0
+  41 0008 0D4C     		ldr	r4, .L6+4
+  42 000a 2578     		ldrb	r5, [r4]	@ zero_extendqisi2
+  43 000c EDB2     		uxtb	r5, r5
+  44 000e FFF7FEFF 		bl	MSTK_U32GetElapsedTime
+  45              	.LVL0:
+  46 0012 0C4B     		ldr	r3, .L6+8
+  47 0014 43F82500 		str	r0, [r3, r5, lsl #2]
+  95:../src/main.c **** 		MSTK_VoidSetIntervalSingle(1000000,VoidTakeAction);
+  48              		.loc 1 95 0
+  49 0018 0B49     		ldr	r1, .L6+12
+  50 001a 0C48     		ldr	r0, .L6+16
+  51 001c FFF7FEFF 		bl	MSTK_VoidSetIntervalSingle
+  52              	.LVL1:
+  96:../src/main.c **** 		U8EdgeCounter++;
+  53              		.loc 1 96 0
+  54 0020 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+  55 0022 0133     		adds	r3, r3, #1
+  56 0024 DBB2     		uxtb	r3, r3
+  57 0026 2370     		strb	r3, [r4]
+  58              	.L1:
+  97:../src/main.c **** 	}
+  98:../src/main.c **** }
+  59              		.loc 1 98 0
+  60 0028 38BD     		pop	{r3, r4, r5, pc}
+  61              	.L5:
+  89:../src/main.c **** 		U8StartFlag=1;
+  62              		.loc 1 89 0
+  63 002a 0749     		ldr	r1, .L6+12
+  64 002c 0748     		ldr	r0, .L6+16
+  65 002e FFF7FEFF 		bl	MSTK_VoidSetIntervalSingle
+  66              	.LVL2:
+  90:../src/main.c **** 	}
+  67              		.loc 1 90 0
+  68 0032 024B     		ldr	r3, .L6
+  69 0034 0122     		movs	r2, #1
+  70 0036 1A70     		strb	r2, [r3]
+  71 0038 F6E7     		b	.L1
+  72              	.L7:
+  73 003a 00BF     		.align	2
+  74              	.L6:
+  75 003c 00000000 		.word	.LANCHOR0
+  76 0040 00000000 		.word	.LANCHOR1
+  77 0044 00000000 		.word	.LANCHOR2
+  78 0048 00000000 		.word	VoidTakeAction
+  79 004c 40420F00 		.word	1000000
+  80              		.cfi_endproc
+  81              	.LFE2:
+  83              		.section	.text.VoidPlay,"ax",%progbits
+  84              		.align	1
+  85              		.global	VoidPlay
+  86              		.syntax unified
+  87              		.thumb
+  88              		.thumb_func
+  89              		.fpu softvfp
+  91              	VoidPlay:
+  92              	.LFB0:
+  26:../src/main.c **** 	/*71 -> no sound
+  93              		.loc 1 26 0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97 0000 08B5     		push	{r3, lr}
+  98              		.cfi_def_cfa_offset 8
+  99              		.cfi_offset 3, -8
+ 100              		.cfi_offset 14, -4
+  43:../src/main.c **** 	{
+ 101              		.loc 1 43 0
+ 102 0002 104B     		ldr	r3, .L16
+ 103 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 104 0006 443B     		subs	r3, r3, #68
+ 105 0008 032B     		cmp	r3, #3
+ 106 000a 08D8     		bhi	.L8
+ 107 000c DFE803F0 		tbb	[pc, r3]
+ 108              	.L11:
+ 109 0010 14       		.byte	(.L10-.L11)/2
+ 110 0011 0E       		.byte	(.L12-.L11)/2
+ 111 0012 08       		.byte	(.L13-.L11)/2
+ 112 0013 02       		.byte	(.L14-.L11)/2
+ 113              		.p2align 1
+ 114              	.L14:
+  45:../src/main.c **** 	case 70 : MGPIO_VoidSetPinValue(GPIOA,PIN2,LOW); break;
+ 115              		.loc 1 45 0
+ 116 0014 0122     		movs	r2, #1
+ 117 0016 0221     		movs	r1, #2
+ 118 0018 0020     		movs	r0, #0
+ 119 001a FFF7FEFF 		bl	MGPIO_VoidSetPinValue
+ 120              	.LVL3:
+ 121              	.L8:
+  50:../src/main.c **** 
+ 122              		.loc 1 50 0
+ 123 001e 08BD     		pop	{r3, pc}
+ 124              	.L13:
+  46:../src/main.c **** 	case 69 : MGPIO_VoidSetPinValue(GPIOA,PIN1,HIGH); break;
+ 125              		.loc 1 46 0
+ 126 0020 0022     		movs	r2, #0
+ 127 0022 0221     		movs	r1, #2
+ 128 0024 1046     		mov	r0, r2
+ 129 0026 FFF7FEFF 		bl	MGPIO_VoidSetPinValue
+ 130              	.LVL4:
+ 131 002a F8E7     		b	.L8
+ 132              	.L12:
+  47:../src/main.c **** 	case 68 : MGPIO_VoidSetPinValue(GPIOA,PIN1,LOW); break;
+ 133              		.loc 1 47 0
+ 134 002c 0122     		movs	r2, #1
+ 135 002e 1146     		mov	r1, r2
+ 136 0030 0020     		movs	r0, #0
+ 137 0032 FFF7FEFF 		bl	MGPIO_VoidSetPinValue
+ 138              	.LVL5:
+ 139 0036 F2E7     		b	.L8
+ 140              	.L10:
+  48:../src/main.c **** 	}
+ 141              		.loc 1 48 0
+ 142 0038 0022     		movs	r2, #0
+ 143 003a 0121     		movs	r1, #1
+ 144 003c 1046     		mov	r0, r2
+ 145 003e FFF7FEFF 		bl	MGPIO_VoidSetPinValue
+ 146              	.LVL6:
+  50:../src/main.c **** 
+ 147              		.loc 1 50 0
+ 148 0042 ECE7     		b	.L8
+ 149              	.L17:
+ 150              		.align	2
+ 151              	.L16:
+ 152 0044 00000000 		.word	.LANCHOR3
+ 153              		.cfi_endproc
+ 154              	.LFE0:
+ 156              		.section	.text.VoidTakeAction,"ax",%progbits
+ 157              		.align	1
+ 158              		.global	VoidTakeAction
+ 159              		.syntax unified
+ 160              		.thumb
+ 161              		.thumb_func
+ 162              		.fpu softvfp
+ 164              	VoidTakeAction:
+ 165              	.LFB1:
+  53:../src/main.c **** 	u8 i=0;
+ 166              		.loc 1 53 0
+ 167              		.cfi_startproc
+ 168              		@ args = 0, pretend = 0, frame = 0
+ 169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170 0000 08B5     		push	{r3, lr}
+ 171              		.cfi_def_cfa_offset 8
+ 172              		.cfi_offset 3, -8
+ 173              		.cfi_offset 14, -4
+ 174              	.LVL7:
+  55:../src/main.c **** 	if((U32FramData[0]>=10000) && (U32FramData[0]<=14000))
+ 175              		.loc 1 55 0
+ 176 0002 1F4B     		ldr	r3, .L27
+ 177 0004 0022     		movs	r2, #0
+ 178 0006 1A70     		strb	r2, [r3]
+  56:../src/main.c **** 	{
+ 179              		.loc 1 56 0
+ 180 0008 1E4B     		ldr	r3, .L27+4
+ 181 000a 1A68     		ldr	r2, [r3]
+ 182 000c 42F20F73 		movw	r3, #9999
+ 183 0010 9A42     		cmp	r2, r3
+ 184 0012 2DD9     		bls	.L19
+  56:../src/main.c **** 	{
+ 185              		.loc 1 56 0 is_stmt 0 discriminator 1
+ 186 0014 1B4B     		ldr	r3, .L27+4
+ 187 0016 1A68     		ldr	r2, [r3]
+ 188 0018 43F2B063 		movw	r3, #14000
+ 189 001c 9A42     		cmp	r2, r3
+ 190 001e 27D8     		bhi	.L19
+  58:../src/main.c **** 		{
+ 191              		.loc 1 58 0 is_stmt 1
+ 192 0020 0023     		movs	r3, #0
+ 193 0022 09E0     		b	.L20
+ 194              	.LVL8:
+ 195              	.L21:
+  67:../src/main.c **** 			}
+ 196              		.loc 1 67 0
+ 197 0024 0122     		movs	r2, #1
+ 198 0026 02FA01F1 		lsl	r1, r2, r1
+ 199 002a 1548     		ldr	r0, .L27
+ 200 002c 0278     		ldrb	r2, [r0]	@ zero_extendqisi2
+ 201 002e 22EA0102 		bic	r2, r2, r1
+ 202 0032 0270     		strb	r2, [r0]
+ 203              	.L22:
+  58:../src/main.c **** 		{
+ 204              		.loc 1 58 0 discriminator 2
+ 205 0034 0133     		adds	r3, r3, #1
+ 206              	.LVL9:
+ 207 0036 DBB2     		uxtb	r3, r3
+ 208              	.LVL10:
+ 209              	.L20:
+  58:../src/main.c **** 		{
+ 210              		.loc 1 58 0 is_stmt 0 discriminator 1
+ 211 0038 072B     		cmp	r3, #7
+ 212 003a 17D8     		bhi	.L26
+  60:../src/main.c **** 			{
+ 213              		.loc 1 60 0 is_stmt 1
+ 214 003c 1946     		mov	r1, r3
+ 215 003e 03F11100 		add	r0, r3, #17
+ 216 0042 104A     		ldr	r2, .L27+4
+ 217 0044 52F82020 		ldr	r2, [r2, r0, lsl #2]
+ 218 0048 B2F5FA6F 		cmp	r2, #2000
+ 219 004c EAD3     		bcc	.L21
+  60:../src/main.c **** 			{
+ 220              		.loc 1 60 0 is_stmt 0 discriminator 1
+ 221 004e 0D4A     		ldr	r2, .L27+4
+ 222 0050 52F82000 		ldr	r0, [r2, r0, lsl #2]
+ 223 0054 40F6FC02 		movw	r2, #2300
+ 224 0058 9042     		cmp	r0, r2
+ 225 005a E3D8     		bhi	.L21
+  62:../src/main.c **** 			}
+ 226              		.loc 1 62 0 is_stmt 1
+ 227 005c 0122     		movs	r2, #1
+ 228 005e 9A40     		lsls	r2, r2, r3
+ 229 0060 0748     		ldr	r0, .L27
+ 230 0062 0178     		ldrb	r1, [r0]	@ zero_extendqisi2
+ 231 0064 1143     		orrs	r1, r1, r2
+ 232 0066 C9B2     		uxtb	r1, r1
+ 233 0068 0170     		strb	r1, [r0]
+ 234 006a E3E7     		b	.L22
+ 235              	.L26:
+  70:../src/main.c **** 	}
+ 236              		.loc 1 70 0
+ 237 006c FFF7FEFF 		bl	VoidPlay
+ 238              	.LVL11:
+ 239              	.L19:
+  77:../src/main.c **** 	U32FramData[0]	= 0;
+ 240              		.loc 1 77 0
+ 241 0070 0023     		movs	r3, #0
+ 242 0072 054A     		ldr	r2, .L27+8
+ 243 0074 1370     		strb	r3, [r2]
+  78:../src/main.c **** 	U8EdgeCounter	= 0;
+ 244              		.loc 1 78 0
+ 245 0076 034A     		ldr	r2, .L27+4
+ 246 0078 1360     		str	r3, [r2]
+  79:../src/main.c **** 
+ 247              		.loc 1 79 0
+ 248 007a 044A     		ldr	r2, .L27+12
+ 249 007c 1370     		strb	r3, [r2]
+  81:../src/main.c **** 
+ 250              		.loc 1 81 0
+ 251 007e 08BD     		pop	{r3, pc}
+ 252              	.L28:
+ 253              		.align	2
+ 254              	.L27:
+ 255 0080 00000000 		.word	.LANCHOR3
+ 256 0084 00000000 		.word	.LANCHOR2
+ 257 0088 00000000 		.word	.LANCHOR0
+ 258 008c 00000000 		.word	.LANCHOR1
+ 259              		.cfi_endproc
+ 260              	.LFE1:
+ 262              		.section	.text.main,"ax",%progbits
+ 263              		.align	1
+ 264              		.global	main
+ 265              		.syntax unified
+ 266              		.thumb
+ 267              		.thumb_func
+ 268              		.fpu softvfp
+ 270              	main:
+ 271              	.LFB3:
+  99:../src/main.c **** 
+ 100:../src/main.c **** 
+ 101:../src/main.c **** void main()
+ 102:../src/main.c **** {
+ 272              		.loc 1 102 0
+ 273              		.cfi_startproc
+ 274              		@ Volatile: function does not return.
+ 275              		@ args = 0, pretend = 0, frame = 0
+ 276              		@ frame_needed = 0, uses_anonymous_args = 0
+ 277 0000 08B5     		push	{r3, lr}
+ 278              		.cfi_def_cfa_offset 8
+ 279              		.cfi_offset 3, -8
+ 280              		.cfi_offset 14, -4
+ 103:../src/main.c **** 	/*initiat clock*/
+ 104:../src/main.c **** 	RCC_voidInitSysClock();
+ 281              		.loc 1 104 0
+ 282 0002 FFF7FEFF 		bl	RCC_voidInitSysClock
+ 283              	.LVL12:
+ 105:../src/main.c **** 
+ 106:../src/main.c **** 	RCC_voidEnableClock(RCC_APB2, 0); // Enable clock for AFIO
+ 284              		.loc 1 106 0
+ 285 0006 0021     		movs	r1, #0
+ 286 0008 0220     		movs	r0, #2
+ 287 000a FFF7FEFF 		bl	RCC_voidEnableClock
+ 288              	.LVL13:
+ 107:../src/main.c **** 	RCC_voidEnableClock(RCC_APB2, 2); // Enable clock for GPIOA
+ 289              		.loc 1 107 0
+ 290 000e 0221     		movs	r1, #2
+ 291 0010 0846     		mov	r0, r1
+ 292 0012 FFF7FEFF 		bl	RCC_voidEnableClock
+ 293              	.LVL14:
+ 108:../src/main.c **** 	RCC_voidEnableClock(RCC_APB2, 3); // Enable clock for GPIOB
+ 294              		.loc 1 108 0
+ 295 0016 0321     		movs	r1, #3
+ 296 0018 0220     		movs	r0, #2
+ 297 001a FFF7FEFF 		bl	RCC_voidEnableClock
+ 298              	.LVL15:
+ 109:../src/main.c **** 	RCC_voidEnableClock(RCC_APB1,0);  /*Enable clock for TIM2*/
+ 299              		.loc 1 109 0
+ 300 001e 0021     		movs	r1, #0
+ 301 0020 0120     		movs	r0, #1
+ 302 0022 FFF7FEFF 		bl	RCC_voidEnableClock
+ 303              	.LVL16:
+ 110:../src/main.c **** 
+ 111:../src/main.c **** 	/*PIN mode*/
+ 112:../src/main.c **** 	MGPIO_VoidSetPinDirection(GPIOB , PIN0 , INPUT_PULLUP_DOWN); //no pull up or down sensor
+ 304              		.loc 1 112 0
+ 305 0026 0822     		movs	r2, #8
+ 306 0028 0021     		movs	r1, #0
+ 307 002a 0120     		movs	r0, #1
+ 308 002c FFF7FEFF 		bl	MGPIO_VoidSetPinDirection
+ 309              	.LVL17:
+ 113:../src/main.c **** 	MGPIO_VoidSetPinValue(GPIOB, PIN0,HIGH);
+ 310              		.loc 1 113 0
+ 311 0030 0122     		movs	r2, #1
+ 312 0032 0021     		movs	r1, #0
+ 313 0034 1046     		mov	r0, r2
+ 314 0036 FFF7FEFF 		bl	MGPIO_VoidSetPinValue
+ 315              	.LVL18:
+ 114:../src/main.c **** 	MGPIO_VoidSetPinDirection(GPIOA , PIN1 , OUTPUT_SPEED_2MHZ_PP);
+ 316              		.loc 1 114 0
+ 317 003a 0222     		movs	r2, #2
+ 318 003c 0121     		movs	r1, #1
+ 319 003e 0020     		movs	r0, #0
+ 320 0040 FFF7FEFF 		bl	MGPIO_VoidSetPinDirection
+ 321              	.LVL19:
+ 115:../src/main.c **** 	MGPIO_VoidSetPinDirection(GPIOA , PIN2 , OUTPUT_SPEED_2MHZ_PP);
+ 322              		.loc 1 115 0
+ 323 0044 0222     		movs	r2, #2
+ 324 0046 1146     		mov	r1, r2
+ 325 0048 0020     		movs	r0, #0
+ 326 004a FFF7FEFF 		bl	MGPIO_VoidSetPinDirection
+ 327              	.LVL20:
+ 116:../src/main.c **** 	MGPIO_VoidSetPinDirection(GPIOA , PIN3 , OUTPUT_SPEED_2MHZ_PP);
+ 328              		.loc 1 116 0
+ 329 004e 0222     		movs	r2, #2
+ 330 0050 0321     		movs	r1, #3
+ 331 0052 0020     		movs	r0, #0
+ 332 0054 FFF7FEFF 		bl	MGPIO_VoidSetPinDirection
+ 333              	.LVL21:
+ 117:../src/main.c **** 
+ 118:../src/main.c **** 
+ 119:../src/main.c **** 	/*AFIO*/
+ 120:../src/main.c **** 	MAFIO_voidSetEXTIConfiguration(0,MGPIOB);
+ 334              		.loc 1 120 0
+ 335 0058 0121     		movs	r1, #1
+ 336 005a 0020     		movs	r0, #0
+ 337 005c FFF7FEFF 		bl	MAFIO_voidSetEXTIConfiguration
+ 338              	.LVL22:
+ 121:../src/main.c **** 
+ 122:../src/main.c **** 	/*EXTI Initialization*/
+ 123:../src/main.c **** 	MEXTI_VoidSetCallBack(VoidGetFrame);
+ 339              		.loc 1 123 0
+ 340 0060 0648     		ldr	r0, .L32
+ 341 0062 FFF7FEFF 		bl	MEXTI_VoidSetCallBack
+ 342              	.LVL23:
+ 124:../src/main.c **** 	MEXTI_VoidInit();
+ 343              		.loc 1 124 0
+ 344 0066 FFF7FEFF 		bl	MEXTI_VoidInit
+ 345              	.LVL24:
+ 125:../src/main.c **** 
+ 126:../src/main.c **** 	/*Initialise MNVIC EXTI0*/
+ 127:../src/main.c **** 	MNVIC_VoidInit();
+ 346              		.loc 1 127 0
+ 347 006a FFF7FEFF 		bl	MNVIC_VoidInit
+ 348              	.LVL25:
+ 128:../src/main.c **** 	MNVIC_VoidEnableInterrupt(6); //EXTI0
+ 349              		.loc 1 128 0
+ 350 006e 0620     		movs	r0, #6
+ 351 0070 FFF7FEFF 		bl	MNVIC_VoidEnableInterrupt
+ 352              	.LVL26:
+ 129:../src/main.c **** //	MNVIC_VoidEnableInterrupt(28);/* TIM2 Enable Interrupt */
+ 130:../src/main.c **** 
+ 131:../src/main.c **** 	/*Initialise SYSTICk*/
+ 132:../src/main.c **** 	MSTK_VoidInit();	// clk=AHB/8 = 1MHz
+ 353              		.loc 1 132 0
+ 354 0074 FFF7FEFF 		bl	MSTK_VoidInit
+ 355              	.LVL27:
+ 356              	.L30:
+ 357 0078 FEE7     		b	.L30
+ 358              	.L33:
+ 359 007a 00BF     		.align	2
+ 360              	.L32:
+ 361 007c 00000000 		.word	VoidGetFrame
+ 362              		.cfi_endproc
+ 363              	.LFE3:
+ 365              		.global	U8Data
+ 366              		.global	U8EdgeCounter
+ 367              		.global	U32FramData
+ 368              		.global	U8StartFlag
+ 369              		.section	.bss.U32FramData,"aw",%nobits
+ 370              		.align	2
+ 371              		.set	.LANCHOR2,. + 0
+ 374              	U32FramData:
+ 375 0000 00000000 		.space	200
+ 375      00000000 
+ 375      00000000 
+ 375      00000000 
+ 375      00000000 
+ 376              		.section	.bss.U8Data,"aw",%nobits
+ 377              		.set	.LANCHOR3,. + 0
+ 380              	U8Data:
+ 381 0000 00       		.space	1
+ 382              		.section	.bss.U8EdgeCounter,"aw",%nobits
+ 383              		.set	.LANCHOR1,. + 0
+ 386              	U8EdgeCounter:
+ 387 0000 00       		.space	1
+ 388              		.section	.bss.U8StartFlag,"aw",%nobits
+ 389              		.set	.LANCHOR0,. + 0
+ 392              	U8StartFlag:
+ 393 0000 00       		.space	1
+ 394              		.text
+ 395              	.Letext0:
+ 396              		.file 2 "../include/STD_TYPES.h"
+ 397              		.file 3 "../include/RCC_interface.h"
+ 398              		.file 4 "../include/GPIO_int.h"
+ 399              		.file 5 "../include/AFIO_interface.h"
+ 400              		.file 6 "../include/EXTI_interface.h"
+ 401              		.file 7 "../include/NVIC_interface.h"
+ 402              		.file 8 "../include/STk_interface.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:16     .text.VoidGetFrame:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:23     .text.VoidGetFrame:00000000 VoidGetFrame
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:75     .text.VoidGetFrame:0000003c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:164    .text.VoidTakeAction:00000000 VoidTakeAction
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:84     .text.VoidPlay:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:91     .text.VoidPlay:00000000 VoidPlay
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:109    .text.VoidPlay:00000010 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:113    .text.VoidPlay:00000014 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:152    .text.VoidPlay:00000044 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:157    .text.VoidTakeAction:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:255    .text.VoidTakeAction:00000080 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:263    .text.main:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:270    .text.main:00000000 main
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:361    .text.main:0000007c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:380    .bss.U8Data:00000000 U8Data
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:386    .bss.U8EdgeCounter:00000000 U8EdgeCounter
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:374    .bss.U32FramData:00000000 U32FramData
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:392    .bss.U8StartFlag:00000000 U8StartFlag
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:370    .bss.U32FramData:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:381    .bss.U8Data:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:387    .bss.U8EdgeCounter:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccc1Z6Mo.s:393    .bss.U8StartFlag:00000000 $d
+                           .group:00000000 wm4.0.c450a18b2a29049e2cbb4137d58ca9b1
+                           .group:00000000 wm4.BIT_MATH.h.8.0385af17eb3d24c1ce205d0ed1b8762b
+                           .group:00000000 wm4.GPIO_int.h.9.912c8a44b51b492659014d2a4df9f992
+                           .group:00000000 wm4.RCC_interface.h.8.5138a41d5741806f19ac37f49995ed87
+                           .group:00000000 wm4.NVIC_interface.h.8.7c4fcae27b065a03e7119f30af3a6ff9
+                           .group:00000000 wm4.EXTI_interface.h.9.e1c6d63d0bc618e58233ec97d77d783a
+                           .group:00000000 wm4.GPTIM_interface.h.7.0d776b5d12e92a7950d679027c2d1620
+                           .group:00000000 wm4.AFIO_interface.h.8.6e694c0e688a302530ddd69d268179d1
+
+UNDEFINED SYMBOLS
+MSTK_U32GetElapsedTime
+MSTK_VoidSetIntervalSingle
+MGPIO_VoidSetPinValue
+RCC_voidInitSysClock
+RCC_voidEnableClock
+MGPIO_VoidSetPinDirection
+MAFIO_voidSetEXTIConfiguration
+MEXTI_VoidSetCallBack
+MEXTI_VoidInit
+MNVIC_VoidInit
+MNVIC_VoidEnableInterrupt
+MSTK_VoidInit

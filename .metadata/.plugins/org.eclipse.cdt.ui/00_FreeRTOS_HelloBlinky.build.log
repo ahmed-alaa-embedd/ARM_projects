@@ -1,0 +1,11 @@
+10:47:22 **** Incremental Build of configuration Debug for project 00_FreeRTOS_HelloBlinky ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "00_FreeRTOS_HelloBlinky.elf"
+   text	   data	    bss	    dec	    hex	filename
+   4516	     80	  17976	  22572	   582c	00_FreeRTOS_HelloBlinky.elf
+Finished building: 00_FreeRTOS_HelloBlinky.siz
+ 
+
+10:47:22 Build Finished (took 442ms)
+

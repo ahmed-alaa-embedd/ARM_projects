@@ -1,0 +1,271 @@
+15:25:07 **** Build of configuration Debug for project osek_MASTER ****
+make all 
+Building file: ../src/cortexM4/Os_Arch.c
+Invoking: Cross ARM GNU C Compiler
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DUSE_FULL_ASSERT -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f1-stdperiph" -std=gnu11 -MMD -MP -MF"src/cortexM4/Os_Arch.d" -MT"src/cortexM4/Os_Arch.o" -c -o "src/cortexM4/Os_Arch.o" "../src/cortexM4/Os_Arch.c"
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:40:1: error: expected identifier or '(' before '<' token
+ <?php
+ ^
+../include/Os_Cfg.h:91:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:91:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:92:10: error: unknown type name '$tasks'
+ foreach ($tasks as $task)
+          ^~~~~~
+../include/Os_Cfg.h:98:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:101:1: warning: data definition has no type or storage class
+ $appmodes = $config->getList("/OSEK","APPMODE");
+ ^~~~~~~~~
+../include/Os_Cfg.h:101:1: warning: type defaults to 'int' in declaration of '$appmodes' [-Wimplicit-int]
+../include/Os_Cfg.h:101:13: error: '$config' undeclared here (not in a function)
+ $appmodes = $config->getList("/OSEK","APPMODE");
+             ^~~~~~~
+../include/Os_Cfg.h:102:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:102:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:102:1: error: redefinition of '$count'
+../include/Os_Cfg.h:91:1: note: previous definition of '$count' was here
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:103:10: error: expected declaration specifiers or '...' before '$appmodes'
+ foreach ($appmodes as $appmode)
+          ^~~~~~~~~
+../include/Os_Cfg.h:108:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:111:1: warning: data definition has no type or storage class
+ $events = $config->getList("/OSEK","EVENT");
+ ^~~~~~~
+../include/Os_Cfg.h:111:1: warning: type defaults to 'int' in declaration of '$events' [-Wimplicit-int]
+../include/Os_Cfg.h:112:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:112:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:112:1: error: redefinition of '$count'
+../include/Os_Cfg.h:91:1: note: previous definition of '$count' was here
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:113:10: error: expected declaration specifiers or '...' before '$events'
+ foreach ($events as $event)
+          ^~~~~~~
+../include/Os_Cfg.h:118:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:121:1: warning: data definition has no type or storage class
+ $resources = $config->getList("/OSEK","RESOURCE");
+ ^~~~~~~~~~
+../include/Os_Cfg.h:121:1: warning: type defaults to 'int' in declaration of '$resources' [-Wimplicit-int]
+../include/Os_Cfg.h:122:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:122:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:122:1: error: redefinition of '$count'
+../include/Os_Cfg.h:91:1: note: previous definition of '$count' was here
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:123:10: error: expected declaration specifiers or '...' before '$resources'
+ foreach ($resources as $resource)
+          ^~~~~~~~~~
+../include/Os_Cfg.h:128:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:131:1: warning: data definition has no type or storage class
+ $alarms = $config->getList("/OSEK","ALARM");
+ ^~~~~~~
+../include/Os_Cfg.h:131:1: warning: type defaults to 'int' in declaration of '$alarms' [-Wimplicit-int]
+../include/Os_Cfg.h:132:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:132:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:132:1: error: redefinition of '$count'
+../include/Os_Cfg.h:91:1: note: previous definition of '$count' was here
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:133:10: error: expected declaration specifiers or '...' before '$alarms'
+ foreach ($alarms as $alarm)
+          ^~~~~~~
+../include/Os_Cfg.h:138:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:141:1: warning: data definition has no type or storage class
+ $counters = $config->getList("/OSEK","COUNTER");
+ ^~~~~~~~~
+../include/Os_Cfg.h:141:1: warning: type defaults to 'int' in declaration of '$counters' [-Wimplicit-int]
+../include/Os_Cfg.h:142:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:142:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:142:1: error: redefinition of '$count'
+../include/Os_Cfg.h:91:1: note: previous definition of '$count' was here
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:143:10: error: expected declaration specifiers or '...' before '$counters'
+ foreach ($counters as $counter)
+          ^~~~~~~~~
+../include/Os_Cfg.h:148:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:150:1: warning: data definition has no type or storage class
+ $errorhook=$config->getValue("/OSEK/" . $os[0],"ERRORHOOK");
+ ^~~~~~~~~~
+../include/Os_Cfg.h:150:1: warning: type defaults to 'int' in declaration of '$errorhook' [-Wimplicit-int]
+../include/Os_Cfg.h:150:39: error: request for member '$os' in something not a structure or union
+ $errorhook=$config->getValue("/OSEK/" . $os[0],"ERRORHOOK");
+                                       ^
+../include/Os_Cfg.h:151:1: error: expected identifier or '(' before 'if'
+ if ($errorhook == "TRUE")
+ ^~
+../include/Os_Cfg.h:173:1: warning: data definition has no type or storage class
+ $memmap = $config->getValue("/OSEK/" . $os[0],"MEMMAP");
+ ^~~~~~~
+../include/Os_Cfg.h:173:1: warning: type defaults to 'int' in declaration of '$memmap' [-Wimplicit-int]
+../include/Os_Cfg.h:173:38: error: request for member '$os' in something not a structure or union
+ $memmap = $config->getValue("/OSEK/" . $os[0],"MEMMAP");
+                                      ^
+../include/Os_Cfg.h:174:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "/** \brief OSEK_MEMMAP macro (OSEK_DISABLE not MemMap is used for FreeOSEK, OSEK_ENABLE\n ** MemMap is used for FreeOSEK) */\n";
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:175:1: error: expected identifier or '(' before 'if'
+ if ($memmap == "TRUE")
+ ^~
+../include/Os_Cfg.h:179:17: error: expected ')' before '==' token
+ elseif ($memmap == "FALSE")
+                 ^~
+../include/Os_Cfg.h:183:1: error: expected identifier or '(' before 'else'
+ else
+ ^~~~
+../include/Os_Cfg.h:189:1: error: expected identifier or '(' before '?' token
+ ?>
+ ^
+../include/Os_Cfg.h:196:1: error: expected identifier or '(' before 'if'
+ if ($errorhook == "TRUE")
+ ^~
+../include/Os_Cfg.h:235:1: error: expected identifier or '(' before '?' token
+ ?>
+ ^
+../include/Os_Cfg.h:240:1: error: expected identifier or '(' before 'if'
+ if ($pretaskhook == "TRUE")
+ ^~
+../include/Os_Cfg.h:245:1: warning: data definition has no type or storage class
+ $posttaskhook=$config->getValue("/OSEK/" . $os[0],"POSTTASKHOOK");
+ ^~~~~~~~~~~~~
+../include/Os_Cfg.h:245:1: warning: type defaults to 'int' in declaration of '$posttaskhook' [-Wimplicit-int]
+../include/Os_Cfg.h:245:42: error: request for member '$os' in something not a structure or union
+ $posttaskhook=$config->getValue("/OSEK/" . $os[0],"POSTTASKHOOK");
+                                          ^
+../include/Os_Cfg.h:246:1: error: expected identifier or '(' before 'if'
+ if ($posttaskhook == "TRUE")
+ ^~
+../include/Os_Cfg.h:251:1: warning: data definition has no type or storage class
+ $shutdownhook=$config->getValue("/OSEK/" . $os[0],"SHUTDOWNHOOK");
+ ^~~~~~~~~~~~~
+../include/Os_Cfg.h:251:1: warning: type defaults to 'int' in declaration of '$shutdownhook' [-Wimplicit-int]
+../include/Os_Cfg.h:251:42: error: request for member '$os' in something not a structure or union
+ $shutdownhook=$config->getValue("/OSEK/" . $os[0],"SHUTDOWNHOOK");
+                                          ^
+../include/Os_Cfg.h:252:1: error: expected identifier or '(' before 'if'
+ if ($shutdownhook == "TRUE")
+ ^~
+../include/Os_Cfg.h:257:1: warning: data definition has no type or storage class
+ $startuphook=$config->getValue("/OSEK/" . $os[0],"STARTUPHOOK");
+ ^~~~~~~~~~~~
+../include/Os_Cfg.h:257:1: warning: type defaults to 'int' in declaration of '$startuphook' [-Wimplicit-int]
+../include/Os_Cfg.h:257:41: error: request for member '$os' in something not a structure or union
+ $startuphook=$config->getValue("/OSEK/" . $os[0],"STARTUPHOOK");
+                                         ^
+../include/Os_Cfg.h:258:1: error: expected identifier or '(' before 'if'
+ if ($startuphook == "TRUE")
+ ^~
+../include/Os_Cfg.h:263:1: warning: data definition has no type or storage class
+ $errorhook=$config->getValue("/OSEK/" . $os[0],"ERRORHOOK");
+ ^~~~~~~~~~
+../include/Os_Cfg.h:263:1: warning: type defaults to 'int' in declaration of '$errorhook' [-Wimplicit-int]
+../include/Os_Cfg.h:263:1: error: redefinition of '$errorhook'
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:150:1: note: previous definition of '$errorhook' was here
+ $errorhook=$config->getValue("/OSEK/" . $os[0],"ERRORHOOK");
+ ^~~~~~~~~~
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:263:39: error: request for member '$os' in something not a structure or union
+ $errorhook=$config->getValue("/OSEK/" . $os[0],"ERRORHOOK");
+                                       ^
+../include/Os_Cfg.h:264:1: error: expected identifier or '(' before 'if'
+ if ($errorhook == "TRUE")
+ ^~
+../include/Os_Cfg.h:271:1: warning: data definition has no type or storage class
+ $count = 0;
+ ^~~~~~
+../include/Os_Cfg.h:271:1: warning: type defaults to 'int' in declaration of '$count' [-Wimplicit-int]
+../include/Os_Cfg.h:271:1: error: redefinition of '$count'
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:91:1: note: previous definition of '$count' was here
+ $count = 0;
+ ^~~~~~
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:272:10: error: unknown type name '$tasks'
+ foreach ($tasks as $task)
+          ^~~~~~
+../include/Os_Cfg.h:277:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:279:1: warning: data definition has no type or storage class
+ $intnames = $config->getList("/OSEK","ISR");
+ ^~~~~~~~~
+../include/Os_Cfg.h:279:1: warning: type defaults to 'int' in declaration of '$intnames' [-Wimplicit-int]
+../include/Os_Cfg.h:280:10: error: expected declaration specifiers or '...' before '$intnames'
+ foreach ($intnames as $int)
+          ^~~~~~~~~
+../include/Os_Cfg.h:285:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:287:1: warning: data definition has no type or storage class
+ $alarms = $config->getList("/OSEK","ALARM");
+ ^~~~~~~
+../include/Os_Cfg.h:287:1: warning: type defaults to 'int' in declaration of '$alarms' [-Wimplicit-int]
+../include/Os_Cfg.h:287:1: error: redefinition of '$alarms'
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:131:1: note: previous definition of '$alarms' was here
+ $alarms = $config->getList("/OSEK","ALARM");
+ ^~~~~~~
+In file included from ../include/os.h:77:0,
+                 from ../include/Os_Internal.h:71,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/Os_Cfg.h:288:10: error: expected declaration specifiers or '...' before '$alarms'
+ foreach ($alarms as $alarm)
+          ^~~~~~~
+../include/Os_Cfg.h:297:7: error: expected '=', ',', ';', 'asm' or '__attribute__' before string constant
+ print "\n";
+       ^~~~
+../include/Os_Cfg.h:299:1: error: expected identifier or '(' before '?' token
+ ?>
+ ^
+In file included from ../include/Os_Internal.h:71:0,
+                 from ../src/cortexM4/Os_Arch.c:59:
+../include/os.h:78:10: fatal error: Os_Arch.h: No such file or directory
+ #include "Os_Arch.h"
+          ^~~~~~~~~~~
+compilation terminated.
+make: *** [src/cortexM4/subdir.mk:36: src/cortexM4/Os_Arch.o] Error 1
+
+15:25:08 Build Finished (took 1s.93ms)
+

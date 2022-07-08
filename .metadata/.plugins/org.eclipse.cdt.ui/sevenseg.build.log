@@ -1,0 +1,11 @@
+21:09:25 **** Incremental Build of configuration Debug for project sevenseg ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "sevenseg.elf"
+   text	   data	    bss	    dec	    hex	filename
+   5091	    176	    412	   5679	   162f	sevenseg.elf
+Finished building: sevenseg.siz
+ 
+
+21:09:25 Build Finished (took 385ms)
+

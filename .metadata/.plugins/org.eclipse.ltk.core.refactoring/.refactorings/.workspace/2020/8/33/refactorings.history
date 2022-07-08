@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete 4 resources" deleteContents="false" description="Delete 4 resources" element1="/GPIOARM/01-LIB" element2="/GPIOARM/02-MCAL" element3="/GPIOARM/03-HAL" element4="/GPIOARM/04-APP" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="4" stamp="1597260789908"/>&#x0A;<refactoring comment="Delete 2 resources" deleteContents="false" description="Delete 2 resources" element1="/Hello_DIO/src/_write.c" element2="/Hello_DIO/src/oldmain.c" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1597343823282"/>
+</session>

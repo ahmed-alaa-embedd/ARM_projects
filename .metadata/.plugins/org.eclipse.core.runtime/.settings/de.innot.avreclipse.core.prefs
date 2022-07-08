@@ -1,0 +1,6 @@
+avrpaths//systempath/PDFPATH=
+avrpaths/AVRDUDE=D\:\\courses\\IMT\\AVR\\Tools\\SDK\\IMT_SDK_Win_64\\WinAVR\\bin
+avrpaths/AVRGCC=D\:\\courses\\IMT\\AVR\\Tools\\SDK\\IMT_SDK_Win_64\\WinAVR\\bin
+avrpaths/AVRINCLUDE=D\:\\courses\\IMT\\AVR\\Tools\\SDK\\IMT_SDK_Win_64\\WinAVR\\avr\\include
+avrpaths/MAKE=D\:\\courses\\IMT\\AVR\\Tools\\SDK\\IMT_SDK_Win_64\\WinAVR\\utils\\bin
+eclipse.preferences.version=1

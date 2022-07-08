@@ -1,0 +1,11 @@
+15:40:40 **** Incremental Build of configuration Debug for project DMA ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "DMA.elf"
+   text	   data	    bss	    dec	    hex	filename
+   4683	    176	    416	   5275	   149b	DMA.elf
+Finished building: DMA.siz
+ 
+
+15:40:40 Build Finished (took 370ms)
+

@@ -1,0 +1,11 @@
+00:05:20 **** Incremental Build of configuration Debug for project 05_freeRTOS_Semaphor ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "05_freeRTOS_Semaphor.elf"
+   text	   data	    bss	    dec	    hex	filename
+   6460	     80	  17980	  24520	   5fc8	05_freeRTOS_Semaphor.elf
+Finished building: 05_freeRTOS_Semaphor.siz
+ 
+
+00:05:20 Build Finished (took 417ms)
+

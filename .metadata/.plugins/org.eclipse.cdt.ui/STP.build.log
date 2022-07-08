@@ -1,0 +1,11 @@
+14:52:41 **** Incremental Build of configuration Debug for project STP ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "STP.elf"
+   text	   data	    bss	    dec	    hex	filename
+   5483	    220	    420	   6123	   17eb	STP.elf
+Finished building: STP.siz
+ 
+
+14:52:41 Build Finished (took 313ms)
+

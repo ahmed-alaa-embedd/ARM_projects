@@ -1,0 +1,40 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 26/8/2020 		*/
+/*version : v01			*/
+/***************************/
+
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
+
+#include "STk_interface.h"
+#include "STk_private.h"
+#include "STk_config.h"
+
+
+void MSTK_VoidInit(void)
+{
+#if CLKSOURCE==AHB/8	/* Disable counter - Set clock source AHB/8*/
+
+	STK_CTRL = 0 ;
+#elif CLKSOURCE==AHB
+
+	STK_CTRL = 0x00000004 ;/* Disable counter - Set clock source AHB*/
+
+#else
+	/*REPORT ERROR*/
+
+#endif
+}
+
+void MSTK_VoidSetBusyWait(u32 copy_u32ticks)
+{
+//	copy_u32ticks-=1;
+
+	STK_LOAD = copy_u32ticks; /* Load ticks to load register */
+
+	/* Counter enable */
+
+	SET_BIT(STK_CTRL,0) ;
+
+}

@@ -1,0 +1,29 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 22/8/2020 		*/
+/*version : v01			*/
+/***************************/
+
+
+#ifndef EXTI_interface_H
+#define EXTI_interface_H
+
+
+void MEXTI_Init(u8 copy_u8Line);
+
+
+
+
+
+
+
+
+
+
+
+#endif
+
+
+
+
+

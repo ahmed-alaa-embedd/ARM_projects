@@ -1,0 +1,18 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 22/8/2020 		*/
+/*version : v01			*/
+/***************************/
+
+
+#ifndef EXTI_config_H
+#define EXTI_config_H
+
+
+#define EXTI_LINE		/* 0:15 */
+
+
+
+
+
+#endif

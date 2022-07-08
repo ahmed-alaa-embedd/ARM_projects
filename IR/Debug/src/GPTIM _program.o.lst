@@ -1,0 +1,3406 @@
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"GPTIM _program.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.TIM2_voidInit,"ax",%progbits
+  16              		.align	1
+  17              		.global	TIM2_voidInit
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	TIM2_voidInit:
+  24              	.LFB0:
+  25              		.file 1 "../src/GPTIM _program.c"
+   1:../src/GPTIM _program.c **** /************************************************/
+   2:../src/GPTIM _program.c **** /* Author :Hussin Ebrahim                       */
+   3:../src/GPTIM _program.c **** /* Date   :10/9/2020                            */
+   4:../src/GPTIM _program.c **** /* Version:V01                                  */
+   5:../src/GPTIM _program.c **** /************************************************/ 
+   6:../src/GPTIM _program.c **** #include"STD_TYPES.h"
+   7:../src/GPTIM _program.c **** #include"BIT_MATH.h"
+   8:../src/GPTIM _program.c **** #include"GPTIM_interface.h"
+   9:../src/GPTIM _program.c **** #include"GPTIM_private.h"
+  10:../src/GPTIM _program.c **** #include"GPTIM_config.h"
+  11:../src/GPTIM _program.c **** 
+  12:../src/GPTIM _program.c **** /***********************TIM2****************************/
+  13:../src/GPTIM _program.c **** /*  Clock of TIM2 is APB1_clk(8 MHZ)
+  14:../src/GPTIM _program.c ****    Disable TIM7 interrupt
+  15:../src/GPTIM _program.c ****    Disable TIM6
+  16:../src/GPTIM _program.c ****    F(TIM2)=8M/(1+PSC)
+  17:../src/GPTIM _program.c ****    If PSC=7
+  18:../src/GPTIM _program.c **** 	Tick=>1us                 */
+  19:../src/GPTIM _program.c **** void TIM2_voidInit(void)
+  20:../src/GPTIM _program.c **** {
+  26              		.loc 1 20 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  21:../src/GPTIM _program.c **** 	/*Up/Down Counter Mode*/
+  22:../src/GPTIM _program.c **** 	TIM2->CR1&=~(0b111<<4);
+  31              		.loc 1 22 0
+  32 0000 4FF08043 		mov	r3, #1073741824
+  33 0004 1A68     		ldr	r2, [r3]
+  34 0006 22F07002 		bic	r2, r2, #112
+  35 000a 1A60     		str	r2, [r3]
+  23:../src/GPTIM _program.c **** 	TIM2->CR1|=(DOWNCOUNTER<<4);
+  36              		.loc 1 23 0
+  37 000c 1A68     		ldr	r2, [r3]
+  38 000e 42F01002 		orr	r2, r2, #16
+  39 0012 1A60     		str	r2, [r3]
+  24:../src/GPTIM _program.c **** 
+  25:../src/GPTIM _program.c **** 	/*ARR is Buffered can't changed Execpt at Update Event*/
+  26:../src/GPTIM _program.c **** 	SET_BIT(TIM2->CR1,GPTIM_ARPE);
+  40              		.loc 1 26 0
+  41 0014 1A68     		ldr	r2, [r3]
+  42 0016 42F08002 		orr	r2, r2, #128
+  43 001a 1A60     		str	r2, [r3]
+  27:../src/GPTIM _program.c **** 
+  28:../src/GPTIM _program.c **** 	/*Only Counter OverFlow UnderFlow Generate update Interrupt */
+  29:../src/GPTIM _program.c **** 	SET_BIT(TIM2->CR1,GPTIM_URS);
+  44              		.loc 1 29 0
+  45 001c 1A68     		ldr	r2, [r3]
+  46 001e 42F00402 		orr	r2, r2, #4
+  47 0022 1A60     		str	r2, [r3]
+  30:../src/GPTIM _program.c **** 
+  31:../src/GPTIM _program.c **** 	/*Enable Update Event */
+  32:../src/GPTIM _program.c **** 	CLR_BIT(TIM2->CR1,GPTIM_UDIS);
+  48              		.loc 1 32 0
+  49 0024 1A68     		ldr	r2, [r3]
+  50 0026 22F00202 		bic	r2, r2, #2
+  51 002a 1A60     		str	r2, [r3]
+  33:../src/GPTIM _program.c **** 
+  34:../src/GPTIM _program.c **** 	/*Disable Update Interrupt */
+  35:../src/GPTIM _program.c **** 	CLR_BIT(TIM2->DIER,GPTIM_UIE);
+  52              		.loc 1 35 0
+  53 002c DA68     		ldr	r2, [r3, #12]
+  54 002e 22F00102 		bic	r2, r2, #1
+  55 0032 DA60     		str	r2, [r3, #12]
+  36:../src/GPTIM _program.c **** 
+  37:../src/GPTIM _program.c **** 	/*F(TIM2)=8M/(1+PSC)=1MHz
+  38:../src/GPTIM _program.c **** 	*Ticks equal 1us*/
+  39:../src/GPTIM _program.c **** 	TIM2->PSC=7;
+  56              		.loc 1 39 0
+  57 0034 0722     		movs	r2, #7
+  58 0036 9A62     		str	r2, [r3, #40]
+  40:../src/GPTIM _program.c **** }
+  59              		.loc 1 40 0
+  60 0038 7047     		bx	lr
+  61              		.cfi_endproc
+  62              	.LFE0:
+  64              		.section	.text.TIM2_voidSetBusyWait,"ax",%progbits
+  65              		.align	1
+  66              		.global	TIM2_voidSetBusyWait
+  67              		.syntax unified
+  68              		.thumb
+  69              		.thumb_func
+  70              		.fpu softvfp
+  72              	TIM2_voidSetBusyWait:
+  73              	.LFB1:
+  41:../src/GPTIM _program.c **** /* Synchronous API  Lock Processor For Certain Ticks
+  42:../src/GPTIM _program.c ****    *Disable SysTick interrupt
+  43:../src/GPTIM _program.c ****    *enable Systick
+  44:../src/GPTIM _program.c ****    *polling flag (underflow)
+  45:../src/GPTIM _program.c ****    *Tick=>1us*/
+  46:../src/GPTIM _program.c **** void TIM2_voidSetBusyWait( u32 Copy_u32Ticks )
+  47:../src/GPTIM _program.c **** {
+  74              		.loc 1 47 0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+  79              	.LVL0:
+  80 0000 10B4     		push	{r4}
+  81              		.cfi_def_cfa_offset 4
+  82              		.cfi_offset 4, -4
+  48:../src/GPTIM _program.c **** 	u32 Local_u32Routine=Copy_u32Ticks/65535;
+  83              		.loc 1 48 0
+  84 0002 214B     		ldr	r3, .L8
+  85 0004 A3FB0023 		umull	r2, r3, r3, r0
+  86 0008 DB0B     		lsrs	r3, r3, #15
+  87              	.LVL1:
+  49:../src/GPTIM _program.c **** 	u32 Local_u32Fraction=Copy_u32Ticks%65535;
+  88              		.loc 1 49 0
+  89 000a C3EB0344 		rsb	r4, r3, r3, lsl #16
+  90 000e 041B     		subs	r4, r0, r4
+  91              	.LVL2:
+  50:../src/GPTIM _program.c **** 	while(Local_u32Routine--)
+  92              		.loc 1 50 0
+  93 0010 19E0     		b	.L3
+  94              	.LVL3:
+  95              	.L5:
+  51:../src/GPTIM _program.c **** 	{
+  52:../src/GPTIM _program.c **** 		TIM2->ARR=65535;
+  96              		.loc 1 52 0
+  97 0012 4FF08043 		mov	r3, #1073741824
+  98 0016 4FF6FF72 		movw	r2, #65535
+  99 001a DA62     		str	r2, [r3, #44]
+  53:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+  54:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 100              		.loc 1 54 0
+ 101 001c 5A69     		ldr	r2, [r3, #20]
+ 102 001e 42F00102 		orr	r2, r2, #1
+ 103 0022 5A61     		str	r2, [r3, #20]
+  55:../src/GPTIM _program.c **** 		/*Enable counter*/
+  56:../src/GPTIM _program.c **** 		SET_BIT(TIM2->CR1,GPTIM_CEN);
+ 104              		.loc 1 56 0
+ 105 0024 1A68     		ldr	r2, [r3]
+ 106 0026 42F00102 		orr	r2, r2, #1
+ 107 002a 1A60     		str	r2, [r3]
+ 108              	.L4:
+  57:../src/GPTIM _program.c **** 		while(GET_BIT(TIM2->SR,GPTIM_UIF)==0);
+ 109              		.loc 1 57 0 discriminator 1
+ 110 002c 4FF08043 		mov	r3, #1073741824
+ 111 0030 1B69     		ldr	r3, [r3, #16]
+ 112 0032 13F0010F 		tst	r3, #1
+ 113 0036 F9D0     		beq	.L4
+  58:../src/GPTIM _program.c **** 		/*Clear Uderflow Flag*/
+  59:../src/GPTIM _program.c **** 		CLR_BIT(TIM2->SR,GPTIM_UIF);
+ 114              		.loc 1 59 0
+ 115 0038 4FF08042 		mov	r2, #1073741824
+ 116 003c 1369     		ldr	r3, [r2, #16]
+ 117 003e 23F00103 		bic	r3, r3, #1
+ 118 0042 1361     		str	r3, [r2, #16]
+  50:../src/GPTIM _program.c **** 	{
+ 119              		.loc 1 50 0
+ 120 0044 0B46     		mov	r3, r1
+ 121              	.LVL4:
+ 122              	.L3:
+ 123 0046 591E     		subs	r1, r3, #1
+ 124              	.LVL5:
+ 125 0048 002B     		cmp	r3, #0
+ 126 004a E2D1     		bne	.L5
+  60:../src/GPTIM _program.c **** 	}
+  61:../src/GPTIM _program.c **** 
+  62:../src/GPTIM _program.c **** 	TIM2->ARR=Local_u32Fraction;
+ 127              		.loc 1 62 0
+ 128 004c 4FF08043 		mov	r3, #1073741824
+ 129 0050 DC62     		str	r4, [r3, #44]
+  63:../src/GPTIM _program.c **** 	/*Re-Initialize the the counter & prescaller*/
+  64:../src/GPTIM _program.c **** 	SET_BIT(TIM2->EGR,GPTIM_UG);
+ 130              		.loc 1 64 0
+ 131 0052 5A69     		ldr	r2, [r3, #20]
+ 132 0054 42F00102 		orr	r2, r2, #1
+ 133 0058 5A61     		str	r2, [r3, #20]
+  65:../src/GPTIM _program.c **** 	/*Enable counter*/
+  66:../src/GPTIM _program.c **** 	SET_BIT(TIM2->CR1,GPTIM_CEN);
+ 134              		.loc 1 66 0
+ 135 005a 1A68     		ldr	r2, [r3]
+ 136 005c 42F00102 		orr	r2, r2, #1
+ 137 0060 1A60     		str	r2, [r3]
+ 138              	.L6:
+  67:../src/GPTIM _program.c **** 	while(GET_BIT(TIM2->SR,GPTIM_UIF)==0);
+ 139              		.loc 1 67 0 discriminator 1
+ 140 0062 4FF08043 		mov	r3, #1073741824
+ 141 0066 1B69     		ldr	r3, [r3, #16]
+ 142 0068 13F0010F 		tst	r3, #1
+ 143 006c F9D0     		beq	.L6
+  68:../src/GPTIM _program.c **** 	/*Clear Uderflow Flag*/
+  69:../src/GPTIM _program.c **** 	CLR_BIT(TIM2->SR,GPTIM_UIF);
+ 144              		.loc 1 69 0
+ 145 006e 4FF08043 		mov	r3, #1073741824
+ 146 0072 1A69     		ldr	r2, [r3, #16]
+ 147 0074 22F00102 		bic	r2, r2, #1
+ 148 0078 1A61     		str	r2, [r3, #16]
+  70:../src/GPTIM _program.c **** 	/*Stop Timer*/
+  71:../src/GPTIM _program.c **** 	CLR_BIT(TIM2->CR1,GPTIM_CEN);
+ 149              		.loc 1 71 0
+ 150 007a 1A68     		ldr	r2, [r3]
+ 151 007c 22F00102 		bic	r2, r2, #1
+ 152 0080 1A60     		str	r2, [r3]
+  72:../src/GPTIM _program.c **** 
+  73:../src/GPTIM _program.c **** 
+  74:../src/GPTIM _program.c **** 
+  75:../src/GPTIM _program.c **** }
+ 153              		.loc 1 75 0
+ 154 0082 10BC     		pop	{r4}
+ 155              		.cfi_restore 4
+ 156              		.cfi_def_cfa_offset 0
+ 157              	.LVL6:
+ 158 0084 7047     		bx	lr
+ 159              	.L9:
+ 160 0086 00BF     		.align	2
+ 161              	.L8:
+ 162 0088 01800080 		.word	-2147450879
+ 163              		.cfi_endproc
+ 164              	.LFE1:
+ 166              		.section	.text.TIM2_voidSetIntervalSingle,"ax",%progbits
+ 167              		.align	1
+ 168              		.global	TIM2_voidSetIntervalSingle
+ 169              		.syntax unified
+ 170              		.thumb
+ 171              		.thumb_func
+ 172              		.fpu softvfp
+ 174              	TIM2_voidSetIntervalSingle:
+ 175              	.LFB2:
+  76:../src/GPTIM _program.c **** void TIM2_voidSetIntervalSingle( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+  77:../src/GPTIM _program.c **** {
+ 176              		.loc 1 77 0
+ 177              		.cfi_startproc
+ 178              		@ args = 0, pretend = 0, frame = 0
+ 179              		@ frame_needed = 0, uses_anonymous_args = 0
+ 180              		@ link register save eliminated.
+ 181              	.LVL7:
+  78:../src/GPTIM _program.c **** 	/*save CallBack*/
+  79:../src/GPTIM _program.c **** 	TIM2_CallBack=Copy_ptr;
+ 182              		.loc 1 79 0
+ 183 0000 1D4B     		ldr	r3, .L14
+ 184 0002 1960     		str	r1, [r3]
+  80:../src/GPTIM _program.c **** 	/*Set Mode to Single*/
+  81:../src/GPTIM _program.c **** 	TIM2_u8ModeOfInterval=SINGLE_INTERVAL;
+ 185              		.loc 1 81 0
+ 186 0004 1D4B     		ldr	r3, .L14+4
+ 187 0006 0022     		movs	r2, #0
+ 188 0008 1A70     		strb	r2, [r3]
+  82:../src/GPTIM _program.c **** 
+  83:../src/GPTIM _program.c **** 	Global2_u32Routine =(Copy_u32Ticks/65535);
+ 189              		.loc 1 83 0
+ 190 000a 1D4B     		ldr	r3, .L14+8
+ 191 000c A3FB0023 		umull	r2, r3, r3, r0
+ 192 0010 DB0B     		lsrs	r3, r3, #15
+ 193 0012 1C4A     		ldr	r2, .L14+12
+ 194 0014 1360     		str	r3, [r2]
+  84:../src/GPTIM _program.c **** 	Global2_u32Fraction=Copy_u32Ticks%65535;
+ 195              		.loc 1 84 0
+ 196 0016 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 197 001a C11A     		subs	r1, r0, r3
+ 198              	.LVL8:
+ 199 001c 1A4B     		ldr	r3, .L14+16
+ 200 001e 1960     		str	r1, [r3]
+  85:../src/GPTIM _program.c **** 	/*    to be initialize before enter the interrupt */
+  86:../src/GPTIM _program.c **** 	Global2_u32CopyRoutine=Global2_u32Routine;
+ 201              		.loc 1 86 0
+ 202 0020 1168     		ldr	r1, [r2]
+ 203 0022 1A4B     		ldr	r3, .L14+20
+ 204 0024 1960     		str	r1, [r3]
+  87:../src/GPTIM _program.c **** 	/*stop timer */
+  88:../src/GPTIM _program.c **** 	CLR_BIT(TIM2->CR1,GPTIM_CEN);
+ 205              		.loc 1 88 0
+ 206 0026 4FF08041 		mov	r1, #1073741824
+ 207 002a 0B68     		ldr	r3, [r1]
+ 208 002c 23F00103 		bic	r3, r3, #1
+ 209 0030 0B60     		str	r3, [r1]
+ 210              	.LVL9:
+  89:../src/GPTIM _program.c **** 
+  90:../src/GPTIM _program.c **** 	if(Global2_u32Routine)
+ 211              		.loc 1 90 0
+ 212 0032 1368     		ldr	r3, [r2]
+ 213 0034 9BB9     		cbnz	r3, .L13
+  91:../src/GPTIM _program.c **** 	{
+  92:../src/GPTIM _program.c **** 		TIM2->ARR=65535;
+  93:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+  94:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+  95:../src/GPTIM _program.c **** 		/*Enable counter*/
+  96:../src/GPTIM _program.c **** 		SET_BIT(TIM2->CR1,GPTIM_CEN);
+  97:../src/GPTIM _program.c **** 	}
+  98:../src/GPTIM _program.c **** 	else
+  99:../src/GPTIM _program.c **** 	{
+ 100:../src/GPTIM _program.c **** 		TIM2->ARR=Global2_u32Fraction;
+ 214              		.loc 1 100 0
+ 215 0036 144B     		ldr	r3, .L14+16
+ 216 0038 1A68     		ldr	r2, [r3]
+ 217 003a 4FF08043 		mov	r3, #1073741824
+ 218 003e DA62     		str	r2, [r3, #44]
+ 101:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 102:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 219              		.loc 1 102 0
+ 220 0040 5A69     		ldr	r2, [r3, #20]
+ 221 0042 42F00102 		orr	r2, r2, #1
+ 222 0046 5A61     		str	r2, [r3, #20]
+ 103:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 104:../src/GPTIM _program.c **** 		SET_BIT(TIM2->CR1,GPTIM_CEN);
+ 223              		.loc 1 104 0
+ 224 0048 1A68     		ldr	r2, [r3]
+ 225 004a 42F00102 		orr	r2, r2, #1
+ 226 004e 1A60     		str	r2, [r3]
+ 227              	.L12:
+ 105:../src/GPTIM _program.c **** 	}
+ 106:../src/GPTIM _program.c **** 
+ 107:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 108:../src/GPTIM _program.c **** 	SET_BIT(TIM2->DIER,GPTIM_UIE);
+ 228              		.loc 1 108 0
+ 229 0050 4FF08042 		mov	r2, #1073741824
+ 230 0054 D368     		ldr	r3, [r2, #12]
+ 231 0056 43F00103 		orr	r3, r3, #1
+ 232 005a D360     		str	r3, [r2, #12]
+ 109:../src/GPTIM _program.c **** }
+ 233              		.loc 1 109 0
+ 234 005c 7047     		bx	lr
+ 235              	.L13:
+  92:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 236              		.loc 1 92 0
+ 237 005e 4FF6FF72 		movw	r2, #65535
+ 238 0062 CA62     		str	r2, [r1, #44]
+  94:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 239              		.loc 1 94 0
+ 240 0064 4A69     		ldr	r2, [r1, #20]
+ 241 0066 42F00102 		orr	r2, r2, #1
+ 242 006a 4A61     		str	r2, [r1, #20]
+  96:../src/GPTIM _program.c **** 	}
+ 243              		.loc 1 96 0
+ 244 006c 0A68     		ldr	r2, [r1]
+ 245 006e 42F00102 		orr	r2, r2, #1
+ 246 0072 0A60     		str	r2, [r1]
+ 247 0074 ECE7     		b	.L12
+ 248              	.L15:
+ 249 0076 00BF     		.align	2
+ 250              	.L14:
+ 251 0078 00000000 		.word	.LANCHOR0
+ 252 007c 00000000 		.word	.LANCHOR1
+ 253 0080 01800080 		.word	-2147450879
+ 254 0084 00000000 		.word	.LANCHOR2
+ 255 0088 00000000 		.word	.LANCHOR3
+ 256 008c 00000000 		.word	.LANCHOR4
+ 257              		.cfi_endproc
+ 258              	.LFE2:
+ 260              		.section	.text.TIM2_voidSetIntervalPeriodic,"ax",%progbits
+ 261              		.align	1
+ 262              		.global	TIM2_voidSetIntervalPeriodic
+ 263              		.syntax unified
+ 264              		.thumb
+ 265              		.thumb_func
+ 266              		.fpu softvfp
+ 268              	TIM2_voidSetIntervalPeriodic:
+ 269              	.LFB3:
+ 110:../src/GPTIM _program.c **** void TIM2_voidSetIntervalPeriodic( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 111:../src/GPTIM _program.c **** {
+ 270              		.loc 1 111 0
+ 271              		.cfi_startproc
+ 272              		@ args = 0, pretend = 0, frame = 0
+ 273              		@ frame_needed = 0, uses_anonymous_args = 0
+ 274              		@ link register save eliminated.
+ 275              	.LVL10:
+ 112:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 113:../src/GPTIM _program.c **** 	TIM2_CallBack=Copy_ptr;
+ 276              		.loc 1 113 0
+ 277 0000 194B     		ldr	r3, .L20
+ 278 0002 1960     		str	r1, [r3]
+ 114:../src/GPTIM _program.c **** 	/*Set Mode to Periodic*/
+ 115:../src/GPTIM _program.c **** 	TIM2_u8ModeOfInterval=PERIODIC_INTERVAL;
+ 279              		.loc 1 115 0
+ 280 0004 194B     		ldr	r3, .L20+4
+ 281 0006 0122     		movs	r2, #1
+ 282 0008 1A70     		strb	r2, [r3]
+ 116:../src/GPTIM _program.c **** 
+ 117:../src/GPTIM _program.c **** 	Global2_u32Routine =(Copy_u32Ticks/65535) ;
+ 283              		.loc 1 117 0
+ 284 000a 194B     		ldr	r3, .L20+8
+ 285 000c A3FB0023 		umull	r2, r3, r3, r0
+ 286 0010 DB0B     		lsrs	r3, r3, #15
+ 287 0012 184A     		ldr	r2, .L20+12
+ 288 0014 1360     		str	r3, [r2]
+ 118:../src/GPTIM _program.c **** 	Global2_u32Fraction=Copy_u32Ticks%65535;
+ 289              		.loc 1 118 0
+ 290 0016 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 291 001a C11A     		subs	r1, r0, r3
+ 292              	.LVL11:
+ 293 001c 164B     		ldr	r3, .L20+16
+ 294 001e 1960     		str	r1, [r3]
+ 119:../src/GPTIM _program.c **** 
+ 120:../src/GPTIM _program.c **** 	if(Global2_u32Routine)
+ 295              		.loc 1 120 0
+ 296 0020 1368     		ldr	r3, [r2]
+ 297 0022 9BB9     		cbnz	r3, .L19
+ 121:../src/GPTIM _program.c **** 	{
+ 122:../src/GPTIM _program.c **** 		TIM2->ARR=65535;
+ 123:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 124:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 125:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 126:../src/GPTIM _program.c **** 		SET_BIT(TIM2->CR1,GPTIM_CEN);
+ 127:../src/GPTIM _program.c **** 	}
+ 128:../src/GPTIM _program.c **** 	else
+ 129:../src/GPTIM _program.c **** 	{
+ 130:../src/GPTIM _program.c **** 		TIM2->ARR=Global2_u32Fraction;
+ 298              		.loc 1 130 0
+ 299 0024 144B     		ldr	r3, .L20+16
+ 300 0026 1A68     		ldr	r2, [r3]
+ 301 0028 4FF08043 		mov	r3, #1073741824
+ 302 002c DA62     		str	r2, [r3, #44]
+ 303              	.LVL12:
+ 131:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 132:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 304              		.loc 1 132 0
+ 305 002e 5A69     		ldr	r2, [r3, #20]
+ 306 0030 42F00102 		orr	r2, r2, #1
+ 307 0034 5A61     		str	r2, [r3, #20]
+ 133:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 134:../src/GPTIM _program.c **** 		SET_BIT(TIM2->CR1,GPTIM_CEN);
+ 308              		.loc 1 134 0
+ 309 0036 1A68     		ldr	r2, [r3]
+ 310 0038 42F00102 		orr	r2, r2, #1
+ 311 003c 1A60     		str	r2, [r3]
+ 312              	.L18:
+ 135:../src/GPTIM _program.c **** 	}
+ 136:../src/GPTIM _program.c **** 
+ 137:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 138:../src/GPTIM _program.c **** 	SET_BIT(TIM2->DIER,GPTIM_UIE);
+ 313              		.loc 1 138 0
+ 314 003e 4FF08042 		mov	r2, #1073741824
+ 315 0042 D368     		ldr	r3, [r2, #12]
+ 316 0044 43F00103 		orr	r3, r3, #1
+ 317 0048 D360     		str	r3, [r2, #12]
+ 139:../src/GPTIM _program.c **** }
+ 318              		.loc 1 139 0
+ 319 004a 7047     		bx	lr
+ 320              	.LVL13:
+ 321              	.L19:
+ 122:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 322              		.loc 1 122 0
+ 323 004c 4FF08043 		mov	r3, #1073741824
+ 324 0050 4FF6FF72 		movw	r2, #65535
+ 325 0054 DA62     		str	r2, [r3, #44]
+ 326              	.LVL14:
+ 124:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 327              		.loc 1 124 0
+ 328 0056 5A69     		ldr	r2, [r3, #20]
+ 329 0058 42F00102 		orr	r2, r2, #1
+ 330 005c 5A61     		str	r2, [r3, #20]
+ 126:../src/GPTIM _program.c **** 	}
+ 331              		.loc 1 126 0
+ 332 005e 1A68     		ldr	r2, [r3]
+ 333 0060 42F00102 		orr	r2, r2, #1
+ 334 0064 1A60     		str	r2, [r3]
+ 335 0066 EAE7     		b	.L18
+ 336              	.L21:
+ 337              		.align	2
+ 338              	.L20:
+ 339 0068 00000000 		.word	.LANCHOR0
+ 340 006c 00000000 		.word	.LANCHOR1
+ 341 0070 01800080 		.word	-2147450879
+ 342 0074 00000000 		.word	.LANCHOR2
+ 343 0078 00000000 		.word	.LANCHOR3
+ 344              		.cfi_endproc
+ 345              	.LFE3:
+ 347              		.section	.text.TIM2_voidStopInterval,"ax",%progbits
+ 348              		.align	1
+ 349              		.global	TIM2_voidStopInterval
+ 350              		.syntax unified
+ 351              		.thumb
+ 352              		.thumb_func
+ 353              		.fpu softvfp
+ 355              	TIM2_voidStopInterval:
+ 356              	.LFB4:
+ 140:../src/GPTIM _program.c **** 
+ 141:../src/GPTIM _program.c **** void TIM2_voidStopInterval(void)
+ 142:../src/GPTIM _program.c **** {
+ 357              		.loc 1 142 0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 0
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 361              		@ link register save eliminated.
+ 143:../src/GPTIM _program.c **** 	//*Disable Update Interrupt
+ 144:../src/GPTIM _program.c ****     CLR_BIT(TIM2->DIER,GPTIM_UIE);
+ 362              		.loc 1 144 0
+ 363 0000 4FF08043 		mov	r3, #1073741824
+ 364 0004 DA68     		ldr	r2, [r3, #12]
+ 365 0006 22F00102 		bic	r2, r2, #1
+ 366 000a DA60     		str	r2, [r3, #12]
+ 145:../src/GPTIM _program.c **** 	//*Stop Timer
+ 146:../src/GPTIM _program.c **** 	CLR_BIT(TIM2->CR1,GPTIM_CEN);
+ 367              		.loc 1 146 0
+ 368 000c 1A68     		ldr	r2, [r3]
+ 369 000e 22F00102 		bic	r2, r2, #1
+ 370 0012 1A60     		str	r2, [r3]
+ 147:../src/GPTIM _program.c **** }
+ 371              		.loc 1 147 0
+ 372 0014 7047     		bx	lr
+ 373              		.cfi_endproc
+ 374              	.LFE4:
+ 376              		.section	.text.TIM2_u16GetElapsedTime,"ax",%progbits
+ 377              		.align	1
+ 378              		.global	TIM2_u16GetElapsedTime
+ 379              		.syntax unified
+ 380              		.thumb
+ 381              		.thumb_func
+ 382              		.fpu softvfp
+ 384              	TIM2_u16GetElapsedTime:
+ 385              	.LFB5:
+ 148:../src/GPTIM _program.c **** u32  TIM2_u16GetElapsedTime(void)
+ 149:../src/GPTIM _program.c **** {
+ 386              		.loc 1 149 0
+ 387              		.cfi_startproc
+ 388              		@ args = 0, pretend = 0, frame = 0
+ 389              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390              		@ link register save eliminated.
+ 150:../src/GPTIM _program.c **** 	u32 Local_u32ElapsedTime;
+ 151:../src/GPTIM _program.c **** 	u16 Local_u16Cycle=Global2_u32Routine - Global2_u32CopyRoutine;
+ 391              		.loc 1 151 0
+ 392 0000 084B     		ldr	r3, .L24
+ 393 0002 1B68     		ldr	r3, [r3]
+ 394 0004 9BB2     		uxth	r3, r3
+ 395 0006 084A     		ldr	r2, .L24+4
+ 396 0008 1068     		ldr	r0, [r2]
+ 397 000a 80B2     		uxth	r0, r0
+ 398 000c 1B1A     		subs	r3, r3, r0
+ 399 000e 9BB2     		uxth	r3, r3
+ 400              	.LVL15:
+ 152:../src/GPTIM _program.c **** 
+ 153:../src/GPTIM _program.c **** 	Local_u32ElapsedTime=((TIM2->ARR)-(TIM2->CNT))+(Local_u16Cycle*65535);
+ 401              		.loc 1 153 0
+ 402 0010 4FF08042 		mov	r2, #1073741824
+ 403 0014 D06A     		ldr	r0, [r2, #44]
+ 404 0016 526A     		ldr	r2, [r2, #36]
+ 405 0018 801A     		subs	r0, r0, r2
+ 406 001a C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 407              	.LVL16:
+ 154:../src/GPTIM _program.c **** 	return Local_u32ElapsedTime;
+ 155:../src/GPTIM _program.c **** }
+ 408              		.loc 1 155 0
+ 409 001e 1844     		add	r0, r0, r3
+ 410              	.LVL17:
+ 411 0020 7047     		bx	lr
+ 412              	.L25:
+ 413 0022 00BF     		.align	2
+ 414              	.L24:
+ 415 0024 00000000 		.word	.LANCHOR2
+ 416 0028 00000000 		.word	.LANCHOR4
+ 417              		.cfi_endproc
+ 418              	.LFE5:
+ 420              		.section	.text.TIM2_u16GetRemainingTime,"ax",%progbits
+ 421              		.align	1
+ 422              		.global	TIM2_u16GetRemainingTime
+ 423              		.syntax unified
+ 424              		.thumb
+ 425              		.thumb_func
+ 426              		.fpu softvfp
+ 428              	TIM2_u16GetRemainingTime:
+ 429              	.LFB6:
+ 156:../src/GPTIM _program.c **** u32  TIM2_u16GetRemainingTime(void)
+ 157:../src/GPTIM _program.c **** {
+ 430              		.loc 1 157 0
+ 431              		.cfi_startproc
+ 432              		@ args = 0, pretend = 0, frame = 0
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 434              		@ link register save eliminated.
+ 435              	.LVL18:
+ 158:../src/GPTIM _program.c **** 	u32 local_u32RemainingTime=0;
+ 159:../src/GPTIM _program.c **** 	if(Global2_u32CopyRoutine>=1)
+ 436              		.loc 1 159 0
+ 437 0000 0D4B     		ldr	r3, .L31
+ 438 0002 1B68     		ldr	r3, [r3]
+ 439 0004 33B9     		cbnz	r3, .L30
+ 160:../src/GPTIM _program.c **** 	{
+ 161:../src/GPTIM _program.c **** 		local_u32RemainingTime=(TIM2->CNT)+(Global2_u32CopyRoutine-1)*65535+Global2_u32Fraction;
+ 162:../src/GPTIM _program.c **** 	}
+ 163:../src/GPTIM _program.c **** 	else if(Global2_u32CopyRoutine==0)
+ 440              		.loc 1 163 0
+ 441 0006 0C4B     		ldr	r3, .L31
+ 442 0008 1B68     		ldr	r3, [r3]
+ 443 000a 93B9     		cbnz	r3, .L29
+ 164:../src/GPTIM _program.c **** 	{
+ 165:../src/GPTIM _program.c **** 		local_u32RemainingTime=TIM2->CNT;
+ 444              		.loc 1 165 0
+ 445 000c 4FF08043 		mov	r3, #1073741824
+ 446 0010 586A     		ldr	r0, [r3, #36]
+ 447              	.LVL19:
+ 448 0012 7047     		bx	lr
+ 449              	.LVL20:
+ 450              	.L30:
+ 161:../src/GPTIM _program.c **** 	}
+ 451              		.loc 1 161 0
+ 452 0014 4FF08043 		mov	r3, #1073741824
+ 453 0018 5B6A     		ldr	r3, [r3, #36]
+ 454 001a 074A     		ldr	r2, .L31
+ 455 001c 1068     		ldr	r0, [r2]
+ 456 001e C0EB0040 		rsb	r0, r0, r0, lsl #16
+ 457 0022 1844     		add	r0, r0, r3
+ 458 0024 054B     		ldr	r3, .L31+4
+ 459 0026 1B68     		ldr	r3, [r3]
+ 460 0028 1844     		add	r0, r0, r3
+ 461 002a A0F57F40 		sub	r0, r0, #65280
+ 462 002e FF38     		subs	r0, r0, #255
+ 463              	.LVL21:
+ 464 0030 7047     		bx	lr
+ 465              	.LVL22:
+ 466              	.L29:
+ 158:../src/GPTIM _program.c **** 	if(Global2_u32CopyRoutine>=1)
+ 467              		.loc 1 158 0
+ 468 0032 0020     		movs	r0, #0
+ 166:../src/GPTIM _program.c **** 	}
+ 167:../src/GPTIM _program.c **** 	return local_u32RemainingTime;
+ 168:../src/GPTIM _program.c **** }
+ 469              		.loc 1 168 0
+ 470 0034 7047     		bx	lr
+ 471              	.L32:
+ 472 0036 00BF     		.align	2
+ 473              	.L31:
+ 474 0038 00000000 		.word	.LANCHOR4
+ 475 003c 00000000 		.word	.LANCHOR3
+ 476              		.cfi_endproc
+ 477              	.LFE6:
+ 479              		.section	.text.TIM3_voidInit,"ax",%progbits
+ 480              		.align	1
+ 481              		.global	TIM3_voidInit
+ 482              		.syntax unified
+ 483              		.thumb
+ 484              		.thumb_func
+ 485              		.fpu softvfp
+ 487              	TIM3_voidInit:
+ 488              	.LFB7:
+ 169:../src/GPTIM _program.c **** /***********************TIM3******************************/
+ 170:../src/GPTIM _program.c **** 
+ 171:../src/GPTIM _program.c **** /*  Clock of TIM2 is APB1_clk(8 MHZ)
+ 172:../src/GPTIM _program.c ****    Disable TIM7 interrupt
+ 173:../src/GPTIM _program.c ****    Disable TIM6
+ 174:../src/GPTIM _program.c ****    F(TIM2)=8M/(1+PSC)
+ 175:../src/GPTIM _program.c ****    If PSC=7
+ 176:../src/GPTIM _program.c **** 	Tick=>1us                 */
+ 177:../src/GPTIM _program.c **** 
+ 178:../src/GPTIM _program.c **** void TIM3_voidInit(void)
+ 179:../src/GPTIM _program.c **** {
+ 489              		.loc 1 179 0
+ 490              		.cfi_startproc
+ 491              		@ args = 0, pretend = 0, frame = 0
+ 492              		@ frame_needed = 0, uses_anonymous_args = 0
+ 493              		@ link register save eliminated.
+ 180:../src/GPTIM _program.c **** 	/*Up Counter Mode*/
+ 181:../src/GPTIM _program.c **** 	TIM3->CR1&=~(0b111<<4);
+ 494              		.loc 1 181 0
+ 495 0000 0D4B     		ldr	r3, .L34
+ 496 0002 1A68     		ldr	r2, [r3]
+ 497 0004 22F07002 		bic	r2, r2, #112
+ 498 0008 1A60     		str	r2, [r3]
+ 182:../src/GPTIM _program.c **** 	TIM3->CR1|=(DOWNCOUNTER<<4);
+ 499              		.loc 1 182 0
+ 500 000a 1A68     		ldr	r2, [r3]
+ 501 000c 42F01002 		orr	r2, r2, #16
+ 502 0010 1A60     		str	r2, [r3]
+ 183:../src/GPTIM _program.c **** 
+ 184:../src/GPTIM _program.c **** 	/*ARR is Buffered can't changed Execpt at Update Event*/
+ 185:../src/GPTIM _program.c **** 	SET_BIT(TIM3->CR1,GPTIM_ARPE);
+ 503              		.loc 1 185 0
+ 504 0012 1A68     		ldr	r2, [r3]
+ 505 0014 42F08002 		orr	r2, r2, #128
+ 506 0018 1A60     		str	r2, [r3]
+ 186:../src/GPTIM _program.c **** 
+ 187:../src/GPTIM _program.c **** 	/*Only Counter OverFlow UnderFlow Generate update Interrupt */
+ 188:../src/GPTIM _program.c **** 	SET_BIT(TIM3->CR1,GPTIM_URS);
+ 507              		.loc 1 188 0
+ 508 001a 1A68     		ldr	r2, [r3]
+ 509 001c 42F00402 		orr	r2, r2, #4
+ 510 0020 1A60     		str	r2, [r3]
+ 189:../src/GPTIM _program.c **** 
+ 190:../src/GPTIM _program.c **** 	/*Enable Update Event */
+ 191:../src/GPTIM _program.c **** 	CLR_BIT(TIM3->CR1,GPTIM_UDIS);
+ 511              		.loc 1 191 0
+ 512 0022 1A68     		ldr	r2, [r3]
+ 513 0024 22F00202 		bic	r2, r2, #2
+ 514 0028 1A60     		str	r2, [r3]
+ 192:../src/GPTIM _program.c **** 
+ 193:../src/GPTIM _program.c **** 	/*Disable Update Interrupt */
+ 194:../src/GPTIM _program.c **** 	CLR_BIT(TIM3->DIER,GPTIM_UIE);
+ 515              		.loc 1 194 0
+ 516 002a DA68     		ldr	r2, [r3, #12]
+ 517 002c 22F00102 		bic	r2, r2, #1
+ 518 0030 DA60     		str	r2, [r3, #12]
+ 195:../src/GPTIM _program.c **** 
+ 196:../src/GPTIM _program.c **** 	/*F(TIM2)=8M/(1+PSC)=1MHz
+ 197:../src/GPTIM _program.c **** 	*Ticks equal 1us*/
+ 198:../src/GPTIM _program.c **** 	TIM3->PSC=7;
+ 519              		.loc 1 198 0
+ 520 0032 0722     		movs	r2, #7
+ 521 0034 9A62     		str	r2, [r3, #40]
+ 199:../src/GPTIM _program.c **** }
+ 522              		.loc 1 199 0
+ 523 0036 7047     		bx	lr
+ 524              	.L35:
+ 525              		.align	2
+ 526              	.L34:
+ 527 0038 00040040 		.word	1073742848
+ 528              		.cfi_endproc
+ 529              	.LFE7:
+ 531              		.section	.text.TIM3_voidSetBusyWait,"ax",%progbits
+ 532              		.align	1
+ 533              		.global	TIM3_voidSetBusyWait
+ 534              		.syntax unified
+ 535              		.thumb
+ 536              		.thumb_func
+ 537              		.fpu softvfp
+ 539              	TIM3_voidSetBusyWait:
+ 540              	.LFB8:
+ 200:../src/GPTIM _program.c **** /* Synchronous API  Lock Processor For Certain Ticks
+ 201:../src/GPTIM _program.c ****    *Disable SysTick interrupt
+ 202:../src/GPTIM _program.c ****    *enable Systick
+ 203:../src/GPTIM _program.c ****    *polling flag (underflow)
+ 204:../src/GPTIM _program.c ****    *Tick=>1us*/
+ 205:../src/GPTIM _program.c **** void TIM3_voidSetBusyWait( u32 Copy_u32Ticks )
+ 206:../src/GPTIM _program.c **** {
+ 541              		.loc 1 206 0
+ 542              		.cfi_startproc
+ 543              		@ args = 0, pretend = 0, frame = 0
+ 544              		@ frame_needed = 0, uses_anonymous_args = 0
+ 545              		@ link register save eliminated.
+ 546              	.LVL23:
+ 547 0000 10B4     		push	{r4}
+ 548              		.cfi_def_cfa_offset 4
+ 549              		.cfi_offset 4, -4
+ 207:../src/GPTIM _program.c **** 	u32 Local_u32Routine=Copy_u32Ticks/65535;
+ 550              		.loc 1 207 0
+ 551 0002 1E4B     		ldr	r3, .L42
+ 552 0004 A3FB0023 		umull	r2, r3, r3, r0
+ 553 0008 DB0B     		lsrs	r3, r3, #15
+ 554              	.LVL24:
+ 208:../src/GPTIM _program.c **** 	u32 Local_u32Fraction=Copy_u32Ticks%65535;
+ 555              		.loc 1 208 0
+ 556 000a C3EB0344 		rsb	r4, r3, r3, lsl #16
+ 557 000e 041B     		subs	r4, r0, r4
+ 558              	.LVL25:
+ 209:../src/GPTIM _program.c **** 	while(Local_u32Routine--)
+ 559              		.loc 1 209 0
+ 560 0010 16E0     		b	.L37
+ 561              	.LVL26:
+ 562              	.L39:
+ 210:../src/GPTIM _program.c **** 	{
+ 211:../src/GPTIM _program.c **** 		TIM3->ARR=65535;
+ 563              		.loc 1 211 0
+ 564 0012 1B4B     		ldr	r3, .L42+4
+ 565 0014 4FF6FF72 		movw	r2, #65535
+ 566 0018 DA62     		str	r2, [r3, #44]
+ 212:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 213:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 567              		.loc 1 213 0
+ 568 001a 5A69     		ldr	r2, [r3, #20]
+ 569 001c 42F00102 		orr	r2, r2, #1
+ 570 0020 5A61     		str	r2, [r3, #20]
+ 214:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 215:../src/GPTIM _program.c **** 		SET_BIT(TIM3->CR1,GPTIM_CEN);
+ 571              		.loc 1 215 0
+ 572 0022 1A68     		ldr	r2, [r3]
+ 573 0024 42F00102 		orr	r2, r2, #1
+ 574 0028 1A60     		str	r2, [r3]
+ 575              	.L38:
+ 216:../src/GPTIM _program.c **** 		while(GET_BIT(TIM3->SR,GPTIM_UIF)==0);
+ 576              		.loc 1 216 0 discriminator 1
+ 577 002a 154B     		ldr	r3, .L42+4
+ 578 002c 1B69     		ldr	r3, [r3, #16]
+ 579 002e 13F0010F 		tst	r3, #1
+ 580 0032 FAD0     		beq	.L38
+ 217:../src/GPTIM _program.c **** 		/*Clear Underflow Flag*/
+ 218:../src/GPTIM _program.c **** 		CLR_BIT(TIM3->SR,GPTIM_UIF);
+ 581              		.loc 1 218 0
+ 582 0034 124A     		ldr	r2, .L42+4
+ 583 0036 1369     		ldr	r3, [r2, #16]
+ 584 0038 23F00103 		bic	r3, r3, #1
+ 585 003c 1361     		str	r3, [r2, #16]
+ 209:../src/GPTIM _program.c **** 	{
+ 586              		.loc 1 209 0
+ 587 003e 0B46     		mov	r3, r1
+ 588              	.LVL27:
+ 589              	.L37:
+ 590 0040 591E     		subs	r1, r3, #1
+ 591              	.LVL28:
+ 592 0042 002B     		cmp	r3, #0
+ 593 0044 E5D1     		bne	.L39
+ 219:../src/GPTIM _program.c **** 	}
+ 220:../src/GPTIM _program.c **** 
+ 221:../src/GPTIM _program.c **** 	TIM3->ARR=Local_u32Fraction;
+ 594              		.loc 1 221 0
+ 595 0046 0E4B     		ldr	r3, .L42+4
+ 596 0048 DC62     		str	r4, [r3, #44]
+ 222:../src/GPTIM _program.c **** 	/*Re-Initialize the the counter & prescaller*/
+ 223:../src/GPTIM _program.c **** 	SET_BIT(TIM3->EGR,GPTIM_UG);
+ 597              		.loc 1 223 0
+ 598 004a 5A69     		ldr	r2, [r3, #20]
+ 599 004c 42F00102 		orr	r2, r2, #1
+ 600 0050 5A61     		str	r2, [r3, #20]
+ 224:../src/GPTIM _program.c **** 	/*Enable counter*/
+ 225:../src/GPTIM _program.c **** 	SET_BIT(TIM3->CR1,GPTIM_CEN);
+ 601              		.loc 1 225 0
+ 602 0052 1A68     		ldr	r2, [r3]
+ 603 0054 42F00102 		orr	r2, r2, #1
+ 604 0058 1A60     		str	r2, [r3]
+ 605              	.L40:
+ 226:../src/GPTIM _program.c **** 	while(GET_BIT(TIM3->SR,GPTIM_UIF)==0);
+ 606              		.loc 1 226 0 discriminator 1
+ 607 005a 094B     		ldr	r3, .L42+4
+ 608 005c 1B69     		ldr	r3, [r3, #16]
+ 609 005e 13F0010F 		tst	r3, #1
+ 610 0062 FAD0     		beq	.L40
+ 227:../src/GPTIM _program.c **** 	/*Clear Uderflow Flag*/
+ 228:../src/GPTIM _program.c **** 	CLR_BIT(TIM3->SR,GPTIM_UIF);
+ 611              		.loc 1 228 0
+ 612 0064 064B     		ldr	r3, .L42+4
+ 613 0066 1A69     		ldr	r2, [r3, #16]
+ 614 0068 22F00102 		bic	r2, r2, #1
+ 615 006c 1A61     		str	r2, [r3, #16]
+ 229:../src/GPTIM _program.c **** 	/*Stop Timer*/
+ 230:../src/GPTIM _program.c **** 	CLR_BIT(TIM3->CR1,GPTIM_CEN);
+ 616              		.loc 1 230 0
+ 617 006e 1A68     		ldr	r2, [r3]
+ 618 0070 22F00102 		bic	r2, r2, #1
+ 619 0074 1A60     		str	r2, [r3]
+ 231:../src/GPTIM _program.c **** 
+ 232:../src/GPTIM _program.c **** 
+ 233:../src/GPTIM _program.c **** 
+ 234:../src/GPTIM _program.c **** }
+ 620              		.loc 1 234 0
+ 621 0076 10BC     		pop	{r4}
+ 622              		.cfi_restore 4
+ 623              		.cfi_def_cfa_offset 0
+ 624              	.LVL29:
+ 625 0078 7047     		bx	lr
+ 626              	.L43:
+ 627 007a 00BF     		.align	2
+ 628              	.L42:
+ 629 007c 01800080 		.word	-2147450879
+ 630 0080 00040040 		.word	1073742848
+ 631              		.cfi_endproc
+ 632              	.LFE8:
+ 634              		.section	.text.TIM3_voidSetIntervalSingle,"ax",%progbits
+ 635              		.align	1
+ 636              		.global	TIM3_voidSetIntervalSingle
+ 637              		.syntax unified
+ 638              		.thumb
+ 639              		.thumb_func
+ 640              		.fpu softvfp
+ 642              	TIM3_voidSetIntervalSingle:
+ 643              	.LFB9:
+ 235:../src/GPTIM _program.c **** void TIM3_voidSetIntervalSingle( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 236:../src/GPTIM _program.c **** {
+ 644              		.loc 1 236 0
+ 645              		.cfi_startproc
+ 646              		@ args = 0, pretend = 0, frame = 0
+ 647              		@ frame_needed = 0, uses_anonymous_args = 0
+ 648              		@ link register save eliminated.
+ 649              	.LVL30:
+ 237:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 238:../src/GPTIM _program.c **** 	TIM3_CallBack=Copy_ptr;
+ 650              		.loc 1 238 0
+ 651 0000 1B4B     		ldr	r3, .L48
+ 652 0002 1960     		str	r1, [r3]
+ 239:../src/GPTIM _program.c **** 	/*Set Mode to Single*/
+ 240:../src/GPTIM _program.c **** 	TIM3_u8ModeOfInterval=SINGLE_INTERVAL;
+ 653              		.loc 1 240 0
+ 654 0004 1B4B     		ldr	r3, .L48+4
+ 655 0006 0022     		movs	r2, #0
+ 656 0008 1A70     		strb	r2, [r3]
+ 241:../src/GPTIM _program.c **** 
+ 242:../src/GPTIM _program.c **** 	Global3_u32Routine =(Copy_u32Ticks/65535);
+ 657              		.loc 1 242 0
+ 658 000a 1B4B     		ldr	r3, .L48+8
+ 659 000c A3FB0023 		umull	r2, r3, r3, r0
+ 660 0010 DB0B     		lsrs	r3, r3, #15
+ 661 0012 1A4A     		ldr	r2, .L48+12
+ 662 0014 1360     		str	r3, [r2]
+ 243:../src/GPTIM _program.c **** 	Global3_u32Fraction=Copy_u32Ticks%65535;
+ 663              		.loc 1 243 0
+ 664 0016 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 665 001a C11A     		subs	r1, r0, r3
+ 666              	.LVL31:
+ 667 001c 184B     		ldr	r3, .L48+16
+ 668 001e 1960     		str	r1, [r3]
+ 244:../src/GPTIM _program.c **** 	/*    to be initialize before enter the interrupt */
+ 245:../src/GPTIM _program.c **** 	Global3_u32CopyRoutine=Global3_u32Routine;
+ 669              		.loc 1 245 0
+ 670 0020 1168     		ldr	r1, [r2]
+ 671 0022 184B     		ldr	r3, .L48+20
+ 672 0024 1960     		str	r1, [r3]
+ 246:../src/GPTIM _program.c **** 	/*stop timer */
+ 247:../src/GPTIM _program.c **** 	CLR_BIT(TIM3->CR1,GPTIM_CEN);
+ 673              		.loc 1 247 0
+ 674 0026 1849     		ldr	r1, .L48+24
+ 675 0028 0B68     		ldr	r3, [r1]
+ 676 002a 23F00103 		bic	r3, r3, #1
+ 677 002e 0B60     		str	r3, [r1]
+ 678              	.LVL32:
+ 248:../src/GPTIM _program.c **** 
+ 249:../src/GPTIM _program.c **** 	if(Global3_u32Routine)
+ 679              		.loc 1 249 0
+ 680 0030 1368     		ldr	r3, [r2]
+ 681 0032 8BB9     		cbnz	r3, .L47
+ 250:../src/GPTIM _program.c **** 	{
+ 251:../src/GPTIM _program.c **** 		TIM3->ARR=65535;
+ 252:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 253:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 254:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 255:../src/GPTIM _program.c **** 		SET_BIT(TIM3->CR1,GPTIM_CEN);
+ 256:../src/GPTIM _program.c **** 	}
+ 257:../src/GPTIM _program.c **** 	else
+ 258:../src/GPTIM _program.c **** 	{
+ 259:../src/GPTIM _program.c **** 		TIM3->ARR=Global3_u32Fraction;
+ 682              		.loc 1 259 0
+ 683 0034 124B     		ldr	r3, .L48+16
+ 684 0036 1A68     		ldr	r2, [r3]
+ 685 0038 134B     		ldr	r3, .L48+24
+ 686 003a DA62     		str	r2, [r3, #44]
+ 260:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 261:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 687              		.loc 1 261 0
+ 688 003c 5A69     		ldr	r2, [r3, #20]
+ 689 003e 42F00102 		orr	r2, r2, #1
+ 690 0042 5A61     		str	r2, [r3, #20]
+ 262:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 263:../src/GPTIM _program.c **** 		SET_BIT(TIM3->CR1,GPTIM_CEN);
+ 691              		.loc 1 263 0
+ 692 0044 1A68     		ldr	r2, [r3]
+ 693 0046 42F00102 		orr	r2, r2, #1
+ 694 004a 1A60     		str	r2, [r3]
+ 695              	.L46:
+ 264:../src/GPTIM _program.c **** 	}
+ 265:../src/GPTIM _program.c **** 
+ 266:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 267:../src/GPTIM _program.c **** 	SET_BIT(TIM3->DIER,GPTIM_UIE);
+ 696              		.loc 1 267 0
+ 697 004c 0E4A     		ldr	r2, .L48+24
+ 698 004e D368     		ldr	r3, [r2, #12]
+ 699 0050 43F00103 		orr	r3, r3, #1
+ 700 0054 D360     		str	r3, [r2, #12]
+ 268:../src/GPTIM _program.c **** }
+ 701              		.loc 1 268 0
+ 702 0056 7047     		bx	lr
+ 703              	.L47:
+ 251:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 704              		.loc 1 251 0
+ 705 0058 4FF6FF72 		movw	r2, #65535
+ 706 005c CA62     		str	r2, [r1, #44]
+ 253:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 707              		.loc 1 253 0
+ 708 005e 4A69     		ldr	r2, [r1, #20]
+ 709 0060 42F00102 		orr	r2, r2, #1
+ 710 0064 4A61     		str	r2, [r1, #20]
+ 255:../src/GPTIM _program.c **** 	}
+ 711              		.loc 1 255 0
+ 712 0066 0A68     		ldr	r2, [r1]
+ 713 0068 42F00102 		orr	r2, r2, #1
+ 714 006c 0A60     		str	r2, [r1]
+ 715 006e EDE7     		b	.L46
+ 716              	.L49:
+ 717              		.align	2
+ 718              	.L48:
+ 719 0070 00000000 		.word	.LANCHOR5
+ 720 0074 00000000 		.word	.LANCHOR6
+ 721 0078 01800080 		.word	-2147450879
+ 722 007c 00000000 		.word	.LANCHOR7
+ 723 0080 00000000 		.word	.LANCHOR8
+ 724 0084 00000000 		.word	.LANCHOR9
+ 725 0088 00040040 		.word	1073742848
+ 726              		.cfi_endproc
+ 727              	.LFE9:
+ 729              		.section	.text.TIM3_voidSetIntervalPeriodic,"ax",%progbits
+ 730              		.align	1
+ 731              		.global	TIM3_voidSetIntervalPeriodic
+ 732              		.syntax unified
+ 733              		.thumb
+ 734              		.thumb_func
+ 735              		.fpu softvfp
+ 737              	TIM3_voidSetIntervalPeriodic:
+ 738              	.LFB10:
+ 269:../src/GPTIM _program.c **** void TIM3_voidSetIntervalPeriodic( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 270:../src/GPTIM _program.c **** {
+ 739              		.loc 1 270 0
+ 740              		.cfi_startproc
+ 741              		@ args = 0, pretend = 0, frame = 0
+ 742              		@ frame_needed = 0, uses_anonymous_args = 0
+ 743              		@ link register save eliminated.
+ 744              	.LVL33:
+ 271:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 272:../src/GPTIM _program.c **** 	TIM3_CallBack=Copy_ptr;
+ 745              		.loc 1 272 0
+ 746 0000 184B     		ldr	r3, .L54
+ 747 0002 1960     		str	r1, [r3]
+ 273:../src/GPTIM _program.c **** 	/*Set Mode to Periodic*/
+ 274:../src/GPTIM _program.c **** 	TIM3_u8ModeOfInterval=PERIODIC_INTERVAL;
+ 748              		.loc 1 274 0
+ 749 0004 184B     		ldr	r3, .L54+4
+ 750 0006 0122     		movs	r2, #1
+ 751 0008 1A70     		strb	r2, [r3]
+ 275:../src/GPTIM _program.c **** 
+ 276:../src/GPTIM _program.c **** 	Global3_u32Routine =(Copy_u32Ticks/65535) ;
+ 752              		.loc 1 276 0
+ 753 000a 184B     		ldr	r3, .L54+8
+ 754 000c A3FB0023 		umull	r2, r3, r3, r0
+ 755 0010 DB0B     		lsrs	r3, r3, #15
+ 756 0012 174A     		ldr	r2, .L54+12
+ 757 0014 1360     		str	r3, [r2]
+ 277:../src/GPTIM _program.c **** 	Global3_u32Fraction=Copy_u32Ticks%65535;
+ 758              		.loc 1 277 0
+ 759 0016 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 760 001a C11A     		subs	r1, r0, r3
+ 761              	.LVL34:
+ 762 001c 154B     		ldr	r3, .L54+16
+ 763 001e 1960     		str	r1, [r3]
+ 278:../src/GPTIM _program.c **** 
+ 279:../src/GPTIM _program.c **** 	if(Global3_u32Routine)
+ 764              		.loc 1 279 0
+ 765 0020 1368     		ldr	r3, [r2]
+ 766 0022 8BB9     		cbnz	r3, .L53
+ 280:../src/GPTIM _program.c **** 	{
+ 281:../src/GPTIM _program.c **** 		TIM3->ARR=65535;
+ 282:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 283:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 284:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 285:../src/GPTIM _program.c **** 		SET_BIT(TIM3->CR1,GPTIM_CEN);
+ 286:../src/GPTIM _program.c **** 	}
+ 287:../src/GPTIM _program.c **** 	else
+ 288:../src/GPTIM _program.c **** 	{
+ 289:../src/GPTIM _program.c **** 		TIM3->ARR=Global3_u32Fraction;
+ 767              		.loc 1 289 0
+ 768 0024 134B     		ldr	r3, .L54+16
+ 769 0026 1A68     		ldr	r2, [r3]
+ 770 0028 134B     		ldr	r3, .L54+20
+ 771 002a DA62     		str	r2, [r3, #44]
+ 772              	.LVL35:
+ 290:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 291:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 773              		.loc 1 291 0
+ 774 002c 5A69     		ldr	r2, [r3, #20]
+ 775 002e 42F00102 		orr	r2, r2, #1
+ 776 0032 5A61     		str	r2, [r3, #20]
+ 292:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 293:../src/GPTIM _program.c **** 		SET_BIT(TIM3->CR1,GPTIM_CEN);
+ 777              		.loc 1 293 0
+ 778 0034 1A68     		ldr	r2, [r3]
+ 779 0036 42F00102 		orr	r2, r2, #1
+ 780 003a 1A60     		str	r2, [r3]
+ 781              	.L52:
+ 294:../src/GPTIM _program.c **** 	}
+ 295:../src/GPTIM _program.c **** 
+ 296:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 297:../src/GPTIM _program.c **** 	SET_BIT(TIM3->DIER,GPTIM_UIE);
+ 782              		.loc 1 297 0
+ 783 003c 0E4A     		ldr	r2, .L54+20
+ 784 003e D368     		ldr	r3, [r2, #12]
+ 785 0040 43F00103 		orr	r3, r3, #1
+ 786 0044 D360     		str	r3, [r2, #12]
+ 298:../src/GPTIM _program.c **** }
+ 787              		.loc 1 298 0
+ 788 0046 7047     		bx	lr
+ 789              	.LVL36:
+ 790              	.L53:
+ 281:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 791              		.loc 1 281 0
+ 792 0048 0B4B     		ldr	r3, .L54+20
+ 793 004a 4FF6FF72 		movw	r2, #65535
+ 794 004e DA62     		str	r2, [r3, #44]
+ 795              	.LVL37:
+ 283:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 796              		.loc 1 283 0
+ 797 0050 5A69     		ldr	r2, [r3, #20]
+ 798 0052 42F00102 		orr	r2, r2, #1
+ 799 0056 5A61     		str	r2, [r3, #20]
+ 285:../src/GPTIM _program.c **** 	}
+ 800              		.loc 1 285 0
+ 801 0058 1A68     		ldr	r2, [r3]
+ 802 005a 42F00102 		orr	r2, r2, #1
+ 803 005e 1A60     		str	r2, [r3]
+ 804 0060 ECE7     		b	.L52
+ 805              	.L55:
+ 806 0062 00BF     		.align	2
+ 807              	.L54:
+ 808 0064 00000000 		.word	.LANCHOR5
+ 809 0068 00000000 		.word	.LANCHOR6
+ 810 006c 01800080 		.word	-2147450879
+ 811 0070 00000000 		.word	.LANCHOR7
+ 812 0074 00000000 		.word	.LANCHOR8
+ 813 0078 00040040 		.word	1073742848
+ 814              		.cfi_endproc
+ 815              	.LFE10:
+ 817              		.section	.text.TIM3_voidStopInterval,"ax",%progbits
+ 818              		.align	1
+ 819              		.global	TIM3_voidStopInterval
+ 820              		.syntax unified
+ 821              		.thumb
+ 822              		.thumb_func
+ 823              		.fpu softvfp
+ 825              	TIM3_voidStopInterval:
+ 826              	.LFB11:
+ 299:../src/GPTIM _program.c **** 
+ 300:../src/GPTIM _program.c **** void TIM3_voidStopInterval(void)
+ 301:../src/GPTIM _program.c **** {
+ 827              		.loc 1 301 0
+ 828              		.cfi_startproc
+ 829              		@ args = 0, pretend = 0, frame = 0
+ 830              		@ frame_needed = 0, uses_anonymous_args = 0
+ 831              		@ link register save eliminated.
+ 302:../src/GPTIM _program.c **** 	//*Disable Update Interrupt
+ 303:../src/GPTIM _program.c ****     CLR_BIT(TIM3->DIER,GPTIM_UIE);
+ 832              		.loc 1 303 0
+ 833 0000 044B     		ldr	r3, .L57
+ 834 0002 DA68     		ldr	r2, [r3, #12]
+ 835 0004 22F00102 		bic	r2, r2, #1
+ 836 0008 DA60     		str	r2, [r3, #12]
+ 304:../src/GPTIM _program.c **** 	//*Stop Timer
+ 305:../src/GPTIM _program.c **** 	CLR_BIT(TIM3->CR1,GPTIM_CEN);
+ 837              		.loc 1 305 0
+ 838 000a 1A68     		ldr	r2, [r3]
+ 839 000c 22F00102 		bic	r2, r2, #1
+ 840 0010 1A60     		str	r2, [r3]
+ 306:../src/GPTIM _program.c **** }
+ 841              		.loc 1 306 0
+ 842 0012 7047     		bx	lr
+ 843              	.L58:
+ 844              		.align	2
+ 845              	.L57:
+ 846 0014 00040040 		.word	1073742848
+ 847              		.cfi_endproc
+ 848              	.LFE11:
+ 850              		.section	.text.TIM3_u16GetElapsedTime,"ax",%progbits
+ 851              		.align	1
+ 852              		.global	TIM3_u16GetElapsedTime
+ 853              		.syntax unified
+ 854              		.thumb
+ 855              		.thumb_func
+ 856              		.fpu softvfp
+ 858              	TIM3_u16GetElapsedTime:
+ 859              	.LFB12:
+ 307:../src/GPTIM _program.c **** u32  TIM3_u16GetElapsedTime(void)
+ 308:../src/GPTIM _program.c **** {
+ 860              		.loc 1 308 0
+ 861              		.cfi_startproc
+ 862              		@ args = 0, pretend = 0, frame = 0
+ 863              		@ frame_needed = 0, uses_anonymous_args = 0
+ 864              		@ link register save eliminated.
+ 309:../src/GPTIM _program.c **** 	u32 Local_u32ElapsedTime;
+ 310:../src/GPTIM _program.c **** 	u16 Local_u16Cycle=Global3_u32Routine - Global3_u32CopyRoutine;
+ 865              		.loc 1 310 0
+ 866 0000 074B     		ldr	r3, .L60
+ 867 0002 1B68     		ldr	r3, [r3]
+ 868 0004 9BB2     		uxth	r3, r3
+ 869 0006 074A     		ldr	r2, .L60+4
+ 870 0008 1068     		ldr	r0, [r2]
+ 871 000a 80B2     		uxth	r0, r0
+ 872 000c 1B1A     		subs	r3, r3, r0
+ 873 000e 9BB2     		uxth	r3, r3
+ 874              	.LVL38:
+ 311:../src/GPTIM _program.c **** 
+ 312:../src/GPTIM _program.c **** 	Local_u32ElapsedTime=((TIM3->ARR)-(TIM3->CNT))+(Local_u16Cycle*65535);
+ 875              		.loc 1 312 0
+ 876 0010 054A     		ldr	r2, .L60+8
+ 877 0012 D06A     		ldr	r0, [r2, #44]
+ 878 0014 526A     		ldr	r2, [r2, #36]
+ 879 0016 801A     		subs	r0, r0, r2
+ 880 0018 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 881              	.LVL39:
+ 313:../src/GPTIM _program.c **** 	return Local_u32ElapsedTime;
+ 314:../src/GPTIM _program.c **** }
+ 882              		.loc 1 314 0
+ 883 001c 1844     		add	r0, r0, r3
+ 884              	.LVL40:
+ 885 001e 7047     		bx	lr
+ 886              	.L61:
+ 887              		.align	2
+ 888              	.L60:
+ 889 0020 00000000 		.word	.LANCHOR7
+ 890 0024 00000000 		.word	.LANCHOR9
+ 891 0028 00040040 		.word	1073742848
+ 892              		.cfi_endproc
+ 893              	.LFE12:
+ 895              		.section	.text.TIM3_u16GetRemainingTime,"ax",%progbits
+ 896              		.align	1
+ 897              		.global	TIM3_u16GetRemainingTime
+ 898              		.syntax unified
+ 899              		.thumb
+ 900              		.thumb_func
+ 901              		.fpu softvfp
+ 903              	TIM3_u16GetRemainingTime:
+ 904              	.LFB13:
+ 315:../src/GPTIM _program.c **** u32  TIM3_u16GetRemainingTime(void)
+ 316:../src/GPTIM _program.c **** {
+ 905              		.loc 1 316 0
+ 906              		.cfi_startproc
+ 907              		@ args = 0, pretend = 0, frame = 0
+ 908              		@ frame_needed = 0, uses_anonymous_args = 0
+ 909              		@ link register save eliminated.
+ 910              	.LVL41:
+ 317:../src/GPTIM _program.c **** 	u32 local_u32RemainingTime=0;
+ 318:../src/GPTIM _program.c **** 	if(Global3_u32CopyRoutine>=1)
+ 911              		.loc 1 318 0
+ 912 0000 0C4B     		ldr	r3, .L67
+ 913 0002 1B68     		ldr	r3, [r3]
+ 914 0004 2BB9     		cbnz	r3, .L66
+ 319:../src/GPTIM _program.c **** 	{
+ 320:../src/GPTIM _program.c **** 		local_u32RemainingTime=(TIM3->CNT)+(Global3_u32CopyRoutine-1)*65535+Global3_u32Fraction;
+ 321:../src/GPTIM _program.c **** 	}
+ 322:../src/GPTIM _program.c **** 	else if(Global3_u32CopyRoutine==0)
+ 915              		.loc 1 322 0
+ 916 0006 0B4B     		ldr	r3, .L67
+ 917 0008 1B68     		ldr	r3, [r3]
+ 918 000a 83B9     		cbnz	r3, .L65
+ 323:../src/GPTIM _program.c **** 	{
+ 324:../src/GPTIM _program.c **** 		local_u32RemainingTime=TIM3->CNT;
+ 919              		.loc 1 324 0
+ 920 000c 0A4B     		ldr	r3, .L67+4
+ 921 000e 586A     		ldr	r0, [r3, #36]
+ 922              	.LVL42:
+ 923 0010 7047     		bx	lr
+ 924              	.LVL43:
+ 925              	.L66:
+ 320:../src/GPTIM _program.c **** 	}
+ 926              		.loc 1 320 0
+ 927 0012 094B     		ldr	r3, .L67+4
+ 928 0014 5B6A     		ldr	r3, [r3, #36]
+ 929 0016 074A     		ldr	r2, .L67
+ 930 0018 1068     		ldr	r0, [r2]
+ 931 001a C0EB0040 		rsb	r0, r0, r0, lsl #16
+ 932 001e 1844     		add	r0, r0, r3
+ 933 0020 064B     		ldr	r3, .L67+8
+ 934 0022 1B68     		ldr	r3, [r3]
+ 935 0024 1844     		add	r0, r0, r3
+ 936 0026 A0F57F40 		sub	r0, r0, #65280
+ 937 002a FF38     		subs	r0, r0, #255
+ 938              	.LVL44:
+ 939 002c 7047     		bx	lr
+ 940              	.LVL45:
+ 941              	.L65:
+ 317:../src/GPTIM _program.c **** 	if(Global3_u32CopyRoutine>=1)
+ 942              		.loc 1 317 0
+ 943 002e 0020     		movs	r0, #0
+ 325:../src/GPTIM _program.c **** 	}
+ 326:../src/GPTIM _program.c **** 	return local_u32RemainingTime;
+ 327:../src/GPTIM _program.c **** }
+ 944              		.loc 1 327 0
+ 945 0030 7047     		bx	lr
+ 946              	.L68:
+ 947 0032 00BF     		.align	2
+ 948              	.L67:
+ 949 0034 00000000 		.word	.LANCHOR9
+ 950 0038 00040040 		.word	1073742848
+ 951 003c 00000000 		.word	.LANCHOR8
+ 952              		.cfi_endproc
+ 953              	.LFE13:
+ 955              		.section	.text.TIM4_voidInit,"ax",%progbits
+ 956              		.align	1
+ 957              		.global	TIM4_voidInit
+ 958              		.syntax unified
+ 959              		.thumb
+ 960              		.thumb_func
+ 961              		.fpu softvfp
+ 963              	TIM4_voidInit:
+ 964              	.LFB14:
+ 328:../src/GPTIM _program.c **** /**********************TIM4*********************************/
+ 329:../src/GPTIM _program.c **** 
+ 330:../src/GPTIM _program.c **** /*  Clock of TIM2 is APB1_clk(8 MHZ)
+ 331:../src/GPTIM _program.c ****    Disable TIM7 interrupt
+ 332:../src/GPTIM _program.c ****    Disable TIM6
+ 333:../src/GPTIM _program.c ****    F(TIM2)=8M/(1+PSC)
+ 334:../src/GPTIM _program.c ****    If PSC=7
+ 335:../src/GPTIM _program.c **** 	Tick=>1us                 */
+ 336:../src/GPTIM _program.c **** void TIM4_voidInit(void)
+ 337:../src/GPTIM _program.c **** {
+ 965              		.loc 1 337 0
+ 966              		.cfi_startproc
+ 967              		@ args = 0, pretend = 0, frame = 0
+ 968              		@ frame_needed = 0, uses_anonymous_args = 0
+ 969              		@ link register save eliminated.
+ 338:../src/GPTIM _program.c **** 	/*Up Counter Mode*/
+ 339:../src/GPTIM _program.c **** 	TIM4->CR1&=~(0b111<<4);
+ 970              		.loc 1 339 0
+ 971 0000 0D4B     		ldr	r3, .L70
+ 972 0002 1A68     		ldr	r2, [r3]
+ 973 0004 22F07002 		bic	r2, r2, #112
+ 974 0008 1A60     		str	r2, [r3]
+ 340:../src/GPTIM _program.c **** 	TIM4->CR1|=(DOWNCOUNTER<<4);
+ 975              		.loc 1 340 0
+ 976 000a 1A68     		ldr	r2, [r3]
+ 977 000c 42F01002 		orr	r2, r2, #16
+ 978 0010 1A60     		str	r2, [r3]
+ 341:../src/GPTIM _program.c **** 
+ 342:../src/GPTIM _program.c **** 	/*ARR is Buffered can't changed Execpt at Update Event*/
+ 343:../src/GPTIM _program.c **** 	SET_BIT(TIM4->CR1,GPTIM_ARPE);
+ 979              		.loc 1 343 0
+ 980 0012 1A68     		ldr	r2, [r3]
+ 981 0014 42F08002 		orr	r2, r2, #128
+ 982 0018 1A60     		str	r2, [r3]
+ 344:../src/GPTIM _program.c **** 
+ 345:../src/GPTIM _program.c **** 	/*Only Counter OverFlow UnderFlow Generate update Interrupt */
+ 346:../src/GPTIM _program.c **** 	SET_BIT(TIM4->CR1,GPTIM_URS);
+ 983              		.loc 1 346 0
+ 984 001a 1A68     		ldr	r2, [r3]
+ 985 001c 42F00402 		orr	r2, r2, #4
+ 986 0020 1A60     		str	r2, [r3]
+ 347:../src/GPTIM _program.c **** 
+ 348:../src/GPTIM _program.c **** 	/*Enable Update Event */
+ 349:../src/GPTIM _program.c **** 	CLR_BIT(TIM4->CR1,GPTIM_UDIS);
+ 987              		.loc 1 349 0
+ 988 0022 1A68     		ldr	r2, [r3]
+ 989 0024 22F00202 		bic	r2, r2, #2
+ 990 0028 1A60     		str	r2, [r3]
+ 350:../src/GPTIM _program.c **** 
+ 351:../src/GPTIM _program.c **** 	/*Disable Update Interrupt */
+ 352:../src/GPTIM _program.c **** 	CLR_BIT(TIM4->DIER,GPTIM_UIE);
+ 991              		.loc 1 352 0
+ 992 002a DA68     		ldr	r2, [r3, #12]
+ 993 002c 22F00102 		bic	r2, r2, #1
+ 994 0030 DA60     		str	r2, [r3, #12]
+ 353:../src/GPTIM _program.c **** 
+ 354:../src/GPTIM _program.c **** 	/*F(TIM2)=8M/(1+PSC)=1MHz
+ 355:../src/GPTIM _program.c **** 	*Ticks equal 1us*/
+ 356:../src/GPTIM _program.c **** 	TIM4->PSC=7;
+ 995              		.loc 1 356 0
+ 996 0032 0722     		movs	r2, #7
+ 997 0034 9A62     		str	r2, [r3, #40]
+ 357:../src/GPTIM _program.c **** }
+ 998              		.loc 1 357 0
+ 999 0036 7047     		bx	lr
+ 1000              	.L71:
+ 1001              		.align	2
+ 1002              	.L70:
+ 1003 0038 00080040 		.word	1073743872
+ 1004              		.cfi_endproc
+ 1005              	.LFE14:
+ 1007              		.section	.text.TIM4_voidSetBusyWait,"ax",%progbits
+ 1008              		.align	1
+ 1009              		.global	TIM4_voidSetBusyWait
+ 1010              		.syntax unified
+ 1011              		.thumb
+ 1012              		.thumb_func
+ 1013              		.fpu softvfp
+ 1015              	TIM4_voidSetBusyWait:
+ 1016              	.LFB15:
+ 358:../src/GPTIM _program.c **** /* Synchronous API  Lock Processor For Certain Ticks
+ 359:../src/GPTIM _program.c ****    *Disable SysTick interrupt
+ 360:../src/GPTIM _program.c ****    *enable Systick
+ 361:../src/GPTIM _program.c ****    *polling flag (underflow)
+ 362:../src/GPTIM _program.c ****    *Tick=>1us*/
+ 363:../src/GPTIM _program.c **** void TIM4_voidSetBusyWait( u32 Copy_u32Ticks )
+ 364:../src/GPTIM _program.c **** {
+ 1017              		.loc 1 364 0
+ 1018              		.cfi_startproc
+ 1019              		@ args = 0, pretend = 0, frame = 0
+ 1020              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1021              		@ link register save eliminated.
+ 1022              	.LVL46:
+ 1023 0000 10B4     		push	{r4}
+ 1024              		.cfi_def_cfa_offset 4
+ 1025              		.cfi_offset 4, -4
+ 365:../src/GPTIM _program.c **** 	u32 Local_u32Routine=Copy_u32Ticks/65535;
+ 1026              		.loc 1 365 0
+ 1027 0002 1E4B     		ldr	r3, .L78
+ 1028 0004 A3FB0023 		umull	r2, r3, r3, r0
+ 1029 0008 DB0B     		lsrs	r3, r3, #15
+ 1030              	.LVL47:
+ 366:../src/GPTIM _program.c **** 	u32 Local_u32Fraction=Copy_u32Ticks%65535;
+ 1031              		.loc 1 366 0
+ 1032 000a C3EB0344 		rsb	r4, r3, r3, lsl #16
+ 1033 000e 041B     		subs	r4, r0, r4
+ 1034              	.LVL48:
+ 367:../src/GPTIM _program.c **** 	while(Local_u32Routine--)
+ 1035              		.loc 1 367 0
+ 1036 0010 16E0     		b	.L73
+ 1037              	.LVL49:
+ 1038              	.L75:
+ 368:../src/GPTIM _program.c **** 	{
+ 369:../src/GPTIM _program.c **** 		TIM4->ARR=65535;
+ 1039              		.loc 1 369 0
+ 1040 0012 1B4B     		ldr	r3, .L78+4
+ 1041 0014 4FF6FF72 		movw	r2, #65535
+ 1042 0018 DA62     		str	r2, [r3, #44]
+ 370:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 371:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 1043              		.loc 1 371 0
+ 1044 001a 5A69     		ldr	r2, [r3, #20]
+ 1045 001c 42F00102 		orr	r2, r2, #1
+ 1046 0020 5A61     		str	r2, [r3, #20]
+ 372:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 373:../src/GPTIM _program.c **** 		SET_BIT(TIM4->CR1,GPTIM_CEN);
+ 1047              		.loc 1 373 0
+ 1048 0022 1A68     		ldr	r2, [r3]
+ 1049 0024 42F00102 		orr	r2, r2, #1
+ 1050 0028 1A60     		str	r2, [r3]
+ 1051              	.L74:
+ 374:../src/GPTIM _program.c **** 		while(GET_BIT(TIM4->SR,GPTIM_UIF)==0);
+ 1052              		.loc 1 374 0 discriminator 1
+ 1053 002a 154B     		ldr	r3, .L78+4
+ 1054 002c 1B69     		ldr	r3, [r3, #16]
+ 1055 002e 13F0010F 		tst	r3, #1
+ 1056 0032 FAD0     		beq	.L74
+ 375:../src/GPTIM _program.c **** 		/*Clear Uderflow Flag*/
+ 376:../src/GPTIM _program.c **** 		CLR_BIT(TIM4->SR,GPTIM_UIF);
+ 1057              		.loc 1 376 0
+ 1058 0034 124A     		ldr	r2, .L78+4
+ 1059 0036 1369     		ldr	r3, [r2, #16]
+ 1060 0038 23F00103 		bic	r3, r3, #1
+ 1061 003c 1361     		str	r3, [r2, #16]
+ 367:../src/GPTIM _program.c **** 	{
+ 1062              		.loc 1 367 0
+ 1063 003e 0B46     		mov	r3, r1
+ 1064              	.LVL50:
+ 1065              	.L73:
+ 1066 0040 591E     		subs	r1, r3, #1
+ 1067              	.LVL51:
+ 1068 0042 002B     		cmp	r3, #0
+ 1069 0044 E5D1     		bne	.L75
+ 377:../src/GPTIM _program.c **** 	}
+ 378:../src/GPTIM _program.c **** 
+ 379:../src/GPTIM _program.c **** 	TIM4->ARR=Local_u32Fraction;
+ 1070              		.loc 1 379 0
+ 1071 0046 0E4B     		ldr	r3, .L78+4
+ 1072 0048 DC62     		str	r4, [r3, #44]
+ 380:../src/GPTIM _program.c **** 	/*Re-Initialize the the counter & prescaller*/
+ 381:../src/GPTIM _program.c **** 	SET_BIT(TIM4->EGR,GPTIM_UG);
+ 1073              		.loc 1 381 0
+ 1074 004a 5A69     		ldr	r2, [r3, #20]
+ 1075 004c 42F00102 		orr	r2, r2, #1
+ 1076 0050 5A61     		str	r2, [r3, #20]
+ 382:../src/GPTIM _program.c **** 	/*Enable counter*/
+ 383:../src/GPTIM _program.c **** 	SET_BIT(TIM4->CR1,GPTIM_CEN);
+ 1077              		.loc 1 383 0
+ 1078 0052 1A68     		ldr	r2, [r3]
+ 1079 0054 42F00102 		orr	r2, r2, #1
+ 1080 0058 1A60     		str	r2, [r3]
+ 1081              	.L76:
+ 384:../src/GPTIM _program.c **** 	while(GET_BIT(TIM4->SR,GPTIM_UIF)==0);
+ 1082              		.loc 1 384 0 discriminator 1
+ 1083 005a 094B     		ldr	r3, .L78+4
+ 1084 005c 1B69     		ldr	r3, [r3, #16]
+ 1085 005e 13F0010F 		tst	r3, #1
+ 1086 0062 FAD0     		beq	.L76
+ 385:../src/GPTIM _program.c **** 	/*Clear Uderflow Flag*/
+ 386:../src/GPTIM _program.c **** 	CLR_BIT(TIM4->SR,GPTIM_UIF);
+ 1087              		.loc 1 386 0
+ 1088 0064 064B     		ldr	r3, .L78+4
+ 1089 0066 1A69     		ldr	r2, [r3, #16]
+ 1090 0068 22F00102 		bic	r2, r2, #1
+ 1091 006c 1A61     		str	r2, [r3, #16]
+ 387:../src/GPTIM _program.c **** 	/*Stop Timer*/
+ 388:../src/GPTIM _program.c **** 	CLR_BIT(TIM4->CR1,GPTIM_CEN);
+ 1092              		.loc 1 388 0
+ 1093 006e 1A68     		ldr	r2, [r3]
+ 1094 0070 22F00102 		bic	r2, r2, #1
+ 1095 0074 1A60     		str	r2, [r3]
+ 389:../src/GPTIM _program.c **** 
+ 390:../src/GPTIM _program.c **** 
+ 391:../src/GPTIM _program.c **** 
+ 392:../src/GPTIM _program.c **** }
+ 1096              		.loc 1 392 0
+ 1097 0076 10BC     		pop	{r4}
+ 1098              		.cfi_restore 4
+ 1099              		.cfi_def_cfa_offset 0
+ 1100              	.LVL52:
+ 1101 0078 7047     		bx	lr
+ 1102              	.L79:
+ 1103 007a 00BF     		.align	2
+ 1104              	.L78:
+ 1105 007c 01800080 		.word	-2147450879
+ 1106 0080 00080040 		.word	1073743872
+ 1107              		.cfi_endproc
+ 1108              	.LFE15:
+ 1110              		.section	.text.TIM4_voidSetIntervalSingle,"ax",%progbits
+ 1111              		.align	1
+ 1112              		.global	TIM4_voidSetIntervalSingle
+ 1113              		.syntax unified
+ 1114              		.thumb
+ 1115              		.thumb_func
+ 1116              		.fpu softvfp
+ 1118              	TIM4_voidSetIntervalSingle:
+ 1119              	.LFB16:
+ 393:../src/GPTIM _program.c **** void TIM4_voidSetIntervalSingle( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 394:../src/GPTIM _program.c **** {
+ 1120              		.loc 1 394 0
+ 1121              		.cfi_startproc
+ 1122              		@ args = 0, pretend = 0, frame = 0
+ 1123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1124              		@ link register save eliminated.
+ 1125              	.LVL53:
+ 395:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 396:../src/GPTIM _program.c **** 	TIM4_CallBack=Copy_ptr;
+ 1126              		.loc 1 396 0
+ 1127 0000 1B4B     		ldr	r3, .L84
+ 1128 0002 1960     		str	r1, [r3]
+ 397:../src/GPTIM _program.c **** 	/*Set Mode to Single*/
+ 398:../src/GPTIM _program.c **** 	TIM4_u8ModeOfInterval=SINGLE_INTERVAL;
+ 1129              		.loc 1 398 0
+ 1130 0004 1B4B     		ldr	r3, .L84+4
+ 1131 0006 0022     		movs	r2, #0
+ 1132 0008 1A70     		strb	r2, [r3]
+ 399:../src/GPTIM _program.c **** 
+ 400:../src/GPTIM _program.c **** 	Global4_u32Routine =(Copy_u32Ticks/65535);
+ 1133              		.loc 1 400 0
+ 1134 000a 1B4B     		ldr	r3, .L84+8
+ 1135 000c A3FB0023 		umull	r2, r3, r3, r0
+ 1136 0010 DB0B     		lsrs	r3, r3, #15
+ 1137 0012 1A4A     		ldr	r2, .L84+12
+ 1138 0014 1360     		str	r3, [r2]
+ 401:../src/GPTIM _program.c **** 	Global4_u32Fraction=Copy_u32Ticks%65535;
+ 1139              		.loc 1 401 0
+ 1140 0016 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 1141 001a C11A     		subs	r1, r0, r3
+ 1142              	.LVL54:
+ 1143 001c 184B     		ldr	r3, .L84+16
+ 1144 001e 1960     		str	r1, [r3]
+ 402:../src/GPTIM _program.c **** 	/*    to be initialize before enter the interrupt */
+ 403:../src/GPTIM _program.c **** 	Global4_u32CopyRoutine=Global4_u32Routine;
+ 1145              		.loc 1 403 0
+ 1146 0020 1168     		ldr	r1, [r2]
+ 1147 0022 184B     		ldr	r3, .L84+20
+ 1148 0024 1960     		str	r1, [r3]
+ 404:../src/GPTIM _program.c **** 	/*stop timer */
+ 405:../src/GPTIM _program.c **** 	CLR_BIT(TIM4->CR1,GPTIM_CEN);
+ 1149              		.loc 1 405 0
+ 1150 0026 1849     		ldr	r1, .L84+24
+ 1151 0028 0B68     		ldr	r3, [r1]
+ 1152 002a 23F00103 		bic	r3, r3, #1
+ 1153 002e 0B60     		str	r3, [r1]
+ 1154              	.LVL55:
+ 406:../src/GPTIM _program.c **** 
+ 407:../src/GPTIM _program.c **** 	if(Global4_u32Routine)
+ 1155              		.loc 1 407 0
+ 1156 0030 1368     		ldr	r3, [r2]
+ 1157 0032 8BB9     		cbnz	r3, .L83
+ 408:../src/GPTIM _program.c **** 	{
+ 409:../src/GPTIM _program.c **** 		TIM4->ARR=65535;
+ 410:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 411:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 412:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 413:../src/GPTIM _program.c **** 		SET_BIT(TIM4->CR1,GPTIM_CEN);
+ 414:../src/GPTIM _program.c **** 	}
+ 415:../src/GPTIM _program.c **** 	else
+ 416:../src/GPTIM _program.c **** 	{
+ 417:../src/GPTIM _program.c **** 		TIM4->ARR=Global4_u32Fraction;
+ 1158              		.loc 1 417 0
+ 1159 0034 124B     		ldr	r3, .L84+16
+ 1160 0036 1A68     		ldr	r2, [r3]
+ 1161 0038 134B     		ldr	r3, .L84+24
+ 1162 003a DA62     		str	r2, [r3, #44]
+ 418:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 419:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 1163              		.loc 1 419 0
+ 1164 003c 5A69     		ldr	r2, [r3, #20]
+ 1165 003e 42F00102 		orr	r2, r2, #1
+ 1166 0042 5A61     		str	r2, [r3, #20]
+ 420:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 421:../src/GPTIM _program.c **** 		SET_BIT(TIM4->CR1,GPTIM_CEN);
+ 1167              		.loc 1 421 0
+ 1168 0044 1A68     		ldr	r2, [r3]
+ 1169 0046 42F00102 		orr	r2, r2, #1
+ 1170 004a 1A60     		str	r2, [r3]
+ 1171              	.L82:
+ 422:../src/GPTIM _program.c **** 	}
+ 423:../src/GPTIM _program.c **** 
+ 424:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 425:../src/GPTIM _program.c **** 	SET_BIT(TIM4->DIER,GPTIM_UIE);
+ 1172              		.loc 1 425 0
+ 1173 004c 0E4A     		ldr	r2, .L84+24
+ 1174 004e D368     		ldr	r3, [r2, #12]
+ 1175 0050 43F00103 		orr	r3, r3, #1
+ 1176 0054 D360     		str	r3, [r2, #12]
+ 426:../src/GPTIM _program.c **** }
+ 1177              		.loc 1 426 0
+ 1178 0056 7047     		bx	lr
+ 1179              	.L83:
+ 409:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 1180              		.loc 1 409 0
+ 1181 0058 4FF6FF72 		movw	r2, #65535
+ 1182 005c CA62     		str	r2, [r1, #44]
+ 411:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 1183              		.loc 1 411 0
+ 1184 005e 4A69     		ldr	r2, [r1, #20]
+ 1185 0060 42F00102 		orr	r2, r2, #1
+ 1186 0064 4A61     		str	r2, [r1, #20]
+ 413:../src/GPTIM _program.c **** 	}
+ 1187              		.loc 1 413 0
+ 1188 0066 0A68     		ldr	r2, [r1]
+ 1189 0068 42F00102 		orr	r2, r2, #1
+ 1190 006c 0A60     		str	r2, [r1]
+ 1191 006e EDE7     		b	.L82
+ 1192              	.L85:
+ 1193              		.align	2
+ 1194              	.L84:
+ 1195 0070 00000000 		.word	.LANCHOR10
+ 1196 0074 00000000 		.word	.LANCHOR11
+ 1197 0078 01800080 		.word	-2147450879
+ 1198 007c 00000000 		.word	.LANCHOR12
+ 1199 0080 00000000 		.word	.LANCHOR13
+ 1200 0084 00000000 		.word	.LANCHOR14
+ 1201 0088 00080040 		.word	1073743872
+ 1202              		.cfi_endproc
+ 1203              	.LFE16:
+ 1205              		.section	.text.TIM4_voidSetIntervalPeriodic,"ax",%progbits
+ 1206              		.align	1
+ 1207              		.global	TIM4_voidSetIntervalPeriodic
+ 1208              		.syntax unified
+ 1209              		.thumb
+ 1210              		.thumb_func
+ 1211              		.fpu softvfp
+ 1213              	TIM4_voidSetIntervalPeriodic:
+ 1214              	.LFB17:
+ 427:../src/GPTIM _program.c **** void TIM4_voidSetIntervalPeriodic( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 428:../src/GPTIM _program.c **** {
+ 1215              		.loc 1 428 0
+ 1216              		.cfi_startproc
+ 1217              		@ args = 0, pretend = 0, frame = 0
+ 1218              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1219              		@ link register save eliminated.
+ 1220              	.LVL56:
+ 429:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 430:../src/GPTIM _program.c **** 	TIM4_CallBack=Copy_ptr;
+ 1221              		.loc 1 430 0
+ 1222 0000 184B     		ldr	r3, .L90
+ 1223 0002 1960     		str	r1, [r3]
+ 431:../src/GPTIM _program.c **** 	/*Set Mode to Periodic*/
+ 432:../src/GPTIM _program.c **** 	TIM4_u8ModeOfInterval=PERIODIC_INTERVAL;
+ 1224              		.loc 1 432 0
+ 1225 0004 184B     		ldr	r3, .L90+4
+ 1226 0006 0122     		movs	r2, #1
+ 1227 0008 1A70     		strb	r2, [r3]
+ 433:../src/GPTIM _program.c **** 
+ 434:../src/GPTIM _program.c **** 	Global4_u32Routine =(Copy_u32Ticks/65535) ;
+ 1228              		.loc 1 434 0
+ 1229 000a 184B     		ldr	r3, .L90+8
+ 1230 000c A3FB0023 		umull	r2, r3, r3, r0
+ 1231 0010 DB0B     		lsrs	r3, r3, #15
+ 1232 0012 174A     		ldr	r2, .L90+12
+ 1233 0014 1360     		str	r3, [r2]
+ 435:../src/GPTIM _program.c **** 	Global4_u32Fraction=Copy_u32Ticks%65535;
+ 1234              		.loc 1 435 0
+ 1235 0016 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 1236 001a C11A     		subs	r1, r0, r3
+ 1237              	.LVL57:
+ 1238 001c 154B     		ldr	r3, .L90+16
+ 1239 001e 1960     		str	r1, [r3]
+ 436:../src/GPTIM _program.c **** 
+ 437:../src/GPTIM _program.c **** 	if(Global4_u32Routine)
+ 1240              		.loc 1 437 0
+ 1241 0020 1368     		ldr	r3, [r2]
+ 1242 0022 8BB9     		cbnz	r3, .L89
+ 438:../src/GPTIM _program.c **** 	{
+ 439:../src/GPTIM _program.c **** 		TIM4->ARR=65535;
+ 440:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 441:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 442:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 443:../src/GPTIM _program.c **** 		SET_BIT(TIM4->CR1,GPTIM_CEN);
+ 444:../src/GPTIM _program.c **** 	}
+ 445:../src/GPTIM _program.c **** 	else
+ 446:../src/GPTIM _program.c **** 	{
+ 447:../src/GPTIM _program.c **** 		TIM4->ARR=Global2_u32Fraction;
+ 1243              		.loc 1 447 0
+ 1244 0024 144B     		ldr	r3, .L90+20
+ 1245 0026 1A68     		ldr	r2, [r3]
+ 1246 0028 144B     		ldr	r3, .L90+24
+ 1247 002a DA62     		str	r2, [r3, #44]
+ 1248              	.LVL58:
+ 448:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 449:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 1249              		.loc 1 449 0
+ 1250 002c 5A69     		ldr	r2, [r3, #20]
+ 1251 002e 42F00102 		orr	r2, r2, #1
+ 1252 0032 5A61     		str	r2, [r3, #20]
+ 450:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 451:../src/GPTIM _program.c **** 		SET_BIT(TIM4->CR1,GPTIM_CEN);
+ 1253              		.loc 1 451 0
+ 1254 0034 1A68     		ldr	r2, [r3]
+ 1255 0036 42F00102 		orr	r2, r2, #1
+ 1256 003a 1A60     		str	r2, [r3]
+ 1257              	.L88:
+ 452:../src/GPTIM _program.c **** 	}
+ 453:../src/GPTIM _program.c **** 
+ 454:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 455:../src/GPTIM _program.c **** 	SET_BIT(TIM4->DIER,GPTIM_UIE);
+ 1258              		.loc 1 455 0
+ 1259 003c 0F4A     		ldr	r2, .L90+24
+ 1260 003e D368     		ldr	r3, [r2, #12]
+ 1261 0040 43F00103 		orr	r3, r3, #1
+ 1262 0044 D360     		str	r3, [r2, #12]
+ 456:../src/GPTIM _program.c **** }
+ 1263              		.loc 1 456 0
+ 1264 0046 7047     		bx	lr
+ 1265              	.LVL59:
+ 1266              	.L89:
+ 439:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 1267              		.loc 1 439 0
+ 1268 0048 0C4B     		ldr	r3, .L90+24
+ 1269 004a 4FF6FF72 		movw	r2, #65535
+ 1270 004e DA62     		str	r2, [r3, #44]
+ 1271              	.LVL60:
+ 441:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 1272              		.loc 1 441 0
+ 1273 0050 5A69     		ldr	r2, [r3, #20]
+ 1274 0052 42F00102 		orr	r2, r2, #1
+ 1275 0056 5A61     		str	r2, [r3, #20]
+ 443:../src/GPTIM _program.c **** 	}
+ 1276              		.loc 1 443 0
+ 1277 0058 1A68     		ldr	r2, [r3]
+ 1278 005a 42F00102 		orr	r2, r2, #1
+ 1279 005e 1A60     		str	r2, [r3]
+ 1280 0060 ECE7     		b	.L88
+ 1281              	.L91:
+ 1282 0062 00BF     		.align	2
+ 1283              	.L90:
+ 1284 0064 00000000 		.word	.LANCHOR10
+ 1285 0068 00000000 		.word	.LANCHOR11
+ 1286 006c 01800080 		.word	-2147450879
+ 1287 0070 00000000 		.word	.LANCHOR12
+ 1288 0074 00000000 		.word	.LANCHOR13
+ 1289 0078 00000000 		.word	.LANCHOR3
+ 1290 007c 00080040 		.word	1073743872
+ 1291              		.cfi_endproc
+ 1292              	.LFE17:
+ 1294              		.section	.text.TIM4_voidStopInterval,"ax",%progbits
+ 1295              		.align	1
+ 1296              		.global	TIM4_voidStopInterval
+ 1297              		.syntax unified
+ 1298              		.thumb
+ 1299              		.thumb_func
+ 1300              		.fpu softvfp
+ 1302              	TIM4_voidStopInterval:
+ 1303              	.LFB18:
+ 457:../src/GPTIM _program.c **** 
+ 458:../src/GPTIM _program.c **** void TIM4_voidStopInterval(void)
+ 459:../src/GPTIM _program.c **** {
+ 1304              		.loc 1 459 0
+ 1305              		.cfi_startproc
+ 1306              		@ args = 0, pretend = 0, frame = 0
+ 1307              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1308              		@ link register save eliminated.
+ 460:../src/GPTIM _program.c **** 	//*Disable Update Interrupt
+ 461:../src/GPTIM _program.c ****     CLR_BIT(TIM4->DIER,GPTIM_UIE);
+ 1309              		.loc 1 461 0
+ 1310 0000 044B     		ldr	r3, .L93
+ 1311 0002 DA68     		ldr	r2, [r3, #12]
+ 1312 0004 22F00102 		bic	r2, r2, #1
+ 1313 0008 DA60     		str	r2, [r3, #12]
+ 462:../src/GPTIM _program.c **** 	//*Stop Timer
+ 463:../src/GPTIM _program.c **** 	CLR_BIT(TIM4->CR1,GPTIM_CEN);
+ 1314              		.loc 1 463 0
+ 1315 000a 1A68     		ldr	r2, [r3]
+ 1316 000c 22F00102 		bic	r2, r2, #1
+ 1317 0010 1A60     		str	r2, [r3]
+ 464:../src/GPTIM _program.c **** }
+ 1318              		.loc 1 464 0
+ 1319 0012 7047     		bx	lr
+ 1320              	.L94:
+ 1321              		.align	2
+ 1322              	.L93:
+ 1323 0014 00080040 		.word	1073743872
+ 1324              		.cfi_endproc
+ 1325              	.LFE18:
+ 1327              		.section	.text.TIM4_u16GetElapsedTime,"ax",%progbits
+ 1328              		.align	1
+ 1329              		.global	TIM4_u16GetElapsedTime
+ 1330              		.syntax unified
+ 1331              		.thumb
+ 1332              		.thumb_func
+ 1333              		.fpu softvfp
+ 1335              	TIM4_u16GetElapsedTime:
+ 1336              	.LFB19:
+ 465:../src/GPTIM _program.c **** u32  TIM4_u16GetElapsedTime(void)
+ 466:../src/GPTIM _program.c **** {
+ 1337              		.loc 1 466 0
+ 1338              		.cfi_startproc
+ 1339              		@ args = 0, pretend = 0, frame = 0
+ 1340              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1341              		@ link register save eliminated.
+ 467:../src/GPTIM _program.c **** 	u32 Local_u32ElapsedTime;
+ 468:../src/GPTIM _program.c **** 	u16 Local_u16Cycle=Global4_u32Routine - Global4_u32CopyRoutine;
+ 1342              		.loc 1 468 0
+ 1343 0000 074B     		ldr	r3, .L96
+ 1344 0002 1B68     		ldr	r3, [r3]
+ 1345 0004 9BB2     		uxth	r3, r3
+ 1346 0006 074A     		ldr	r2, .L96+4
+ 1347 0008 1068     		ldr	r0, [r2]
+ 1348 000a 80B2     		uxth	r0, r0
+ 1349 000c 1B1A     		subs	r3, r3, r0
+ 1350 000e 9BB2     		uxth	r3, r3
+ 1351              	.LVL61:
+ 469:../src/GPTIM _program.c **** 
+ 470:../src/GPTIM _program.c **** 	Local_u32ElapsedTime=((TIM4->ARR)-(TIM4->CNT))+(Local_u16Cycle*65535);
+ 1352              		.loc 1 470 0
+ 1353 0010 054A     		ldr	r2, .L96+8
+ 1354 0012 D06A     		ldr	r0, [r2, #44]
+ 1355 0014 526A     		ldr	r2, [r2, #36]
+ 1356 0016 801A     		subs	r0, r0, r2
+ 1357 0018 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 1358              	.LVL62:
+ 471:../src/GPTIM _program.c **** 	return Local_u32ElapsedTime;
+ 472:../src/GPTIM _program.c **** }
+ 1359              		.loc 1 472 0
+ 1360 001c 1844     		add	r0, r0, r3
+ 1361              	.LVL63:
+ 1362 001e 7047     		bx	lr
+ 1363              	.L97:
+ 1364              		.align	2
+ 1365              	.L96:
+ 1366 0020 00000000 		.word	.LANCHOR12
+ 1367 0024 00000000 		.word	.LANCHOR14
+ 1368 0028 00080040 		.word	1073743872
+ 1369              		.cfi_endproc
+ 1370              	.LFE19:
+ 1372              		.section	.text.TIM4_u16GetRemainingTime,"ax",%progbits
+ 1373              		.align	1
+ 1374              		.global	TIM4_u16GetRemainingTime
+ 1375              		.syntax unified
+ 1376              		.thumb
+ 1377              		.thumb_func
+ 1378              		.fpu softvfp
+ 1380              	TIM4_u16GetRemainingTime:
+ 1381              	.LFB20:
+ 473:../src/GPTIM _program.c ****  u32  TIM4_u16GetRemainingTime(void)
+ 474:../src/GPTIM _program.c **** {
+ 1382              		.loc 1 474 0
+ 1383              		.cfi_startproc
+ 1384              		@ args = 0, pretend = 0, frame = 0
+ 1385              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1386              		@ link register save eliminated.
+ 1387              	.LVL64:
+ 475:../src/GPTIM _program.c **** 	u32 local_u32RemainingTime=0;
+ 476:../src/GPTIM _program.c **** 
+ 477:../src/GPTIM _program.c **** 	if(Global4_u32CopyRoutine>=1)
+ 1388              		.loc 1 477 0
+ 1389 0000 0C4B     		ldr	r3, .L103
+ 1390 0002 1B68     		ldr	r3, [r3]
+ 1391 0004 2BB9     		cbnz	r3, .L102
+ 478:../src/GPTIM _program.c **** 	{
+ 479:../src/GPTIM _program.c **** 		local_u32RemainingTime=(TIM4->CNT)+(Global4_u32CopyRoutine-1)*65535+Global4_u32Fraction;
+ 480:../src/GPTIM _program.c **** 	}
+ 481:../src/GPTIM _program.c **** 	else if(Global4_u32CopyRoutine==0)
+ 1392              		.loc 1 481 0
+ 1393 0006 0B4B     		ldr	r3, .L103
+ 1394 0008 1B68     		ldr	r3, [r3]
+ 1395 000a 83B9     		cbnz	r3, .L101
+ 482:../src/GPTIM _program.c **** 	{
+ 483:../src/GPTIM _program.c **** 		local_u32RemainingTime=TIM4->CNT;
+ 1396              		.loc 1 483 0
+ 1397 000c 0A4B     		ldr	r3, .L103+4
+ 1398 000e 586A     		ldr	r0, [r3, #36]
+ 1399              	.LVL65:
+ 1400 0010 7047     		bx	lr
+ 1401              	.LVL66:
+ 1402              	.L102:
+ 479:../src/GPTIM _program.c **** 	}
+ 1403              		.loc 1 479 0
+ 1404 0012 094B     		ldr	r3, .L103+4
+ 1405 0014 5B6A     		ldr	r3, [r3, #36]
+ 1406 0016 074A     		ldr	r2, .L103
+ 1407 0018 1068     		ldr	r0, [r2]
+ 1408 001a C0EB0040 		rsb	r0, r0, r0, lsl #16
+ 1409 001e 1844     		add	r0, r0, r3
+ 1410 0020 064B     		ldr	r3, .L103+8
+ 1411 0022 1B68     		ldr	r3, [r3]
+ 1412 0024 1844     		add	r0, r0, r3
+ 1413 0026 A0F57F40 		sub	r0, r0, #65280
+ 1414 002a FF38     		subs	r0, r0, #255
+ 1415              	.LVL67:
+ 1416 002c 7047     		bx	lr
+ 1417              	.LVL68:
+ 1418              	.L101:
+ 475:../src/GPTIM _program.c **** 
+ 1419              		.loc 1 475 0
+ 1420 002e 0020     		movs	r0, #0
+ 484:../src/GPTIM _program.c **** 	}
+ 485:../src/GPTIM _program.c **** 	return local_u32RemainingTime;
+ 486:../src/GPTIM _program.c **** }
+ 1421              		.loc 1 486 0
+ 1422 0030 7047     		bx	lr
+ 1423              	.L104:
+ 1424 0032 00BF     		.align	2
+ 1425              	.L103:
+ 1426 0034 00000000 		.word	.LANCHOR14
+ 1427 0038 00080040 		.word	1073743872
+ 1428 003c 00000000 		.word	.LANCHOR13
+ 1429              		.cfi_endproc
+ 1430              	.LFE20:
+ 1432              		.section	.text.TIM5_voidInit,"ax",%progbits
+ 1433              		.align	1
+ 1434              		.global	TIM5_voidInit
+ 1435              		.syntax unified
+ 1436              		.thumb
+ 1437              		.thumb_func
+ 1438              		.fpu softvfp
+ 1440              	TIM5_voidInit:
+ 1441              	.LFB21:
+ 487:../src/GPTIM _program.c **** /**************************TIM5**********************/
+ 488:../src/GPTIM _program.c **** 
+ 489:../src/GPTIM _program.c **** /*  Clock of TIM2 is APB1_clk(8 MHZ)
+ 490:../src/GPTIM _program.c ****    Disable TIM7 interrupt
+ 491:../src/GPTIM _program.c ****    Disable TIM6                        
+ 492:../src/GPTIM _program.c ****    F(TIM2)=8M/(1+PSC)
+ 493:../src/GPTIM _program.c ****    If PSC=7
+ 494:../src/GPTIM _program.c **** 	Tick=>1us                 */
+ 495:../src/GPTIM _program.c **** void TIM5_voidInit(void)
+ 496:../src/GPTIM _program.c **** {
+ 1442              		.loc 1 496 0
+ 1443              		.cfi_startproc
+ 1444              		@ args = 0, pretend = 0, frame = 0
+ 1445              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1446              		@ link register save eliminated.
+ 497:../src/GPTIM _program.c **** 	/*Up Counter Mode*/
+ 498:../src/GPTIM _program.c **** 	TIM5->CR1&=~(0b111<<4);
+ 1447              		.loc 1 498 0
+ 1448 0000 0D4B     		ldr	r3, .L106
+ 1449 0002 1A68     		ldr	r2, [r3]
+ 1450 0004 22F07002 		bic	r2, r2, #112
+ 1451 0008 1A60     		str	r2, [r3]
+ 499:../src/GPTIM _program.c **** 	TIM5->CR1|=(DOWNCOUNTER<<4);
+ 1452              		.loc 1 499 0
+ 1453 000a 1A68     		ldr	r2, [r3]
+ 1454 000c 42F01002 		orr	r2, r2, #16
+ 1455 0010 1A60     		str	r2, [r3]
+ 500:../src/GPTIM _program.c **** 
+ 501:../src/GPTIM _program.c **** 	/*ARR is Buffered can't changed Execpt at Update Event*/
+ 502:../src/GPTIM _program.c **** 	SET_BIT(TIM5->CR1,GPTIM_ARPE);
+ 1456              		.loc 1 502 0
+ 1457 0012 1A68     		ldr	r2, [r3]
+ 1458 0014 42F08002 		orr	r2, r2, #128
+ 1459 0018 1A60     		str	r2, [r3]
+ 503:../src/GPTIM _program.c **** 
+ 504:../src/GPTIM _program.c **** 	/*Only Counter OverFlow UnderFlow Generate update Interrupt */
+ 505:../src/GPTIM _program.c **** 	SET_BIT(TIM5->CR1,GPTIM_URS);
+ 1460              		.loc 1 505 0
+ 1461 001a 1A68     		ldr	r2, [r3]
+ 1462 001c 42F00402 		orr	r2, r2, #4
+ 1463 0020 1A60     		str	r2, [r3]
+ 506:../src/GPTIM _program.c **** 
+ 507:../src/GPTIM _program.c **** 	/*Enable Update Event */
+ 508:../src/GPTIM _program.c **** 	CLR_BIT(TIM5->CR1,GPTIM_UDIS);
+ 1464              		.loc 1 508 0
+ 1465 0022 1A68     		ldr	r2, [r3]
+ 1466 0024 22F00202 		bic	r2, r2, #2
+ 1467 0028 1A60     		str	r2, [r3]
+ 509:../src/GPTIM _program.c **** 
+ 510:../src/GPTIM _program.c **** 	/*Disable Update Interrupt */
+ 511:../src/GPTIM _program.c **** 	CLR_BIT(TIM5->DIER,GPTIM_UIE);
+ 1468              		.loc 1 511 0
+ 1469 002a DA68     		ldr	r2, [r3, #12]
+ 1470 002c 22F00102 		bic	r2, r2, #1
+ 1471 0030 DA60     		str	r2, [r3, #12]
+ 512:../src/GPTIM _program.c **** 	
+ 513:../src/GPTIM _program.c **** 	/*F(TIM2)=8M/(1+PSC)=1MHz
+ 514:../src/GPTIM _program.c **** 	*Ticks equal 1us*/
+ 515:../src/GPTIM _program.c **** 	TIM5->PSC=7;
+ 1472              		.loc 1 515 0
+ 1473 0032 0722     		movs	r2, #7
+ 1474 0034 9A62     		str	r2, [r3, #40]
+ 516:../src/GPTIM _program.c **** }
+ 1475              		.loc 1 516 0
+ 1476 0036 7047     		bx	lr
+ 1477              	.L107:
+ 1478              		.align	2
+ 1479              	.L106:
+ 1480 0038 000C0040 		.word	1073744896
+ 1481              		.cfi_endproc
+ 1482              	.LFE21:
+ 1484              		.section	.text.TIM5_voidSetBusyWait,"ax",%progbits
+ 1485              		.align	1
+ 1486              		.global	TIM5_voidSetBusyWait
+ 1487              		.syntax unified
+ 1488              		.thumb
+ 1489              		.thumb_func
+ 1490              		.fpu softvfp
+ 1492              	TIM5_voidSetBusyWait:
+ 1493              	.LFB22:
+ 517:../src/GPTIM _program.c **** /* Synchronous API  Lock Processor For Certain Ticks
+ 518:../src/GPTIM _program.c ****    *Disable SysTick interrupt
+ 519:../src/GPTIM _program.c ****    *enable Systick
+ 520:../src/GPTIM _program.c ****    *polling flag (underflow)
+ 521:../src/GPTIM _program.c ****    *Tick=>1us*/
+ 522:../src/GPTIM _program.c **** void TIM5_voidSetBusyWait( u32 Copy_u32Ticks )
+ 523:../src/GPTIM _program.c **** {
+ 1494              		.loc 1 523 0
+ 1495              		.cfi_startproc
+ 1496              		@ args = 0, pretend = 0, frame = 0
+ 1497              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1498              		@ link register save eliminated.
+ 1499              	.LVL69:
+ 1500 0000 10B4     		push	{r4}
+ 1501              		.cfi_def_cfa_offset 4
+ 1502              		.cfi_offset 4, -4
+ 524:../src/GPTIM _program.c **** 	u32 Local_u32Routine=Copy_u32Ticks/65535;
+ 1503              		.loc 1 524 0
+ 1504 0002 1E4B     		ldr	r3, .L114
+ 1505 0004 A3FB0023 		umull	r2, r3, r3, r0
+ 1506 0008 DB0B     		lsrs	r3, r3, #15
+ 1507              	.LVL70:
+ 525:../src/GPTIM _program.c **** 	u32 Local_u32Fraction=Copy_u32Ticks%65535;
+ 1508              		.loc 1 525 0
+ 1509 000a C3EB0344 		rsb	r4, r3, r3, lsl #16
+ 1510 000e 041B     		subs	r4, r0, r4
+ 1511              	.LVL71:
+ 526:../src/GPTIM _program.c **** 	while(Local_u32Routine--)
+ 1512              		.loc 1 526 0
+ 1513 0010 16E0     		b	.L109
+ 1514              	.LVL72:
+ 1515              	.L111:
+ 527:../src/GPTIM _program.c **** 	{
+ 528:../src/GPTIM _program.c **** 		TIM5->ARR=65535;
+ 1516              		.loc 1 528 0
+ 1517 0012 1B4B     		ldr	r3, .L114+4
+ 1518 0014 4FF6FF72 		movw	r2, #65535
+ 1519 0018 DA62     		str	r2, [r3, #44]
+ 529:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 530:../src/GPTIM _program.c **** 	    SET_BIT(TIM5->EGR,GPTIM_UG);
+ 1520              		.loc 1 530 0
+ 1521 001a 5A69     		ldr	r2, [r3, #20]
+ 1522 001c 42F00102 		orr	r2, r2, #1
+ 1523 0020 5A61     		str	r2, [r3, #20]
+ 531:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 532:../src/GPTIM _program.c **** 		SET_BIT(TIM5->CR1,GPTIM_CEN);
+ 1524              		.loc 1 532 0
+ 1525 0022 1A68     		ldr	r2, [r3]
+ 1526 0024 42F00102 		orr	r2, r2, #1
+ 1527 0028 1A60     		str	r2, [r3]
+ 1528              	.L110:
+ 533:../src/GPTIM _program.c **** 		while(GET_BIT(TIM5->SR,GPTIM_UIF)==0);
+ 1529              		.loc 1 533 0 discriminator 1
+ 1530 002a 154B     		ldr	r3, .L114+4
+ 1531 002c 1B69     		ldr	r3, [r3, #16]
+ 1532 002e 13F0010F 		tst	r3, #1
+ 1533 0032 FAD0     		beq	.L110
+ 534:../src/GPTIM _program.c **** 		/*Clear Uderflow Flag*/
+ 535:../src/GPTIM _program.c **** 		CLR_BIT(TIM5->SR,GPTIM_UIF);
+ 1534              		.loc 1 535 0
+ 1535 0034 124A     		ldr	r2, .L114+4
+ 1536 0036 1369     		ldr	r3, [r2, #16]
+ 1537 0038 23F00103 		bic	r3, r3, #1
+ 1538 003c 1361     		str	r3, [r2, #16]
+ 526:../src/GPTIM _program.c **** 	{
+ 1539              		.loc 1 526 0
+ 1540 003e 0B46     		mov	r3, r1
+ 1541              	.LVL73:
+ 1542              	.L109:
+ 1543 0040 591E     		subs	r1, r3, #1
+ 1544              	.LVL74:
+ 1545 0042 002B     		cmp	r3, #0
+ 1546 0044 E5D1     		bne	.L111
+ 536:../src/GPTIM _program.c **** 	}
+ 537:../src/GPTIM _program.c **** 
+ 538:../src/GPTIM _program.c **** 	TIM5->ARR=Local_u32Fraction;
+ 1547              		.loc 1 538 0
+ 1548 0046 0E4B     		ldr	r3, .L114+4
+ 1549 0048 DC62     		str	r4, [r3, #44]
+ 539:../src/GPTIM _program.c **** 	/*Re-Initialize the the counter & prescaller*/
+ 540:../src/GPTIM _program.c **** 	SET_BIT(TIM5->EGR,GPTIM_UG);
+ 1550              		.loc 1 540 0
+ 1551 004a 5A69     		ldr	r2, [r3, #20]
+ 1552 004c 42F00102 		orr	r2, r2, #1
+ 1553 0050 5A61     		str	r2, [r3, #20]
+ 541:../src/GPTIM _program.c **** 	/*Enable counter*/
+ 542:../src/GPTIM _program.c **** 	SET_BIT(TIM5->CR1,GPTIM_CEN);
+ 1554              		.loc 1 542 0
+ 1555 0052 1A68     		ldr	r2, [r3]
+ 1556 0054 42F00102 		orr	r2, r2, #1
+ 1557 0058 1A60     		str	r2, [r3]
+ 1558              	.L112:
+ 543:../src/GPTIM _program.c **** 	while(GET_BIT(TIM5->SR,GPTIM_UIF)==0);
+ 1559              		.loc 1 543 0 discriminator 1
+ 1560 005a 094B     		ldr	r3, .L114+4
+ 1561 005c 1B69     		ldr	r3, [r3, #16]
+ 1562 005e 13F0010F 		tst	r3, #1
+ 1563 0062 FAD0     		beq	.L112
+ 544:../src/GPTIM _program.c **** 	/*Clear Uderflow Flag*/
+ 545:../src/GPTIM _program.c **** 	CLR_BIT(TIM5->SR,GPTIM_UIF);
+ 1564              		.loc 1 545 0
+ 1565 0064 064B     		ldr	r3, .L114+4
+ 1566 0066 1A69     		ldr	r2, [r3, #16]
+ 1567 0068 22F00102 		bic	r2, r2, #1
+ 1568 006c 1A61     		str	r2, [r3, #16]
+ 546:../src/GPTIM _program.c **** 	/*Stop Timer*/
+ 547:../src/GPTIM _program.c **** 	CLR_BIT(TIM5->CR1,GPTIM_CEN);
+ 1569              		.loc 1 547 0
+ 1570 006e 1A68     		ldr	r2, [r3]
+ 1571 0070 22F00102 		bic	r2, r2, #1
+ 1572 0074 1A60     		str	r2, [r3]
+ 548:../src/GPTIM _program.c **** 	
+ 549:../src/GPTIM _program.c **** 	
+ 550:../src/GPTIM _program.c **** 	
+ 551:../src/GPTIM _program.c **** }
+ 1573              		.loc 1 551 0
+ 1574 0076 10BC     		pop	{r4}
+ 1575              		.cfi_restore 4
+ 1576              		.cfi_def_cfa_offset 0
+ 1577              	.LVL75:
+ 1578 0078 7047     		bx	lr
+ 1579              	.L115:
+ 1580 007a 00BF     		.align	2
+ 1581              	.L114:
+ 1582 007c 01800080 		.word	-2147450879
+ 1583 0080 000C0040 		.word	1073744896
+ 1584              		.cfi_endproc
+ 1585              	.LFE22:
+ 1587              		.section	.text.TIM5_voidSetIntervalSingle,"ax",%progbits
+ 1588              		.align	1
+ 1589              		.global	TIM5_voidSetIntervalSingle
+ 1590              		.syntax unified
+ 1591              		.thumb
+ 1592              		.thumb_func
+ 1593              		.fpu softvfp
+ 1595              	TIM5_voidSetIntervalSingle:
+ 1596              	.LFB23:
+ 552:../src/GPTIM _program.c **** void TIM5_voidSetIntervalSingle( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 553:../src/GPTIM _program.c **** {
+ 1597              		.loc 1 553 0
+ 1598              		.cfi_startproc
+ 1599              		@ args = 0, pretend = 0, frame = 0
+ 1600              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1601              		@ link register save eliminated.
+ 1602              	.LVL76:
+ 554:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 555:../src/GPTIM _program.c **** 	TIM5_CallBack=Copy_ptr;
+ 556:../src/GPTIM _program.c **** 	/*Set Mode to Single*/
+ 557:../src/GPTIM _program.c **** 	TIM5_u8ModeOfInterval=SINGLE_INTERVAL;
+ 1603              		.loc 1 557 0
+ 1604 0000 1A4B     		ldr	r3, .L120
+ 1605 0002 0022     		movs	r2, #0
+ 1606 0004 1A70     		strb	r2, [r3]
+ 558:../src/GPTIM _program.c **** 
+ 559:../src/GPTIM _program.c **** 	Global5_u32Routine =(Copy_u32Ticks/65535);
+ 1607              		.loc 1 559 0
+ 1608 0006 1A4B     		ldr	r3, .L120+4
+ 1609 0008 A3FB0023 		umull	r2, r3, r3, r0
+ 1610 000c DB0B     		lsrs	r3, r3, #15
+ 1611 000e 194A     		ldr	r2, .L120+8
+ 1612 0010 1360     		str	r3, [r2]
+ 560:../src/GPTIM _program.c **** 	Global5_u32Fraction=Copy_u32Ticks%65535;
+ 1613              		.loc 1 560 0
+ 1614 0012 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 1615 0016 C11A     		subs	r1, r0, r3
+ 1616              	.LVL77:
+ 1617 0018 174B     		ldr	r3, .L120+12
+ 1618 001a 1960     		str	r1, [r3]
+ 561:../src/GPTIM _program.c **** 	/*    to be initialize before enter the interrupt */
+ 562:../src/GPTIM _program.c **** 	Global5_u32CopyRoutine=Global5_u32Routine;
+ 1619              		.loc 1 562 0
+ 1620 001c 1168     		ldr	r1, [r2]
+ 1621 001e 174B     		ldr	r3, .L120+16
+ 1622 0020 1960     		str	r1, [r3]
+ 563:../src/GPTIM _program.c **** 	/*stop timer */
+ 564:../src/GPTIM _program.c **** 	CLR_BIT(TIM5->CR1,GPTIM_CEN);
+ 1623              		.loc 1 564 0
+ 1624 0022 1749     		ldr	r1, .L120+20
+ 1625 0024 0B68     		ldr	r3, [r1]
+ 1626 0026 23F00103 		bic	r3, r3, #1
+ 1627 002a 0B60     		str	r3, [r1]
+ 565:../src/GPTIM _program.c **** 
+ 566:../src/GPTIM _program.c **** 	if(Global5_u32Routine)
+ 1628              		.loc 1 566 0
+ 1629 002c 1368     		ldr	r3, [r2]
+ 1630 002e 8BB9     		cbnz	r3, .L119
+ 567:../src/GPTIM _program.c **** 	{
+ 568:../src/GPTIM _program.c **** 		TIM5->ARR=65535;
+ 569:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 570:../src/GPTIM _program.c **** 	    SET_BIT(TIM5->EGR,GPTIM_UG);
+ 571:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 572:../src/GPTIM _program.c **** 		SET_BIT(TIM5->CR1,GPTIM_CEN);
+ 573:../src/GPTIM _program.c **** 	}
+ 574:../src/GPTIM _program.c **** 	else
+ 575:../src/GPTIM _program.c **** 	{
+ 576:../src/GPTIM _program.c **** 		TIM5->ARR=Global5_u32Fraction;
+ 1631              		.loc 1 576 0
+ 1632 0030 114B     		ldr	r3, .L120+12
+ 1633 0032 1A68     		ldr	r2, [r3]
+ 1634 0034 124B     		ldr	r3, .L120+20
+ 1635 0036 DA62     		str	r2, [r3, #44]
+ 577:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 578:../src/GPTIM _program.c **** 	    SET_BIT(TIM5->EGR,GPTIM_UG);
+ 1636              		.loc 1 578 0
+ 1637 0038 5A69     		ldr	r2, [r3, #20]
+ 1638 003a 42F00102 		orr	r2, r2, #1
+ 1639 003e 5A61     		str	r2, [r3, #20]
+ 579:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 580:../src/GPTIM _program.c **** 		SET_BIT(TIM5->CR1,GPTIM_CEN);
+ 1640              		.loc 1 580 0
+ 1641 0040 1A68     		ldr	r2, [r3]
+ 1642 0042 42F00102 		orr	r2, r2, #1
+ 1643 0046 1A60     		str	r2, [r3]
+ 1644              	.L118:
+ 581:../src/GPTIM _program.c **** 	}
+ 582:../src/GPTIM _program.c **** 
+ 583:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 584:../src/GPTIM _program.c **** 	SET_BIT(TIM5->DIER,GPTIM_UIE);
+ 1645              		.loc 1 584 0
+ 1646 0048 0D4A     		ldr	r2, .L120+20
+ 1647 004a D368     		ldr	r3, [r2, #12]
+ 1648 004c 43F00103 		orr	r3, r3, #1
+ 1649 0050 D360     		str	r3, [r2, #12]
+ 585:../src/GPTIM _program.c **** }
+ 1650              		.loc 1 585 0
+ 1651 0052 7047     		bx	lr
+ 1652              	.L119:
+ 568:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 1653              		.loc 1 568 0
+ 1654 0054 4FF6FF72 		movw	r2, #65535
+ 1655 0058 CA62     		str	r2, [r1, #44]
+ 570:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 1656              		.loc 1 570 0
+ 1657 005a 4A69     		ldr	r2, [r1, #20]
+ 1658 005c 42F00102 		orr	r2, r2, #1
+ 1659 0060 4A61     		str	r2, [r1, #20]
+ 572:../src/GPTIM _program.c **** 	}
+ 1660              		.loc 1 572 0
+ 1661 0062 0A68     		ldr	r2, [r1]
+ 1662 0064 42F00102 		orr	r2, r2, #1
+ 1663 0068 0A60     		str	r2, [r1]
+ 1664 006a EDE7     		b	.L118
+ 1665              	.L121:
+ 1666              		.align	2
+ 1667              	.L120:
+ 1668 006c 00000000 		.word	.LANCHOR15
+ 1669 0070 01800080 		.word	-2147450879
+ 1670 0074 00000000 		.word	.LANCHOR16
+ 1671 0078 00000000 		.word	.LANCHOR17
+ 1672 007c 00000000 		.word	.LANCHOR18
+ 1673 0080 000C0040 		.word	1073744896
+ 1674              		.cfi_endproc
+ 1675              	.LFE23:
+ 1677              		.section	.text.TIM5_voidSetIntervalPeriodic,"ax",%progbits
+ 1678              		.align	1
+ 1679              		.global	TIM5_voidSetIntervalPeriodic
+ 1680              		.syntax unified
+ 1681              		.thumb
+ 1682              		.thumb_func
+ 1683              		.fpu softvfp
+ 1685              	TIM5_voidSetIntervalPeriodic:
+ 1686              	.LFB24:
+ 586:../src/GPTIM _program.c **** void TIM5_voidSetIntervalPeriodic( u32 Copy_u32Ticks, void (*Copy_ptr)(void) )
+ 587:../src/GPTIM _program.c **** {
+ 1687              		.loc 1 587 0
+ 1688              		.cfi_startproc
+ 1689              		@ args = 0, pretend = 0, frame = 0
+ 1690              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1691              		@ link register save eliminated.
+ 1692              	.LVL78:
+ 588:../src/GPTIM _program.c **** 	/*save CallBack*/
+ 589:../src/GPTIM _program.c **** 	TIM5_CallBack=Copy_ptr;
+ 590:../src/GPTIM _program.c **** 	/*Set Mode to Periodic*/
+ 591:../src/GPTIM _program.c **** 	TIM5_u8ModeOfInterval=PERIODIC_INTERVAL;
+ 1693              		.loc 1 591 0
+ 1694 0000 174B     		ldr	r3, .L126
+ 1695 0002 0122     		movs	r2, #1
+ 1696 0004 1A70     		strb	r2, [r3]
+ 592:../src/GPTIM _program.c **** 
+ 593:../src/GPTIM _program.c **** 	Global5_u32Routine =(Copy_u32Ticks/65535) ;
+ 1697              		.loc 1 593 0
+ 1698 0006 174B     		ldr	r3, .L126+4
+ 1699 0008 A3FB0023 		umull	r2, r3, r3, r0
+ 1700 000c DB0B     		lsrs	r3, r3, #15
+ 1701 000e 164A     		ldr	r2, .L126+8
+ 1702 0010 1360     		str	r3, [r2]
+ 594:../src/GPTIM _program.c **** 	Global5_u32Fraction=Copy_u32Ticks%65535;
+ 1703              		.loc 1 594 0
+ 1704 0012 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 1705 0016 C11A     		subs	r1, r0, r3
+ 1706              	.LVL79:
+ 1707 0018 144B     		ldr	r3, .L126+12
+ 1708 001a 1960     		str	r1, [r3]
+ 595:../src/GPTIM _program.c **** 
+ 596:../src/GPTIM _program.c **** 	if(Global5_u32Routine)
+ 1709              		.loc 1 596 0
+ 1710 001c 1368     		ldr	r3, [r2]
+ 1711 001e 8BB9     		cbnz	r3, .L125
+ 597:../src/GPTIM _program.c **** 	{
+ 598:../src/GPTIM _program.c **** 		TIM5->ARR=65535;
+ 599:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 600:../src/GPTIM _program.c **** 	    SET_BIT(TIM5->EGR,GPTIM_UG);
+ 601:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 602:../src/GPTIM _program.c **** 		SET_BIT(TIM5->CR1,GPTIM_CEN);
+ 603:../src/GPTIM _program.c **** 	}
+ 604:../src/GPTIM _program.c **** 	else
+ 605:../src/GPTIM _program.c **** 	{
+ 606:../src/GPTIM _program.c **** 		TIM5->ARR=Global5_u32Fraction;
+ 1712              		.loc 1 606 0
+ 1713 0020 124B     		ldr	r3, .L126+12
+ 1714 0022 1A68     		ldr	r2, [r3]
+ 1715 0024 124B     		ldr	r3, .L126+16
+ 1716 0026 DA62     		str	r2, [r3, #44]
+ 607:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 608:../src/GPTIM _program.c **** 	    SET_BIT(TIM5->EGR,GPTIM_UG);
+ 1717              		.loc 1 608 0
+ 1718 0028 5A69     		ldr	r2, [r3, #20]
+ 1719 002a 42F00102 		orr	r2, r2, #1
+ 1720 002e 5A61     		str	r2, [r3, #20]
+ 609:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 610:../src/GPTIM _program.c **** 		SET_BIT(TIM5->CR1,GPTIM_CEN);
+ 1721              		.loc 1 610 0
+ 1722 0030 1A68     		ldr	r2, [r3]
+ 1723 0032 42F00102 		orr	r2, r2, #1
+ 1724 0036 1A60     		str	r2, [r3]
+ 1725              	.L124:
+ 611:../src/GPTIM _program.c **** 	}
+ 612:../src/GPTIM _program.c **** 
+ 613:../src/GPTIM _program.c **** 	/*Enable Update Interrupt */
+ 614:../src/GPTIM _program.c **** 	SET_BIT(TIM5->DIER,GPTIM_UIE);
+ 1726              		.loc 1 614 0
+ 1727 0038 0D4A     		ldr	r2, .L126+16
+ 1728 003a D368     		ldr	r3, [r2, #12]
+ 1729 003c 43F00103 		orr	r3, r3, #1
+ 1730 0040 D360     		str	r3, [r2, #12]
+ 615:../src/GPTIM _program.c **** }
+ 1731              		.loc 1 615 0
+ 1732 0042 7047     		bx	lr
+ 1733              	.L125:
+ 598:../src/GPTIM _program.c **** 	    /*Re-Initialize the the counter & prescaller*/
+ 1734              		.loc 1 598 0
+ 1735 0044 0A4B     		ldr	r3, .L126+16
+ 1736 0046 4FF6FF72 		movw	r2, #65535
+ 1737 004a DA62     		str	r2, [r3, #44]
+ 600:../src/GPTIM _program.c **** 		/*Enable counter*/
+ 1738              		.loc 1 600 0
+ 1739 004c 5A69     		ldr	r2, [r3, #20]
+ 1740 004e 42F00102 		orr	r2, r2, #1
+ 1741 0052 5A61     		str	r2, [r3, #20]
+ 602:../src/GPTIM _program.c **** 	}
+ 1742              		.loc 1 602 0
+ 1743 0054 1A68     		ldr	r2, [r3]
+ 1744 0056 42F00102 		orr	r2, r2, #1
+ 1745 005a 1A60     		str	r2, [r3]
+ 1746 005c ECE7     		b	.L124
+ 1747              	.L127:
+ 1748 005e 00BF     		.align	2
+ 1749              	.L126:
+ 1750 0060 00000000 		.word	.LANCHOR15
+ 1751 0064 01800080 		.word	-2147450879
+ 1752 0068 00000000 		.word	.LANCHOR16
+ 1753 006c 00000000 		.word	.LANCHOR17
+ 1754 0070 000C0040 		.word	1073744896
+ 1755              		.cfi_endproc
+ 1756              	.LFE24:
+ 1758              		.section	.text.TIM5_voidStopInterval,"ax",%progbits
+ 1759              		.align	1
+ 1760              		.global	TIM5_voidStopInterval
+ 1761              		.syntax unified
+ 1762              		.thumb
+ 1763              		.thumb_func
+ 1764              		.fpu softvfp
+ 1766              	TIM5_voidStopInterval:
+ 1767              	.LFB25:
+ 616:../src/GPTIM _program.c **** 
+ 617:../src/GPTIM _program.c **** void TIM5_voidStopInterval(void)
+ 618:../src/GPTIM _program.c **** {
+ 1768              		.loc 1 618 0
+ 1769              		.cfi_startproc
+ 1770              		@ args = 0, pretend = 0, frame = 0
+ 1771              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1772              		@ link register save eliminated.
+ 619:../src/GPTIM _program.c **** 	//*Disable Update Interrupt
+ 620:../src/GPTIM _program.c ****     CLR_BIT(TIM5->DIER,GPTIM_UIE);
+ 1773              		.loc 1 620 0
+ 1774 0000 044B     		ldr	r3, .L129
+ 1775 0002 DA68     		ldr	r2, [r3, #12]
+ 1776 0004 22F00102 		bic	r2, r2, #1
+ 1777 0008 DA60     		str	r2, [r3, #12]
+ 621:../src/GPTIM _program.c **** 	//*Stop Timer
+ 622:../src/GPTIM _program.c **** 	CLR_BIT(TIM5->CR1,GPTIM_CEN);
+ 1778              		.loc 1 622 0
+ 1779 000a 1A68     		ldr	r2, [r3]
+ 1780 000c 22F00102 		bic	r2, r2, #1
+ 1781 0010 1A60     		str	r2, [r3]
+ 623:../src/GPTIM _program.c **** }
+ 1782              		.loc 1 623 0
+ 1783 0012 7047     		bx	lr
+ 1784              	.L130:
+ 1785              		.align	2
+ 1786              	.L129:
+ 1787 0014 000C0040 		.word	1073744896
+ 1788              		.cfi_endproc
+ 1789              	.LFE25:
+ 1791              		.section	.text.TIM5_u16GetElapsedTime,"ax",%progbits
+ 1792              		.align	1
+ 1793              		.global	TIM5_u16GetElapsedTime
+ 1794              		.syntax unified
+ 1795              		.thumb
+ 1796              		.thumb_func
+ 1797              		.fpu softvfp
+ 1799              	TIM5_u16GetElapsedTime:
+ 1800              	.LFB26:
+ 624:../src/GPTIM _program.c **** u32  TIM5_u16GetElapsedTime(void)
+ 625:../src/GPTIM _program.c **** {
+ 1801              		.loc 1 625 0
+ 1802              		.cfi_startproc
+ 1803              		@ args = 0, pretend = 0, frame = 0
+ 1804              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1805              		@ link register save eliminated.
+ 626:../src/GPTIM _program.c **** 	u32 Local_u32ElapsedTime;
+ 627:../src/GPTIM _program.c **** 	u16 Local_u16Cycle=Global5_u32Routine - Global5_u32CopyRoutine;
+ 1806              		.loc 1 627 0
+ 1807 0000 074B     		ldr	r3, .L132
+ 1808 0002 1B68     		ldr	r3, [r3]
+ 1809 0004 9BB2     		uxth	r3, r3
+ 1810 0006 074A     		ldr	r2, .L132+4
+ 1811 0008 1068     		ldr	r0, [r2]
+ 1812 000a 80B2     		uxth	r0, r0
+ 1813 000c 1B1A     		subs	r3, r3, r0
+ 1814 000e 9BB2     		uxth	r3, r3
+ 1815              	.LVL80:
+ 628:../src/GPTIM _program.c **** 
+ 629:../src/GPTIM _program.c **** 	Local_u32ElapsedTime=((TIM5->ARR)-(TIM5->CNT))+(Local_u16Cycle*65535);
+ 1816              		.loc 1 629 0
+ 1817 0010 054A     		ldr	r2, .L132+8
+ 1818 0012 D06A     		ldr	r0, [r2, #44]
+ 1819 0014 526A     		ldr	r2, [r2, #36]
+ 1820 0016 801A     		subs	r0, r0, r2
+ 1821 0018 C3EB0343 		rsb	r3, r3, r3, lsl #16
+ 1822              	.LVL81:
+ 630:../src/GPTIM _program.c **** 	return Local_u32ElapsedTime;
+ 631:../src/GPTIM _program.c **** }
+ 1823              		.loc 1 631 0
+ 1824 001c 1844     		add	r0, r0, r3
+ 1825              	.LVL82:
+ 1826 001e 7047     		bx	lr
+ 1827              	.L133:
+ 1828              		.align	2
+ 1829              	.L132:
+ 1830 0020 00000000 		.word	.LANCHOR16
+ 1831 0024 00000000 		.word	.LANCHOR18
+ 1832 0028 000C0040 		.word	1073744896
+ 1833              		.cfi_endproc
+ 1834              	.LFE26:
+ 1836              		.section	.text.TIM5_u16GetRemainingTime,"ax",%progbits
+ 1837              		.align	1
+ 1838              		.global	TIM5_u16GetRemainingTime
+ 1839              		.syntax unified
+ 1840              		.thumb
+ 1841              		.thumb_func
+ 1842              		.fpu softvfp
+ 1844              	TIM5_u16GetRemainingTime:
+ 1845              	.LFB27:
+ 632:../src/GPTIM _program.c **** u32  TIM5_u16GetRemainingTime(void)
+ 633:../src/GPTIM _program.c **** {
+ 1846              		.loc 1 633 0
+ 1847              		.cfi_startproc
+ 1848              		@ args = 0, pretend = 0, frame = 0
+ 1849              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1850              		@ link register save eliminated.
+ 1851              	.LVL83:
+ 634:../src/GPTIM _program.c **** 	u32 local_u32RemainingTime=0;
+ 635:../src/GPTIM _program.c **** 	if(Global5_u32CopyRoutine>=1)
+ 1852              		.loc 1 635 0
+ 1853 0000 0C4B     		ldr	r3, .L139
+ 1854 0002 1B68     		ldr	r3, [r3]
+ 1855 0004 2BB9     		cbnz	r3, .L138
+ 636:../src/GPTIM _program.c **** 	{
+ 637:../src/GPTIM _program.c **** 		local_u32RemainingTime=(TIM5->CNT)+(Global5_u32CopyRoutine-1)*65535+Global5_u32Fraction;
+ 638:../src/GPTIM _program.c **** 	}
+ 639:../src/GPTIM _program.c **** 	else if(Global5_u32CopyRoutine==0)
+ 1856              		.loc 1 639 0
+ 1857 0006 0B4B     		ldr	r3, .L139
+ 1858 0008 1B68     		ldr	r3, [r3]
+ 1859 000a 83B9     		cbnz	r3, .L137
+ 640:../src/GPTIM _program.c **** 	{
+ 641:../src/GPTIM _program.c **** 		local_u32RemainingTime=TIM5->CNT;
+ 1860              		.loc 1 641 0
+ 1861 000c 0A4B     		ldr	r3, .L139+4
+ 1862 000e 586A     		ldr	r0, [r3, #36]
+ 1863              	.LVL84:
+ 1864 0010 7047     		bx	lr
+ 1865              	.LVL85:
+ 1866              	.L138:
+ 637:../src/GPTIM _program.c **** 	}
+ 1867              		.loc 1 637 0
+ 1868 0012 094B     		ldr	r3, .L139+4
+ 1869 0014 5B6A     		ldr	r3, [r3, #36]
+ 1870 0016 074A     		ldr	r2, .L139
+ 1871 0018 1068     		ldr	r0, [r2]
+ 1872 001a C0EB0040 		rsb	r0, r0, r0, lsl #16
+ 1873 001e 1844     		add	r0, r0, r3
+ 1874 0020 064B     		ldr	r3, .L139+8
+ 1875 0022 1B68     		ldr	r3, [r3]
+ 1876 0024 1844     		add	r0, r0, r3
+ 1877 0026 A0F57F40 		sub	r0, r0, #65280
+ 1878 002a FF38     		subs	r0, r0, #255
+ 1879              	.LVL86:
+ 1880 002c 7047     		bx	lr
+ 1881              	.LVL87:
+ 1882              	.L137:
+ 634:../src/GPTIM _program.c **** 	if(Global5_u32CopyRoutine>=1)
+ 1883              		.loc 1 634 0
+ 1884 002e 0020     		movs	r0, #0
+ 642:../src/GPTIM _program.c **** 	}
+ 643:../src/GPTIM _program.c **** 	return local_u32RemainingTime;
+ 644:../src/GPTIM _program.c **** }
+ 1885              		.loc 1 644 0
+ 1886 0030 7047     		bx	lr
+ 1887              	.L140:
+ 1888 0032 00BF     		.align	2
+ 1889              	.L139:
+ 1890 0034 00000000 		.word	.LANCHOR18
+ 1891 0038 000C0040 		.word	1073744896
+ 1892 003c 00000000 		.word	.LANCHOR17
+ 1893              		.cfi_endproc
+ 1894              	.LFE27:
+ 1896              		.section	.text.TIM2_IRQHandler,"ax",%progbits
+ 1897              		.align	1
+ 1898              		.global	TIM2_IRQHandler
+ 1899              		.syntax unified
+ 1900              		.thumb
+ 1901              		.thumb_func
+ 1902              		.fpu softvfp
+ 1904              	TIM2_IRQHandler:
+ 1905              	.LFB28:
+ 645:../src/GPTIM _program.c **** 
+ 646:../src/GPTIM _program.c **** 
+ 647:../src/GPTIM _program.c **** //**********************TIM2****************************
+ 648:../src/GPTIM _program.c **** void TIM2_IRQHandler(void)
+ 649:../src/GPTIM _program.c **** {
+ 1906              		.loc 1 649 0
+ 1907              		.cfi_startproc
+ 1908              		@ args = 0, pretend = 0, frame = 0
+ 1909              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1910 0000 08B5     		push	{r3, lr}
+ 1911              		.cfi_def_cfa_offset 8
+ 1912              		.cfi_offset 3, -8
+ 1913              		.cfi_offset 14, -4
+ 650:../src/GPTIM _program.c **** 	if(Global2_u8Flag){
+ 1914              		.loc 1 650 0
+ 1915 0002 314B     		ldr	r3, .L151
+ 1916 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1917 0006 33B1     		cbz	r3, .L142
+ 651:../src/GPTIM _program.c **** 		Global2_u32CopyRoutine=Global2_u32Routine;
+ 1918              		.loc 1 651 0
+ 1919 0008 304B     		ldr	r3, .L151+4
+ 1920 000a 1A68     		ldr	r2, [r3]
+ 1921 000c 304B     		ldr	r3, .L151+8
+ 1922 000e 1A60     		str	r2, [r3]
+ 652:../src/GPTIM _program.c **** 		Global2_u8Flag=0;
+ 1923              		.loc 1 652 0
+ 1924 0010 2D4B     		ldr	r3, .L151
+ 1925 0012 0022     		movs	r2, #0
+ 1926 0014 1A70     		strb	r2, [r3]
+ 1927              	.L142:
+ 653:../src/GPTIM _program.c **** 	}
+ 654:../src/GPTIM _program.c **** 
+ 655:../src/GPTIM _program.c **** 	//Local_u32Routine=Global_u32Routine;
+ 656:../src/GPTIM _program.c **** 	if((Global2_u32CopyRoutine)>1)
+ 1928              		.loc 1 656 0
+ 1929 0016 2E4B     		ldr	r3, .L151+8
+ 1930 0018 1B68     		ldr	r3, [r3]
+ 1931 001a 012B     		cmp	r3, #1
+ 1932 001c 11D9     		bls	.L143
+ 657:../src/GPTIM _program.c **** 	{
+ 658:../src/GPTIM _program.c **** 		Global2_u32CopyRoutine--;
+ 1933              		.loc 1 658 0
+ 1934 001e 2C4A     		ldr	r2, .L151+8
+ 1935 0020 1368     		ldr	r3, [r2]
+ 1936 0022 013B     		subs	r3, r3, #1
+ 1937 0024 1360     		str	r3, [r2]
+ 659:../src/GPTIM _program.c **** 		//Clear Uderflow Flag
+ 660:../src/GPTIM _program.c **** 		CLR_BIT(TIM2->SR,GPTIM_UIF);
+ 1938              		.loc 1 660 0
+ 1939 0026 4FF08043 		mov	r3, #1073741824
+ 1940 002a 1A69     		ldr	r2, [r3, #16]
+ 1941 002c 22F00102 		bic	r2, r2, #1
+ 1942 0030 1A61     		str	r2, [r3, #16]
+ 661:../src/GPTIM _program.c **** 		TIM2->ARR=65535;
+ 1943              		.loc 1 661 0
+ 1944 0032 4FF6FF72 		movw	r2, #65535
+ 1945 0036 DA62     		str	r2, [r3, #44]
+ 662:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 663:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 1946              		.loc 1 663 0
+ 1947 0038 5A69     		ldr	r2, [r3, #20]
+ 1948 003a 42F00102 		orr	r2, r2, #1
+ 1949 003e 5A61     		str	r2, [r3, #20]
+ 1950              	.L141:
+ 664:../src/GPTIM _program.c **** 
+ 665:../src/GPTIM _program.c **** 	}
+ 666:../src/GPTIM _program.c **** 	else if((Global2_u32CopyRoutine)==1)
+ 667:../src/GPTIM _program.c **** 	{
+ 668:../src/GPTIM _program.c **** 		Global2_u32CopyRoutine--;
+ 669:../src/GPTIM _program.c **** 		//*Clear Uderflow Flag
+ 670:../src/GPTIM _program.c **** 		CLR_BIT(TIM2->SR,GPTIM_UIF);
+ 671:../src/GPTIM _program.c **** 		TIM2->ARR=Global2_u32Fraction;
+ 672:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 673:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 674:../src/GPTIM _program.c **** 
+ 675:../src/GPTIM _program.c **** 	}
+ 676:../src/GPTIM _program.c **** 	else
+ 677:../src/GPTIM _program.c **** 	{
+ 678:../src/GPTIM _program.c **** 		if(TIM2_u8ModeOfInterval==SINGLE_INTERVAL)
+ 679:../src/GPTIM _program.c **** 		{
+ 680:../src/GPTIM _program.c **** 			//*Disable Update Interrupt
+ 681:../src/GPTIM _program.c **** 	        CLR_BIT(TIM2->DIER,GPTIM_UIE);
+ 682:../src/GPTIM _program.c **** 			//*Stop Timer
+ 683:../src/GPTIM _program.c **** 			CLR_BIT(TIM2->CR1,GPTIM_CEN);
+ 684:../src/GPTIM _program.c **** 		}
+ 685:../src/GPTIM _program.c **** 		//*Callback Notification
+ 686:../src/GPTIM _program.c **** 		TIM2_CallBack();
+ 687:../src/GPTIM _program.c **** 		//Clear Uderflow Flag/
+ 688:../src/GPTIM _program.c **** 		CLR_BIT(TIM2->SR,GPTIM_UIF);
+ 689:../src/GPTIM _program.c **** 
+ 690:../src/GPTIM _program.c **** 		if(Global2_u32Routine)TIM2->ARR=65535;
+ 691:../src/GPTIM _program.c **** 		else TIM2->ARR=Global2_u32Fraction;
+ 692:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 693:../src/GPTIM _program.c **** 	    SET_BIT(TIM2->EGR,GPTIM_UG);
+ 694:../src/GPTIM _program.c **** 
+ 695:../src/GPTIM _program.c **** 		Global2_u8Flag=1;
+ 696:../src/GPTIM _program.c **** 	}
+ 697:../src/GPTIM _program.c **** 
+ 698:../src/GPTIM _program.c **** }
+ 1951              		.loc 1 698 0
+ 1952 0040 08BD     		pop	{r3, pc}
+ 1953              	.L143:
+ 666:../src/GPTIM _program.c **** 	{
+ 1954              		.loc 1 666 0
+ 1955 0042 234B     		ldr	r3, .L151+8
+ 1956 0044 1B68     		ldr	r3, [r3]
+ 1957 0046 012B     		cmp	r3, #1
+ 1958 0048 26D0     		beq	.L150
+ 678:../src/GPTIM _program.c **** 		{
+ 1959              		.loc 1 678 0
+ 1960 004a 224B     		ldr	r3, .L151+12
+ 1961 004c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1962 004e 4BB9     		cbnz	r3, .L146
+ 681:../src/GPTIM _program.c **** 			//*Stop Timer
+ 1963              		.loc 1 681 0
+ 1964 0050 4FF08043 		mov	r3, #1073741824
+ 1965 0054 DA68     		ldr	r2, [r3, #12]
+ 1966 0056 22F00102 		bic	r2, r2, #1
+ 1967 005a DA60     		str	r2, [r3, #12]
+ 683:../src/GPTIM _program.c **** 		}
+ 1968              		.loc 1 683 0
+ 1969 005c 1A68     		ldr	r2, [r3]
+ 1970 005e 22F00102 		bic	r2, r2, #1
+ 1971 0062 1A60     		str	r2, [r3]
+ 1972              	.L146:
+ 686:../src/GPTIM _program.c **** 		//Clear Uderflow Flag/
+ 1973              		.loc 1 686 0
+ 1974 0064 1C4B     		ldr	r3, .L151+16
+ 1975 0066 1B68     		ldr	r3, [r3]
+ 1976 0068 9847     		blx	r3
+ 1977              	.LVL88:
+ 688:../src/GPTIM _program.c **** 
+ 1978              		.loc 1 688 0
+ 1979 006a 4FF08042 		mov	r2, #1073741824
+ 1980 006e 1369     		ldr	r3, [r2, #16]
+ 1981 0070 23F00103 		bic	r3, r3, #1
+ 1982 0074 1361     		str	r3, [r2, #16]
+ 690:../src/GPTIM _program.c **** 		else TIM2->ARR=Global2_u32Fraction;
+ 1983              		.loc 1 690 0
+ 1984 0076 154B     		ldr	r3, .L151+4
+ 1985 0078 1B68     		ldr	r3, [r3]
+ 1986 007a FBB1     		cbz	r3, .L147
+ 690:../src/GPTIM _program.c **** 		else TIM2->ARR=Global2_u32Fraction;
+ 1987              		.loc 1 690 0 is_stmt 0 discriminator 1
+ 1988 007c 1346     		mov	r3, r2
+ 1989 007e 4FF6FF72 		movw	r2, #65535
+ 1990 0082 DA62     		str	r2, [r3, #44]
+ 1991              	.L148:
+ 693:../src/GPTIM _program.c **** 
+ 1992              		.loc 1 693 0 is_stmt 1
+ 1993 0084 4FF08042 		mov	r2, #1073741824
+ 1994 0088 5369     		ldr	r3, [r2, #20]
+ 1995 008a 43F00103 		orr	r3, r3, #1
+ 1996 008e 5361     		str	r3, [r2, #20]
+ 695:../src/GPTIM _program.c **** 	}
+ 1997              		.loc 1 695 0
+ 1998 0090 0D4B     		ldr	r3, .L151
+ 1999 0092 0122     		movs	r2, #1
+ 2000 0094 1A70     		strb	r2, [r3]
+ 2001              		.loc 1 698 0
+ 2002 0096 D3E7     		b	.L141
+ 2003              	.L150:
+ 668:../src/GPTIM _program.c **** 		//*Clear Uderflow Flag
+ 2004              		.loc 1 668 0
+ 2005 0098 0D4A     		ldr	r2, .L151+8
+ 2006 009a 1368     		ldr	r3, [r2]
+ 2007 009c 013B     		subs	r3, r3, #1
+ 2008 009e 1360     		str	r3, [r2]
+ 670:../src/GPTIM _program.c **** 		TIM2->ARR=Global2_u32Fraction;
+ 2009              		.loc 1 670 0
+ 2010 00a0 4FF08043 		mov	r3, #1073741824
+ 2011 00a4 1A69     		ldr	r2, [r3, #16]
+ 2012 00a6 22F00102 		bic	r2, r2, #1
+ 2013 00aa 1A61     		str	r2, [r3, #16]
+ 671:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 2014              		.loc 1 671 0
+ 2015 00ac 0B4A     		ldr	r2, .L151+20
+ 2016 00ae 1268     		ldr	r2, [r2]
+ 2017 00b0 DA62     		str	r2, [r3, #44]
+ 673:../src/GPTIM _program.c **** 
+ 2018              		.loc 1 673 0
+ 2019 00b2 5A69     		ldr	r2, [r3, #20]
+ 2020 00b4 42F00102 		orr	r2, r2, #1
+ 2021 00b8 5A61     		str	r2, [r3, #20]
+ 2022 00ba C1E7     		b	.L141
+ 2023              	.L147:
+ 691:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 2024              		.loc 1 691 0
+ 2025 00bc 074B     		ldr	r3, .L151+20
+ 2026 00be 1A68     		ldr	r2, [r3]
+ 2027 00c0 4FF08043 		mov	r3, #1073741824
+ 2028 00c4 DA62     		str	r2, [r3, #44]
+ 2029 00c6 DDE7     		b	.L148
+ 2030              	.L152:
+ 2031              		.align	2
+ 2032              	.L151:
+ 2033 00c8 00000000 		.word	.LANCHOR19
+ 2034 00cc 00000000 		.word	.LANCHOR2
+ 2035 00d0 00000000 		.word	.LANCHOR4
+ 2036 00d4 00000000 		.word	.LANCHOR1
+ 2037 00d8 00000000 		.word	.LANCHOR0
+ 2038 00dc 00000000 		.word	.LANCHOR3
+ 2039              		.cfi_endproc
+ 2040              	.LFE28:
+ 2042              		.section	.text.TIM3_IRQHandler,"ax",%progbits
+ 2043              		.align	1
+ 2044              		.global	TIM3_IRQHandler
+ 2045              		.syntax unified
+ 2046              		.thumb
+ 2047              		.thumb_func
+ 2048              		.fpu softvfp
+ 2050              	TIM3_IRQHandler:
+ 2051              	.LFB29:
+ 699:../src/GPTIM _program.c **** 
+ 700:../src/GPTIM _program.c **** /**************TIM3***********************/
+ 701:../src/GPTIM _program.c **** void TIM3_IRQHandler(void)
+ 702:../src/GPTIM _program.c **** {
+ 2052              		.loc 1 702 0
+ 2053              		.cfi_startproc
+ 2054              		@ args = 0, pretend = 0, frame = 0
+ 2055              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2056 0000 08B5     		push	{r3, lr}
+ 2057              		.cfi_def_cfa_offset 8
+ 2058              		.cfi_offset 3, -8
+ 2059              		.cfi_offset 14, -4
+ 703:../src/GPTIM _program.c **** 	if(Global3_u8Flag){
+ 2060              		.loc 1 703 0
+ 2061 0002 2E4B     		ldr	r3, .L163
+ 2062 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2063 0006 33B1     		cbz	r3, .L154
+ 704:../src/GPTIM _program.c **** 		Global3_u32CopyRoutine=Global3_u32Routine;
+ 2064              		.loc 1 704 0
+ 2065 0008 2D4B     		ldr	r3, .L163+4
+ 2066 000a 1A68     		ldr	r2, [r3]
+ 2067 000c 2D4B     		ldr	r3, .L163+8
+ 2068 000e 1A60     		str	r2, [r3]
+ 705:../src/GPTIM _program.c **** 		Global3_u8Flag=0;
+ 2069              		.loc 1 705 0
+ 2070 0010 2A4B     		ldr	r3, .L163
+ 2071 0012 0022     		movs	r2, #0
+ 2072 0014 1A70     		strb	r2, [r3]
+ 2073              	.L154:
+ 706:../src/GPTIM _program.c **** 	}
+ 707:../src/GPTIM _program.c **** 	if((Global3_u32CopyRoutine)>1)
+ 2074              		.loc 1 707 0
+ 2075 0016 2B4B     		ldr	r3, .L163+8
+ 2076 0018 1B68     		ldr	r3, [r3]
+ 2077 001a 012B     		cmp	r3, #1
+ 2078 001c 10D9     		bls	.L155
+ 708:../src/GPTIM _program.c **** 	{
+ 709:../src/GPTIM _program.c **** 		Global3_u32CopyRoutine--;
+ 2079              		.loc 1 709 0
+ 2080 001e 294A     		ldr	r2, .L163+8
+ 2081 0020 1368     		ldr	r3, [r2]
+ 2082 0022 013B     		subs	r3, r3, #1
+ 2083 0024 1360     		str	r3, [r2]
+ 710:../src/GPTIM _program.c **** 		//Clear Uderflow Flag
+ 711:../src/GPTIM _program.c **** 		CLR_BIT(TIM3->SR,GPTIM_UIF);
+ 2084              		.loc 1 711 0
+ 2085 0026 284B     		ldr	r3, .L163+12
+ 2086 0028 1A69     		ldr	r2, [r3, #16]
+ 2087 002a 22F00102 		bic	r2, r2, #1
+ 2088 002e 1A61     		str	r2, [r3, #16]
+ 712:../src/GPTIM _program.c **** 		TIM3->ARR=65535;
+ 2089              		.loc 1 712 0
+ 2090 0030 4FF6FF72 		movw	r2, #65535
+ 2091 0034 DA62     		str	r2, [r3, #44]
+ 713:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 714:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 2092              		.loc 1 714 0
+ 2093 0036 5A69     		ldr	r2, [r3, #20]
+ 2094 0038 42F00102 		orr	r2, r2, #1
+ 2095 003c 5A61     		str	r2, [r3, #20]
+ 2096              	.L153:
+ 715:../src/GPTIM _program.c **** 
+ 716:../src/GPTIM _program.c **** 	}
+ 717:../src/GPTIM _program.c **** 	else if((Global3_u32CopyRoutine)==1)
+ 718:../src/GPTIM _program.c **** 	{
+ 719:../src/GPTIM _program.c **** 		Global3_u32CopyRoutine--;
+ 720:../src/GPTIM _program.c **** 		//*Clear Uderflow Flag
+ 721:../src/GPTIM _program.c **** 		CLR_BIT(TIM3->SR,GPTIM_UIF);
+ 722:../src/GPTIM _program.c **** 		TIM3->ARR=Global3_u32Fraction;
+ 723:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 724:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 725:../src/GPTIM _program.c **** 
+ 726:../src/GPTIM _program.c **** 	}
+ 727:../src/GPTIM _program.c **** 	else
+ 728:../src/GPTIM _program.c **** 	{
+ 729:../src/GPTIM _program.c **** 		if(TIM3_u8ModeOfInterval==SINGLE_INTERVAL)
+ 730:../src/GPTIM _program.c **** 		{
+ 731:../src/GPTIM _program.c **** 			//*Disable Update Interrupt
+ 732:../src/GPTIM _program.c **** 	        CLR_BIT(TIM3->DIER,GPTIM_UIE);
+ 733:../src/GPTIM _program.c **** 			//*Stop Timer
+ 734:../src/GPTIM _program.c **** 			CLR_BIT(TIM3->CR1,GPTIM_CEN);
+ 735:../src/GPTIM _program.c **** 		}
+ 736:../src/GPTIM _program.c **** 		//*Callback Notification
+ 737:../src/GPTIM _program.c **** 		TIM3_CallBack();
+ 738:../src/GPTIM _program.c **** 		//Clear Uderflow Flag/
+ 739:../src/GPTIM _program.c **** 		CLR_BIT(TIM3->SR,GPTIM_UIF);
+ 740:../src/GPTIM _program.c **** 
+ 741:../src/GPTIM _program.c **** 		if(Global3_u32Routine)TIM3->ARR=65535;
+ 742:../src/GPTIM _program.c **** 		else TIM3->ARR=Global3_u32Fraction;
+ 743:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 744:../src/GPTIM _program.c **** 	    SET_BIT(TIM3->EGR,GPTIM_UG);
+ 745:../src/GPTIM _program.c **** 
+ 746:../src/GPTIM _program.c **** 		Global3_u8Flag=1;
+ 747:../src/GPTIM _program.c **** 	}
+ 748:../src/GPTIM _program.c **** 
+ 749:../src/GPTIM _program.c **** }
+ 2097              		.loc 1 749 0
+ 2098 003e 08BD     		pop	{r3, pc}
+ 2099              	.L155:
+ 717:../src/GPTIM _program.c **** 	{
+ 2100              		.loc 1 717 0
+ 2101 0040 204B     		ldr	r3, .L163+8
+ 2102 0042 1B68     		ldr	r3, [r3]
+ 2103 0044 012B     		cmp	r3, #1
+ 2104 0046 23D0     		beq	.L162
+ 729:../src/GPTIM _program.c **** 		{
+ 2105              		.loc 1 729 0
+ 2106 0048 204B     		ldr	r3, .L163+16
+ 2107 004a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2108 004c 43B9     		cbnz	r3, .L158
+ 732:../src/GPTIM _program.c **** 			//*Stop Timer
+ 2109              		.loc 1 732 0
+ 2110 004e 1E4B     		ldr	r3, .L163+12
+ 2111 0050 DA68     		ldr	r2, [r3, #12]
+ 2112 0052 22F00102 		bic	r2, r2, #1
+ 2113 0056 DA60     		str	r2, [r3, #12]
+ 734:../src/GPTIM _program.c **** 		}
+ 2114              		.loc 1 734 0
+ 2115 0058 1A68     		ldr	r2, [r3]
+ 2116 005a 22F00102 		bic	r2, r2, #1
+ 2117 005e 1A60     		str	r2, [r3]
+ 2118              	.L158:
+ 737:../src/GPTIM _program.c **** 		//Clear Uderflow Flag/
+ 2119              		.loc 1 737 0
+ 2120 0060 1B4B     		ldr	r3, .L163+20
+ 2121 0062 1B68     		ldr	r3, [r3]
+ 2122 0064 9847     		blx	r3
+ 2123              	.LVL89:
+ 739:../src/GPTIM _program.c **** 
+ 2124              		.loc 1 739 0
+ 2125 0066 184A     		ldr	r2, .L163+12
+ 2126 0068 1369     		ldr	r3, [r2, #16]
+ 2127 006a 23F00103 		bic	r3, r3, #1
+ 2128 006e 1361     		str	r3, [r2, #16]
+ 741:../src/GPTIM _program.c **** 		else TIM3->ARR=Global3_u32Fraction;
+ 2129              		.loc 1 741 0
+ 2130 0070 134B     		ldr	r3, .L163+4
+ 2131 0072 1B68     		ldr	r3, [r3]
+ 2132 0074 EBB1     		cbz	r3, .L159
+ 741:../src/GPTIM _program.c **** 		else TIM3->ARR=Global3_u32Fraction;
+ 2133              		.loc 1 741 0 is_stmt 0 discriminator 1
+ 2134 0076 1346     		mov	r3, r2
+ 2135 0078 4FF6FF72 		movw	r2, #65535
+ 2136 007c DA62     		str	r2, [r3, #44]
+ 2137              	.L160:
+ 744:../src/GPTIM _program.c **** 
+ 2138              		.loc 1 744 0 is_stmt 1
+ 2139 007e 124A     		ldr	r2, .L163+12
+ 2140 0080 5369     		ldr	r3, [r2, #20]
+ 2141 0082 43F00103 		orr	r3, r3, #1
+ 2142 0086 5361     		str	r3, [r2, #20]
+ 746:../src/GPTIM _program.c **** 	}
+ 2143              		.loc 1 746 0
+ 2144 0088 0C4B     		ldr	r3, .L163
+ 2145 008a 0122     		movs	r2, #1
+ 2146 008c 1A70     		strb	r2, [r3]
+ 2147              		.loc 1 749 0
+ 2148 008e D6E7     		b	.L153
+ 2149              	.L162:
+ 719:../src/GPTIM _program.c **** 		//*Clear Uderflow Flag
+ 2150              		.loc 1 719 0
+ 2151 0090 0C4A     		ldr	r2, .L163+8
+ 2152 0092 1368     		ldr	r3, [r2]
+ 2153 0094 013B     		subs	r3, r3, #1
+ 2154 0096 1360     		str	r3, [r2]
+ 721:../src/GPTIM _program.c **** 		TIM3->ARR=Global3_u32Fraction;
+ 2155              		.loc 1 721 0
+ 2156 0098 0B4B     		ldr	r3, .L163+12
+ 2157 009a 1A69     		ldr	r2, [r3, #16]
+ 2158 009c 22F00102 		bic	r2, r2, #1
+ 2159 00a0 1A61     		str	r2, [r3, #16]
+ 722:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 2160              		.loc 1 722 0
+ 2161 00a2 0C4A     		ldr	r2, .L163+24
+ 2162 00a4 1268     		ldr	r2, [r2]
+ 2163 00a6 DA62     		str	r2, [r3, #44]
+ 724:../src/GPTIM _program.c **** 
+ 2164              		.loc 1 724 0
+ 2165 00a8 5A69     		ldr	r2, [r3, #20]
+ 2166 00aa 42F00102 		orr	r2, r2, #1
+ 2167 00ae 5A61     		str	r2, [r3, #20]
+ 2168 00b0 C5E7     		b	.L153
+ 2169              	.L159:
+ 742:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 2170              		.loc 1 742 0
+ 2171 00b2 084B     		ldr	r3, .L163+24
+ 2172 00b4 1A68     		ldr	r2, [r3]
+ 2173 00b6 044B     		ldr	r3, .L163+12
+ 2174 00b8 DA62     		str	r2, [r3, #44]
+ 2175 00ba E0E7     		b	.L160
+ 2176              	.L164:
+ 2177              		.align	2
+ 2178              	.L163:
+ 2179 00bc 00000000 		.word	.LANCHOR20
+ 2180 00c0 00000000 		.word	.LANCHOR7
+ 2181 00c4 00000000 		.word	.LANCHOR9
+ 2182 00c8 00040040 		.word	1073742848
+ 2183 00cc 00000000 		.word	.LANCHOR6
+ 2184 00d0 00000000 		.word	.LANCHOR5
+ 2185 00d4 00000000 		.word	.LANCHOR8
+ 2186              		.cfi_endproc
+ 2187              	.LFE29:
+ 2189              		.section	.text.TIM4_IRQHandler,"ax",%progbits
+ 2190              		.align	1
+ 2191              		.global	TIM4_IRQHandler
+ 2192              		.syntax unified
+ 2193              		.thumb
+ 2194              		.thumb_func
+ 2195              		.fpu softvfp
+ 2197              	TIM4_IRQHandler:
+ 2198              	.LFB30:
+ 750:../src/GPTIM _program.c **** 
+ 751:../src/GPTIM _program.c **** //**************TIM4***********************
+ 752:../src/GPTIM _program.c **** void TIM4_IRQHandler(void)
+ 753:../src/GPTIM _program.c **** {
+ 2199              		.loc 1 753 0
+ 2200              		.cfi_startproc
+ 2201              		@ args = 0, pretend = 0, frame = 0
+ 2202              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2203 0000 08B5     		push	{r3, lr}
+ 2204              		.cfi_def_cfa_offset 8
+ 2205              		.cfi_offset 3, -8
+ 2206              		.cfi_offset 14, -4
+ 754:../src/GPTIM _program.c **** 	if(Global4_u8Flag){
+ 2207              		.loc 1 754 0
+ 2208 0002 2E4B     		ldr	r3, .L175
+ 2209 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2210 0006 33B1     		cbz	r3, .L166
+ 755:../src/GPTIM _program.c **** 		Global4_u32CopyRoutine=Global4_u32Routine;
+ 2211              		.loc 1 755 0
+ 2212 0008 2D4B     		ldr	r3, .L175+4
+ 2213 000a 1A68     		ldr	r2, [r3]
+ 2214 000c 2D4B     		ldr	r3, .L175+8
+ 2215 000e 1A60     		str	r2, [r3]
+ 756:../src/GPTIM _program.c **** 		Global4_u8Flag=0;
+ 2216              		.loc 1 756 0
+ 2217 0010 2A4B     		ldr	r3, .L175
+ 2218 0012 0022     		movs	r2, #0
+ 2219 0014 1A70     		strb	r2, [r3]
+ 2220              	.L166:
+ 757:../src/GPTIM _program.c **** 	}
+ 758:../src/GPTIM _program.c **** 	if((Global4_u32CopyRoutine)>1)
+ 2221              		.loc 1 758 0
+ 2222 0016 2B4B     		ldr	r3, .L175+8
+ 2223 0018 1B68     		ldr	r3, [r3]
+ 2224 001a 012B     		cmp	r3, #1
+ 2225 001c 10D9     		bls	.L167
+ 759:../src/GPTIM _program.c **** 	{
+ 760:../src/GPTIM _program.c **** 		Global4_u32CopyRoutine--;
+ 2226              		.loc 1 760 0
+ 2227 001e 294A     		ldr	r2, .L175+8
+ 2228 0020 1368     		ldr	r3, [r2]
+ 2229 0022 013B     		subs	r3, r3, #1
+ 2230 0024 1360     		str	r3, [r2]
+ 761:../src/GPTIM _program.c **** 		//Clear Uderflow Flag
+ 762:../src/GPTIM _program.c **** 		CLR_BIT(TIM4->SR,GPTIM_UIF);
+ 2231              		.loc 1 762 0
+ 2232 0026 284B     		ldr	r3, .L175+12
+ 2233 0028 1A69     		ldr	r2, [r3, #16]
+ 2234 002a 22F00102 		bic	r2, r2, #1
+ 2235 002e 1A61     		str	r2, [r3, #16]
+ 763:../src/GPTIM _program.c **** 		TIM4->ARR=65535;
+ 2236              		.loc 1 763 0
+ 2237 0030 4FF6FF72 		movw	r2, #65535
+ 2238 0034 DA62     		str	r2, [r3, #44]
+ 764:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 765:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 2239              		.loc 1 765 0
+ 2240 0036 5A69     		ldr	r2, [r3, #20]
+ 2241 0038 42F00102 		orr	r2, r2, #1
+ 2242 003c 5A61     		str	r2, [r3, #20]
+ 2243              	.L165:
+ 766:../src/GPTIM _program.c **** 
+ 767:../src/GPTIM _program.c **** 	}
+ 768:../src/GPTIM _program.c **** 	else if((Global4_u32CopyRoutine)==1)
+ 769:../src/GPTIM _program.c **** 	{
+ 770:../src/GPTIM _program.c **** 		Global4_u32CopyRoutine--;
+ 771:../src/GPTIM _program.c **** 		//*Clear Uderflow Flag
+ 772:../src/GPTIM _program.c **** 		CLR_BIT(TIM4->SR,GPTIM_UIF);
+ 773:../src/GPTIM _program.c **** 		TIM4->ARR=Global4_u32Fraction;
+ 774:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 775:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 776:../src/GPTIM _program.c **** 
+ 777:../src/GPTIM _program.c **** 	}
+ 778:../src/GPTIM _program.c **** 	else
+ 779:../src/GPTIM _program.c **** 	{
+ 780:../src/GPTIM _program.c **** 		if(TIM4_u8ModeOfInterval==SINGLE_INTERVAL)
+ 781:../src/GPTIM _program.c **** 		{
+ 782:../src/GPTIM _program.c **** 			//*Disable Update Interrupt
+ 783:../src/GPTIM _program.c **** 	        CLR_BIT(TIM4->DIER,GPTIM_UIE);
+ 784:../src/GPTIM _program.c **** 			//*Stop Timer
+ 785:../src/GPTIM _program.c **** 			CLR_BIT(TIM4->CR1,GPTIM_CEN);
+ 786:../src/GPTIM _program.c **** 		}
+ 787:../src/GPTIM _program.c **** 		//*Callback Notification
+ 788:../src/GPTIM _program.c **** 		TIM4_CallBack();
+ 789:../src/GPTIM _program.c **** 		//Clear Uderflow Flag/
+ 790:../src/GPTIM _program.c **** 		CLR_BIT(TIM4->SR,GPTIM_UIF);
+ 791:../src/GPTIM _program.c **** 
+ 792:../src/GPTIM _program.c **** 		if(Global4_u32Routine)TIM4->ARR=65535;
+ 793:../src/GPTIM _program.c **** 		else TIM4->ARR=Global4_u32Fraction;
+ 794:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 795:../src/GPTIM _program.c **** 	    SET_BIT(TIM4->EGR,GPTIM_UG);
+ 796:../src/GPTIM _program.c **** 
+ 797:../src/GPTIM _program.c **** 		Global4_u8Flag=1;
+ 798:../src/GPTIM _program.c **** 	}
+ 799:../src/GPTIM _program.c **** 
+ 800:../src/GPTIM _program.c **** }
+ 2244              		.loc 1 800 0
+ 2245 003e 08BD     		pop	{r3, pc}
+ 2246              	.L167:
+ 768:../src/GPTIM _program.c **** 	{
+ 2247              		.loc 1 768 0
+ 2248 0040 204B     		ldr	r3, .L175+8
+ 2249 0042 1B68     		ldr	r3, [r3]
+ 2250 0044 012B     		cmp	r3, #1
+ 2251 0046 23D0     		beq	.L174
+ 780:../src/GPTIM _program.c **** 		{
+ 2252              		.loc 1 780 0
+ 2253 0048 204B     		ldr	r3, .L175+16
+ 2254 004a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2255 004c 43B9     		cbnz	r3, .L170
+ 783:../src/GPTIM _program.c **** 			//*Stop Timer
+ 2256              		.loc 1 783 0
+ 2257 004e 1E4B     		ldr	r3, .L175+12
+ 2258 0050 DA68     		ldr	r2, [r3, #12]
+ 2259 0052 22F00102 		bic	r2, r2, #1
+ 2260 0056 DA60     		str	r2, [r3, #12]
+ 785:../src/GPTIM _program.c **** 		}
+ 2261              		.loc 1 785 0
+ 2262 0058 1A68     		ldr	r2, [r3]
+ 2263 005a 22F00102 		bic	r2, r2, #1
+ 2264 005e 1A60     		str	r2, [r3]
+ 2265              	.L170:
+ 788:../src/GPTIM _program.c **** 		//Clear Uderflow Flag/
+ 2266              		.loc 1 788 0
+ 2267 0060 1B4B     		ldr	r3, .L175+20
+ 2268 0062 1B68     		ldr	r3, [r3]
+ 2269 0064 9847     		blx	r3
+ 2270              	.LVL90:
+ 790:../src/GPTIM _program.c **** 
+ 2271              		.loc 1 790 0
+ 2272 0066 184A     		ldr	r2, .L175+12
+ 2273 0068 1369     		ldr	r3, [r2, #16]
+ 2274 006a 23F00103 		bic	r3, r3, #1
+ 2275 006e 1361     		str	r3, [r2, #16]
+ 792:../src/GPTIM _program.c **** 		else TIM4->ARR=Global4_u32Fraction;
+ 2276              		.loc 1 792 0
+ 2277 0070 134B     		ldr	r3, .L175+4
+ 2278 0072 1B68     		ldr	r3, [r3]
+ 2279 0074 EBB1     		cbz	r3, .L171
+ 792:../src/GPTIM _program.c **** 		else TIM4->ARR=Global4_u32Fraction;
+ 2280              		.loc 1 792 0 is_stmt 0 discriminator 1
+ 2281 0076 1346     		mov	r3, r2
+ 2282 0078 4FF6FF72 		movw	r2, #65535
+ 2283 007c DA62     		str	r2, [r3, #44]
+ 2284              	.L172:
+ 795:../src/GPTIM _program.c **** 
+ 2285              		.loc 1 795 0 is_stmt 1
+ 2286 007e 124A     		ldr	r2, .L175+12
+ 2287 0080 5369     		ldr	r3, [r2, #20]
+ 2288 0082 43F00103 		orr	r3, r3, #1
+ 2289 0086 5361     		str	r3, [r2, #20]
+ 797:../src/GPTIM _program.c **** 	}
+ 2290              		.loc 1 797 0
+ 2291 0088 0C4B     		ldr	r3, .L175
+ 2292 008a 0122     		movs	r2, #1
+ 2293 008c 1A70     		strb	r2, [r3]
+ 2294              		.loc 1 800 0
+ 2295 008e D6E7     		b	.L165
+ 2296              	.L174:
+ 770:../src/GPTIM _program.c **** 		//*Clear Uderflow Flag
+ 2297              		.loc 1 770 0
+ 2298 0090 0C4A     		ldr	r2, .L175+8
+ 2299 0092 1368     		ldr	r3, [r2]
+ 2300 0094 013B     		subs	r3, r3, #1
+ 2301 0096 1360     		str	r3, [r2]
+ 772:../src/GPTIM _program.c **** 		TIM4->ARR=Global4_u32Fraction;
+ 2302              		.loc 1 772 0
+ 2303 0098 0B4B     		ldr	r3, .L175+12
+ 2304 009a 1A69     		ldr	r2, [r3, #16]
+ 2305 009c 22F00102 		bic	r2, r2, #1
+ 2306 00a0 1A61     		str	r2, [r3, #16]
+ 773:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 2307              		.loc 1 773 0
+ 2308 00a2 0C4A     		ldr	r2, .L175+24
+ 2309 00a4 1268     		ldr	r2, [r2]
+ 2310 00a6 DA62     		str	r2, [r3, #44]
+ 775:../src/GPTIM _program.c **** 
+ 2311              		.loc 1 775 0
+ 2312 00a8 5A69     		ldr	r2, [r3, #20]
+ 2313 00aa 42F00102 		orr	r2, r2, #1
+ 2314 00ae 5A61     		str	r2, [r3, #20]
+ 2315 00b0 C5E7     		b	.L165
+ 2316              	.L171:
+ 793:../src/GPTIM _program.c **** 	    //*Re-Initialize the the counter & prescaller
+ 2317              		.loc 1 793 0
+ 2318 00b2 084B     		ldr	r3, .L175+24
+ 2319 00b4 1A68     		ldr	r2, [r3]
+ 2320 00b6 044B     		ldr	r3, .L175+12
+ 2321 00b8 DA62     		str	r2, [r3, #44]
+ 2322 00ba E0E7     		b	.L172
+ 2323              	.L176:
+ 2324              		.align	2
+ 2325              	.L175:
+ 2326 00bc 00000000 		.word	.LANCHOR21
+ 2327 00c0 00000000 		.word	.LANCHOR12
+ 2328 00c4 00000000 		.word	.LANCHOR14
+ 2329 00c8 00080040 		.word	1073743872
+ 2330 00cc 00000000 		.word	.LANCHOR11
+ 2331 00d0 00000000 		.word	.LANCHOR10
+ 2332 00d4 00000000 		.word	.LANCHOR13
+ 2333              		.cfi_endproc
+ 2334              	.LFE30:
+ 2336              		.section	.bss.Global2_u32CopyRoutine,"aw",%nobits
+ 2337              		.align	2
+ 2338              		.set	.LANCHOR4,. + 0
+ 2341              	Global2_u32CopyRoutine:
+ 2342 0000 00000000 		.space	4
+ 2343              		.section	.bss.Global2_u32Fraction,"aw",%nobits
+ 2344              		.align	2
+ 2345              		.set	.LANCHOR3,. + 0
+ 2348              	Global2_u32Fraction:
+ 2349 0000 00000000 		.space	4
+ 2350              		.section	.bss.Global2_u32Routine,"aw",%nobits
+ 2351              		.align	2
+ 2352              		.set	.LANCHOR2,. + 0
+ 2355              	Global2_u32Routine:
+ 2356 0000 00000000 		.space	4
+ 2357              		.section	.bss.Global3_u32CopyRoutine,"aw",%nobits
+ 2358              		.align	2
+ 2359              		.set	.LANCHOR9,. + 0
+ 2362              	Global3_u32CopyRoutine:
+ 2363 0000 00000000 		.space	4
+ 2364              		.section	.bss.Global3_u32Fraction,"aw",%nobits
+ 2365              		.align	2
+ 2366              		.set	.LANCHOR8,. + 0
+ 2369              	Global3_u32Fraction:
+ 2370 0000 00000000 		.space	4
+ 2371              		.section	.bss.Global3_u32Routine,"aw",%nobits
+ 2372              		.align	2
+ 2373              		.set	.LANCHOR7,. + 0
+ 2376              	Global3_u32Routine:
+ 2377 0000 00000000 		.space	4
+ 2378              		.section	.bss.Global4_u32CopyRoutine,"aw",%nobits
+ 2379              		.align	2
+ 2380              		.set	.LANCHOR14,. + 0
+ 2383              	Global4_u32CopyRoutine:
+ 2384 0000 00000000 		.space	4
+ 2385              		.section	.bss.Global4_u32Fraction,"aw",%nobits
+ 2386              		.align	2
+ 2387              		.set	.LANCHOR13,. + 0
+ 2390              	Global4_u32Fraction:
+ 2391 0000 00000000 		.space	4
+ 2392              		.section	.bss.Global4_u32Routine,"aw",%nobits
+ 2393              		.align	2
+ 2394              		.set	.LANCHOR12,. + 0
+ 2397              	Global4_u32Routine:
+ 2398 0000 00000000 		.space	4
+ 2399              		.section	.bss.Global5_u32CopyRoutine,"aw",%nobits
+ 2400              		.align	2
+ 2401              		.set	.LANCHOR18,. + 0
+ 2404              	Global5_u32CopyRoutine:
+ 2405 0000 00000000 		.space	4
+ 2406              		.section	.bss.Global5_u32Fraction,"aw",%nobits
+ 2407              		.align	2
+ 2408              		.set	.LANCHOR17,. + 0
+ 2411              	Global5_u32Fraction:
+ 2412 0000 00000000 		.space	4
+ 2413              		.section	.bss.Global5_u32Routine,"aw",%nobits
+ 2414              		.align	2
+ 2415              		.set	.LANCHOR16,. + 0
+ 2418              	Global5_u32Routine:
+ 2419 0000 00000000 		.space	4
+ 2420              		.section	.bss.TIM2_CallBack,"aw",%nobits
+ 2421              		.align	2
+ 2422              		.set	.LANCHOR0,. + 0
+ 2425              	TIM2_CallBack:
+ 2426 0000 00000000 		.space	4
+ 2427              		.section	.bss.TIM2_u8ModeOfInterval,"aw",%nobits
+ 2428              		.set	.LANCHOR1,. + 0
+ 2431              	TIM2_u8ModeOfInterval:
+ 2432 0000 00       		.space	1
+ 2433              		.section	.bss.TIM3_CallBack,"aw",%nobits
+ 2434              		.align	2
+ 2435              		.set	.LANCHOR5,. + 0
+ 2438              	TIM3_CallBack:
+ 2439 0000 00000000 		.space	4
+ 2440              		.section	.bss.TIM3_u8ModeOfInterval,"aw",%nobits
+ 2441              		.set	.LANCHOR6,. + 0
+ 2444              	TIM3_u8ModeOfInterval:
+ 2445 0000 00       		.space	1
+ 2446              		.section	.bss.TIM4_CallBack,"aw",%nobits
+ 2447              		.align	2
+ 2448              		.set	.LANCHOR10,. + 0
+ 2451              	TIM4_CallBack:
+ 2452 0000 00000000 		.space	4
+ 2453              		.section	.bss.TIM4_u8ModeOfInterval,"aw",%nobits
+ 2454              		.set	.LANCHOR11,. + 0
+ 2457              	TIM4_u8ModeOfInterval:
+ 2458 0000 00       		.space	1
+ 2459              		.section	.bss.TIM5_u8ModeOfInterval,"aw",%nobits
+ 2460              		.set	.LANCHOR15,. + 0
+ 2463              	TIM5_u8ModeOfInterval:
+ 2464 0000 00       		.space	1
+ 2465              		.section	.data.Global2_u8Flag,"aw",%progbits
+ 2466              		.set	.LANCHOR19,. + 0
+ 2469              	Global2_u8Flag:
+ 2470 0000 01       		.byte	1
+ 2471              		.section	.data.Global3_u8Flag,"aw",%progbits
+ 2472              		.set	.LANCHOR20,. + 0
+ 2475              	Global3_u8Flag:
+ 2476 0000 01       		.byte	1
+ 2477              		.section	.data.Global4_u8Flag,"aw",%progbits
+ 2478              		.set	.LANCHOR21,. + 0
+ 2481              	Global4_u8Flag:
+ 2482 0000 01       		.byte	1
+ 2483              		.section	.data.Global5_u8Flag,"aw",%progbits
+ 2486              	Global5_u8Flag:
+ 2487 0000 01       		.byte	1
+ 2488              		.text
+ 2489              	.Letext0:
+ 2490              		.file 2 "../include/STD_TYPES.h"
+ 2491              		.file 3 "../include/GPTIM_private.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 GPTIM _program.c
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:16     .text.TIM2_voidInit:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:23     .text.TIM2_voidInit:00000000 TIM2_voidInit
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:65     .text.TIM2_voidSetBusyWait:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:72     .text.TIM2_voidSetBusyWait:00000000 TIM2_voidSetBusyWait
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:162    .text.TIM2_voidSetBusyWait:00000088 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:167    .text.TIM2_voidSetIntervalSingle:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:174    .text.TIM2_voidSetIntervalSingle:00000000 TIM2_voidSetIntervalSingle
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:251    .text.TIM2_voidSetIntervalSingle:00000078 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:261    .text.TIM2_voidSetIntervalPeriodic:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:268    .text.TIM2_voidSetIntervalPeriodic:00000000 TIM2_voidSetIntervalPeriodic
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:339    .text.TIM2_voidSetIntervalPeriodic:00000068 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:348    .text.TIM2_voidStopInterval:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:355    .text.TIM2_voidStopInterval:00000000 TIM2_voidStopInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:377    .text.TIM2_u16GetElapsedTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:384    .text.TIM2_u16GetElapsedTime:00000000 TIM2_u16GetElapsedTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:415    .text.TIM2_u16GetElapsedTime:00000024 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:421    .text.TIM2_u16GetRemainingTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:428    .text.TIM2_u16GetRemainingTime:00000000 TIM2_u16GetRemainingTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:474    .text.TIM2_u16GetRemainingTime:00000038 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:480    .text.TIM3_voidInit:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:487    .text.TIM3_voidInit:00000000 TIM3_voidInit
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:527    .text.TIM3_voidInit:00000038 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:532    .text.TIM3_voidSetBusyWait:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:539    .text.TIM3_voidSetBusyWait:00000000 TIM3_voidSetBusyWait
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:629    .text.TIM3_voidSetBusyWait:0000007c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:635    .text.TIM3_voidSetIntervalSingle:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:642    .text.TIM3_voidSetIntervalSingle:00000000 TIM3_voidSetIntervalSingle
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:719    .text.TIM3_voidSetIntervalSingle:00000070 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:730    .text.TIM3_voidSetIntervalPeriodic:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:737    .text.TIM3_voidSetIntervalPeriodic:00000000 TIM3_voidSetIntervalPeriodic
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:808    .text.TIM3_voidSetIntervalPeriodic:00000064 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:818    .text.TIM3_voidStopInterval:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:825    .text.TIM3_voidStopInterval:00000000 TIM3_voidStopInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:846    .text.TIM3_voidStopInterval:00000014 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:851    .text.TIM3_u16GetElapsedTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:858    .text.TIM3_u16GetElapsedTime:00000000 TIM3_u16GetElapsedTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:889    .text.TIM3_u16GetElapsedTime:00000020 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:896    .text.TIM3_u16GetRemainingTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:903    .text.TIM3_u16GetRemainingTime:00000000 TIM3_u16GetRemainingTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:949    .text.TIM3_u16GetRemainingTime:00000034 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:956    .text.TIM4_voidInit:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:963    .text.TIM4_voidInit:00000000 TIM4_voidInit
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1003   .text.TIM4_voidInit:00000038 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1008   .text.TIM4_voidSetBusyWait:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1015   .text.TIM4_voidSetBusyWait:00000000 TIM4_voidSetBusyWait
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1105   .text.TIM4_voidSetBusyWait:0000007c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1111   .text.TIM4_voidSetIntervalSingle:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1118   .text.TIM4_voidSetIntervalSingle:00000000 TIM4_voidSetIntervalSingle
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1195   .text.TIM4_voidSetIntervalSingle:00000070 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1206   .text.TIM4_voidSetIntervalPeriodic:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1213   .text.TIM4_voidSetIntervalPeriodic:00000000 TIM4_voidSetIntervalPeriodic
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1284   .text.TIM4_voidSetIntervalPeriodic:00000064 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1295   .text.TIM4_voidStopInterval:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1302   .text.TIM4_voidStopInterval:00000000 TIM4_voidStopInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1323   .text.TIM4_voidStopInterval:00000014 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1328   .text.TIM4_u16GetElapsedTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1335   .text.TIM4_u16GetElapsedTime:00000000 TIM4_u16GetElapsedTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1366   .text.TIM4_u16GetElapsedTime:00000020 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1373   .text.TIM4_u16GetRemainingTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1380   .text.TIM4_u16GetRemainingTime:00000000 TIM4_u16GetRemainingTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1426   .text.TIM4_u16GetRemainingTime:00000034 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1433   .text.TIM5_voidInit:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1440   .text.TIM5_voidInit:00000000 TIM5_voidInit
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1480   .text.TIM5_voidInit:00000038 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1485   .text.TIM5_voidSetBusyWait:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1492   .text.TIM5_voidSetBusyWait:00000000 TIM5_voidSetBusyWait
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1582   .text.TIM5_voidSetBusyWait:0000007c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1588   .text.TIM5_voidSetIntervalSingle:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1595   .text.TIM5_voidSetIntervalSingle:00000000 TIM5_voidSetIntervalSingle
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1668   .text.TIM5_voidSetIntervalSingle:0000006c $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1678   .text.TIM5_voidSetIntervalPeriodic:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1685   .text.TIM5_voidSetIntervalPeriodic:00000000 TIM5_voidSetIntervalPeriodic
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1750   .text.TIM5_voidSetIntervalPeriodic:00000060 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1759   .text.TIM5_voidStopInterval:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1766   .text.TIM5_voidStopInterval:00000000 TIM5_voidStopInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1787   .text.TIM5_voidStopInterval:00000014 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1792   .text.TIM5_u16GetElapsedTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1799   .text.TIM5_u16GetElapsedTime:00000000 TIM5_u16GetElapsedTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1830   .text.TIM5_u16GetElapsedTime:00000020 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1837   .text.TIM5_u16GetRemainingTime:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1844   .text.TIM5_u16GetRemainingTime:00000000 TIM5_u16GetRemainingTime
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1890   .text.TIM5_u16GetRemainingTime:00000034 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1897   .text.TIM2_IRQHandler:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:1904   .text.TIM2_IRQHandler:00000000 TIM2_IRQHandler
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2033   .text.TIM2_IRQHandler:000000c8 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2043   .text.TIM3_IRQHandler:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2050   .text.TIM3_IRQHandler:00000000 TIM3_IRQHandler
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2179   .text.TIM3_IRQHandler:000000bc $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2190   .text.TIM4_IRQHandler:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2197   .text.TIM4_IRQHandler:00000000 TIM4_IRQHandler
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2326   .text.TIM4_IRQHandler:000000bc $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2337   .bss.Global2_u32CopyRoutine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2341   .bss.Global2_u32CopyRoutine:00000000 Global2_u32CopyRoutine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2344   .bss.Global2_u32Fraction:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2348   .bss.Global2_u32Fraction:00000000 Global2_u32Fraction
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2351   .bss.Global2_u32Routine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2355   .bss.Global2_u32Routine:00000000 Global2_u32Routine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2358   .bss.Global3_u32CopyRoutine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2362   .bss.Global3_u32CopyRoutine:00000000 Global3_u32CopyRoutine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2365   .bss.Global3_u32Fraction:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2369   .bss.Global3_u32Fraction:00000000 Global3_u32Fraction
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2372   .bss.Global3_u32Routine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2376   .bss.Global3_u32Routine:00000000 Global3_u32Routine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2379   .bss.Global4_u32CopyRoutine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2383   .bss.Global4_u32CopyRoutine:00000000 Global4_u32CopyRoutine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2386   .bss.Global4_u32Fraction:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2390   .bss.Global4_u32Fraction:00000000 Global4_u32Fraction
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2393   .bss.Global4_u32Routine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2397   .bss.Global4_u32Routine:00000000 Global4_u32Routine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2400   .bss.Global5_u32CopyRoutine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2404   .bss.Global5_u32CopyRoutine:00000000 Global5_u32CopyRoutine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2407   .bss.Global5_u32Fraction:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2411   .bss.Global5_u32Fraction:00000000 Global5_u32Fraction
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2414   .bss.Global5_u32Routine:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2418   .bss.Global5_u32Routine:00000000 Global5_u32Routine
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2421   .bss.TIM2_CallBack:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2425   .bss.TIM2_CallBack:00000000 TIM2_CallBack
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2431   .bss.TIM2_u8ModeOfInterval:00000000 TIM2_u8ModeOfInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2432   .bss.TIM2_u8ModeOfInterval:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2434   .bss.TIM3_CallBack:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2438   .bss.TIM3_CallBack:00000000 TIM3_CallBack
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2444   .bss.TIM3_u8ModeOfInterval:00000000 TIM3_u8ModeOfInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2445   .bss.TIM3_u8ModeOfInterval:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2447   .bss.TIM4_CallBack:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2451   .bss.TIM4_CallBack:00000000 TIM4_CallBack
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2457   .bss.TIM4_u8ModeOfInterval:00000000 TIM4_u8ModeOfInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2458   .bss.TIM4_u8ModeOfInterval:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2463   .bss.TIM5_u8ModeOfInterval:00000000 TIM5_u8ModeOfInterval
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2464   .bss.TIM5_u8ModeOfInterval:00000000 $d
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2469   .data.Global2_u8Flag:00000000 Global2_u8Flag
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2475   .data.Global3_u8Flag:00000000 Global3_u8Flag
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2481   .data.Global4_u8Flag:00000000 Global4_u8Flag
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccKIqEwz.s:2486   .data.Global5_u8Flag:00000000 Global5_u8Flag
+                           .group:00000000 wm4.0.c450a18b2a29049e2cbb4137d58ca9b1
+                           .group:00000000 wm4.BIT_MATH.h.8.0385af17eb3d24c1ce205d0ed1b8762b
+                           .group:00000000 wm4.GPTIM_interface.h.7.0d776b5d12e92a7950d679027c2d1620
+                           .group:00000000 wm4.GPTIM_private.h.7.29a273c6f7975877182369c19a92cced
+                           .group:00000000 wm4.GPTIM_config.h.7.427e1d4cda2cc17df01c3e2853cea618
+
+NO UNDEFINED SYMBOLS

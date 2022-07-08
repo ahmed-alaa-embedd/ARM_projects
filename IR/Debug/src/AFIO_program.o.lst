@@ -1,0 +1,183 @@
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"AFIO_program.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.MAFIO_voidSetEXTIConfiguration,"ax",%progbits
+  16              		.align	1
+  17              		.global	MAFIO_voidSetEXTIConfiguration
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	MAFIO_voidSetEXTIConfiguration:
+  24              	.LFB0:
+  25              		.file 1 "../src/AFIO_program.c"
+   1:../src/AFIO_program.c **** /**********************************************************/
+   2:../src/AFIO_program.c **** /* Author    : Ahmed Assaf                                */
+   3:../src/AFIO_program.c **** /* Date      : 22 August 2020                             */
+   4:../src/AFIO_program.c **** /* Version   : V01                                        */
+   5:../src/AFIO_program.c **** /**********************************************************/
+   6:../src/AFIO_program.c **** #include "STD_TYPES.h"
+   7:../src/AFIO_program.c **** #include "BIT_MATH.h"
+   8:../src/AFIO_program.c **** 
+   9:../src/AFIO_program.c **** #include "AFIO_interface.h"
+  10:../src/AFIO_program.c **** #include "AFIO_config.h"
+  11:../src/AFIO_program.c **** #include "AFIO_private.h"
+  12:../src/AFIO_program.c **** 
+  13:../src/AFIO_program.c **** 
+  14:../src/AFIO_program.c **** 
+  15:../src/AFIO_program.c **** 
+  16:../src/AFIO_program.c **** void	MAFIO_voidSetEXTIConfiguration(u8 Copy_u8Line ,u8 Copy_u8PortMap)
+  17:../src/AFIO_program.c **** {
+  26              		.loc 1 17 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  31              	.LVL0:
+  32 0000 30B4     		push	{r4, r5}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 5, -4
+  36              	.LVL1:
+  18:../src/AFIO_program.c **** 	u8 Local_u8RegIndex = 0 ;		
+  19:../src/AFIO_program.c **** 	/* Assign to EXTICRX register									*/
+  20:../src/AFIO_program.c **** 	if(Copy_u8Line <= 3 )
+  37              		.loc 1 20 0
+  38 0002 0328     		cmp	r0, #3
+  39 0004 13D9     		bls	.L5
+  21:../src/AFIO_program.c **** 	{
+  22:../src/AFIO_program.c **** 			Local_u8RegIndex = 0;
+  23:../src/AFIO_program.c **** 	}
+  24:../src/AFIO_program.c **** 	else if(Copy_u8Line<=7)
+  40              		.loc 1 24 0
+  41 0006 0728     		cmp	r0, #7
+  42 0008 08D9     		bls	.L8
+  25:../src/AFIO_program.c **** 	{
+  26:../src/AFIO_program.c **** 			/*	another	solution									*/
+  27:../src/AFIO_program.c **** 			/*	line 7 => 1.... 									*/
+  28:../src/AFIO_program.c **** 			/*	Local_u8RegIndex = copy_u8Line/4					*/
+  29:../src/AFIO_program.c **** 			/*	copy_u8Line = copy_u8Line%4 => (3 in the EXTICR2)	*/	
+  30:../src/AFIO_program.c **** 		Local_u8RegIndex = 1;
+  31:../src/AFIO_program.c **** 		Copy_u8Line -= 4;
+  32:../src/AFIO_program.c **** 	}
+  33:../src/AFIO_program.c **** 	else if(Copy_u8Line<=11)
+  43              		.loc 1 33 0
+  44 000a 0B28     		cmp	r0, #11
+  45 000c 0AD9     		bls	.L9
+  34:../src/AFIO_program.c **** 	{
+  35:../src/AFIO_program.c **** 		Local_u8RegIndex = 2;
+  36:../src/AFIO_program.c **** 		Copy_u8Line -= 8;
+  37:../src/AFIO_program.c **** 	
+  38:../src/AFIO_program.c **** 	}
+  39:../src/AFIO_program.c **** 	else if(Copy_u8Line<=15)
+  46              		.loc 1 39 0
+  47 000e 0F28     		cmp	r0, #15
+  48 0010 22D8     		bhi	.L6
+  49              	.LVL2:
+  40:../src/AFIO_program.c **** 	{
+  41:../src/AFIO_program.c **** 		Local_u8RegIndex = 3;
+  42:../src/AFIO_program.c **** 		Copy_u8Line -= 12;
+  50              		.loc 1 42 0
+  51 0012 A0F10C03 		sub	r3, r0, #12
+  52 0016 D8B2     		uxtb	r0, r3
+  53              	.LVL3:
+  41:../src/AFIO_program.c **** 		Copy_u8Line -= 12;
+  54              		.loc 1 41 0
+  55 0018 0323     		movs	r3, #3
+  56 001a 09E0     		b	.L2
+  57              	.LVL4:
+  58              	.L8:
+  31:../src/AFIO_program.c **** 	}
+  59              		.loc 1 31 0
+  60 001c 0438     		subs	r0, r0, #4
+  61              	.LVL5:
+  62 001e C0B2     		uxtb	r0, r0
+  63              	.LVL6:
+  30:../src/AFIO_program.c **** 		Copy_u8Line -= 4;
+  64              		.loc 1 30 0
+  65 0020 0123     		movs	r3, #1
+  66 0022 05E0     		b	.L2
+  67              	.LVL7:
+  68              	.L9:
+  36:../src/AFIO_program.c **** 	
+  69              		.loc 1 36 0
+  70 0024 A0F10803 		sub	r3, r0, #8
+  71 0028 D8B2     		uxtb	r0, r3
+  72              	.LVL8:
+  35:../src/AFIO_program.c **** 		Copy_u8Line -= 8;
+  73              		.loc 1 35 0
+  74 002a 0223     		movs	r3, #2
+  75 002c 00E0     		b	.L2
+  76              	.LVL9:
+  77              	.L5:
+  22:../src/AFIO_program.c **** 	}
+  78              		.loc 1 22 0
+  79 002e 0023     		movs	r3, #0
+  80              	.LVL10:
+  81              	.L2:
+  43:../src/AFIO_program.c **** 	}
+  44:../src/AFIO_program.c **** 	AFIO->EXTICR[Local_u8RegIndex] &= ~((0b1111) << (Copy_u8Line * 4));
+  82              		.loc 1 44 0
+  83 0030 0A4A     		ldr	r2, .L10
+  84 0032 0233     		adds	r3, r3, #2
+  85              	.LVL11:
+  86 0034 52F82340 		ldr	r4, [r2, r3, lsl #2]
+  87 0038 8000     		lsls	r0, r0, #2
+  88              	.LVL12:
+  89 003a 0F25     		movs	r5, #15
+  90 003c 8540     		lsls	r5, r5, r0
+  91 003e 24EA0504 		bic	r4, r4, r5
+  92 0042 42F82340 		str	r4, [r2, r3, lsl #2]
+  45:../src/AFIO_program.c **** 	AFIO->EXTICR[Local_u8RegIndex]  |= ((Copy_u8PortMap) << (Copy_u8Line * 4));	
+  93              		.loc 1 45 0
+  94 0046 52F82340 		ldr	r4, [r2, r3, lsl #2]
+  95 004a 01FA00F0 		lsl	r0, r1, r0
+  96 004e 2043     		orrs	r0, r0, r4
+  97 0050 42F82300 		str	r0, [r2, r3, lsl #2]
+  46:../src/AFIO_program.c **** }
+  98              		.loc 1 46 0
+  99 0054 30BC     		pop	{r4, r5}
+ 100              		.cfi_remember_state
+ 101              		.cfi_restore 5
+ 102              		.cfi_restore 4
+ 103              		.cfi_def_cfa_offset 0
+ 104 0056 7047     		bx	lr
+ 105              	.LVL13:
+ 106              	.L6:
+ 107              		.cfi_restore_state
+  18:../src/AFIO_program.c **** 	/* Assign to EXTICRX register									*/
+ 108              		.loc 1 18 0
+ 109 0058 0023     		movs	r3, #0
+ 110 005a E9E7     		b	.L2
+ 111              	.L11:
+ 112              		.align	2
+ 113              	.L10:
+ 114 005c 00000140 		.word	1073807360
+ 115              		.cfi_endproc
+ 116              	.LFE0:
+ 118              		.text
+ 119              	.Letext0:
+ 120              		.file 2 "../include/STD_TYPES.h"
+ 121              		.file 3 "../include/AFIO_private.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 AFIO_program.c
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccFFNcWp.s:16     .text.MAFIO_voidSetEXTIConfiguration:00000000 $t
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccFFNcWp.s:23     .text.MAFIO_voidSetEXTIConfiguration:00000000 MAFIO_voidSetEXTIConfiguration
+C:\Users\AHMEDA~1\AppData\Local\Temp\ccFFNcWp.s:114    .text.MAFIO_voidSetEXTIConfiguration:0000005c $d
+                           .group:00000000 wm4.0.c450a18b2a29049e2cbb4137d58ca9b1
+                           .group:00000000 wm4.BIT_MATH.h.8.0385af17eb3d24c1ce205d0ed1b8762b
+                           .group:00000000 wm4.AFIO_interface.h.8.6e694c0e688a302530ddd69d268179d1
+                           .group:00000000 wm4.AFIO_private.h.8.e700dcc280be99dee21c0c247a8ffd50
+
+NO UNDEFINED SYMBOLS

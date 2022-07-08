@@ -1,0 +1,441 @@
+16:41:47 **** Incremental Build of configuration Debug for project OSEK_OS_Hello ****
+make all 
+Building file: ../src/OS.c
+Invoking: Cross ARM GNU C Compiler
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DUSE_FULL_ASSERT -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f1-stdperiph" -std=gnu11 -MMD -MP -MF"src/OS.d" -MT"src/OS.o" -c -o "src/OS.o" "../src/OS.c"
+In file included from ../include/OsCfg.h:15:0,
+                 from ../include/TCB.h:29,
+                 from ../src/OS.c:24:
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:23:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T1   ,5 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:22:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(Idle ,0 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:24:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T2   ,6 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:23:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T1   ,5 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:25:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T3   ,8 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:24:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T2   ,6 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsCfg.h:29:17: error: pasting "EVT_BLINK_BLUE_LED" and "=" does not give a valid preprocessing token
+    OS_EVENT_DEF(EVT_BLINK_BLUE_LED        , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:30:17: error: pasting "EVT_BLINK_GREEN_LED" and "=" does not give a valid preprocessing token
+    OS_EVENT_DEF(EVT_BLINK_GREEN_LED       , 0x02)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:31:17: error: pasting "EVT_BLINK_FASTER_BLUE_LED" and "=" does not give a valid preprocessing token
+    OS_EVENT_DEF(EVT_BLINK_FASTER_BLUE_LED , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:35:17: error: pasting "ALARM_BLUE_LED" and "," does not give a valid preprocessing token
+    OS_ALARM_DEF(ALARM_BLUE_LED        ,ALARM_SET_EVENT ,EVT_BLINK_BLUE_LED        ,ALARM_NO_AUTOSTART ,T1   ,0)
+                 ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:36:18: error: pasting "ALARM_GREEN_LED" and "," does not give a valid preprocessing token
+     OS_ALARM_DEF(ALARM_GREEN_LED       ,ALARM_SET_EVENT ,EVT_BLINK_GREEN_LED       ,ALARM_NO_AUTOSTART ,Idle ,0)
+                  ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:37:16: error: pasting "ALARM_FASTER_BLUE_LED" and "," does not give a valid preprocessing token
+   OS_ALARM_DEF(ALARM_FASTER_BLUE_LED ,ALARM_SET_EVENT ,EVT_BLINK_FASTER_BLUE_LED ,ALARM_NO_AUTOSTART ,T2   ,0)
+                ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:41:19: error: pasting "RES_SCHEDULER" and "," does not give a valid preprocessing token
+   OS_RESOURCE_DEF(RES_SCHEDULER ,RES_SCHEDULER_PRIO , {1,1,1,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:42:19: error: pasting "RES_TRACE" and "," does not give a valid preprocessing token
+   OS_RESOURCE_DEF(RES_TRACE     ,RES_TRACE_PRIO     , {1,0,0,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:43:19: error: pasting "RES_R2" and "," does not give a valid preprocessing token
+   OS_RESOURCE_DEF(RES_R2        ,0                  , {0,0,0,0})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:47:30: error: pasting "SysTickTimer" and "," does not give a valid preprocessing token
+     OS_INTERRUPT_CAT2_DEF(15,SysTickTimer)
+                              ^
+../include/OsGenMac.h:122:81: note: in definition of macro 'OS_INTERRUPT_CAT2_DEF'
+ #define OS_INTERRUPT_CAT2_DEF(IsrNbr,IsrFunc)                                   IsrFunc##,
+                                                                                 ^~~~~~~
+../include/OsCfg.h:22:15: error: redeclaration of enumerator 'Idle'
+   OS_TASK_DEF(Idle ,0 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsCfg.h:22:15: note: previous definition of 'Idle' was here
+   OS_TASK_DEF(Idle ,0 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:22:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(Idle ,0 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:25:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T3   ,8 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsCfg.h:23:15: error: redeclaration of enumerator 'T1'
+   OS_TASK_DEF(T1   ,5 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsCfg.h:23:15: note: previous definition of 'T1' was here
+   OS_TASK_DEF(T1   ,5 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:23:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T1   ,5 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:22:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(Idle ,0 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsCfg.h:24:15: error: redeclaration of enumerator 'T2'
+   OS_TASK_DEF(T2   ,6 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsCfg.h:24:15: note: previous definition of 'T2' was here
+   OS_TASK_DEF(T2   ,6 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:24:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T2   ,6 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:23:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T1   ,5 ,512 ,1 ,OS_AUTOSTART    ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsCfg.h:25:15: error: redeclaration of enumerator 'T3'
+   OS_TASK_DEF(T3   ,8 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsCfg.h:25:15: note: previous definition of 'T3' was here
+   OS_TASK_DEF(T3   ,8 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+               ^
+../include/OsGenMac.h:98:87: note: in definition of macro 'OS_TASK_DEF'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                       ^~~~
+../include/OsGenMac.h:98:92: error: redeclaration of enumerator 'INVALID_TASK'
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:25:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T3   ,8 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsGenMac.h:98:92: note: previous definition of 'INVALID_TASK' was here
+ #define OS_TASK_DEF(Name,Prio,StackSize,NbOfActiv,AutoStart,TaskType,SchedType)  enum{Name,INVALID_TASK};
+                                                                                            ^
+../include/OsCfg.h:24:3: note: in expansion of macro 'OS_TASK_DEF'
+   OS_TASK_DEF(T2   ,6 ,512 ,1 ,OS_NO_AUTOSTART ,EXTENDED ,FULL_PREEMPT)
+   ^~~~~~~~~~~
+../include/OsCfg.h:29:17: error: pasting "EVT_BLINK_BLUE_LED" and "=" does not give a valid preprocessing token
+    OS_EVENT_DEF(EVT_BLINK_BLUE_LED        , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:29:17: error: redeclaration of enumerator 'EVT_BLINK_BLUE_LED'
+    OS_EVENT_DEF(EVT_BLINK_BLUE_LED        , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:29:17: note: previous definition of 'EVT_BLINK_BLUE_LED' was here
+    OS_EVENT_DEF(EVT_BLINK_BLUE_LED        , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:30:17: error: pasting "EVT_BLINK_GREEN_LED" and "=" does not give a valid preprocessing token
+    OS_EVENT_DEF(EVT_BLINK_GREEN_LED       , 0x02)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:30:17: error: redeclaration of enumerator 'EVT_BLINK_GREEN_LED'
+    OS_EVENT_DEF(EVT_BLINK_GREEN_LED       , 0x02)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:30:17: note: previous definition of 'EVT_BLINK_GREEN_LED' was here
+    OS_EVENT_DEF(EVT_BLINK_GREEN_LED       , 0x02)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:31:17: error: pasting "EVT_BLINK_FASTER_BLUE_LED" and "=" does not give a valid preprocessing token
+    OS_EVENT_DEF(EVT_BLINK_FASTER_BLUE_LED , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:31:17: error: redeclaration of enumerator 'EVT_BLINK_FASTER_BLUE_LED'
+    OS_EVENT_DEF(EVT_BLINK_FASTER_BLUE_LED , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsCfg.h:31:17: note: previous definition of 'EVT_BLINK_FASTER_BLUE_LED' was here
+    OS_EVENT_DEF(EVT_BLINK_FASTER_BLUE_LED , 0x01)
+                 ^
+../include/OsGenMac.h:104:82: note: in definition of macro 'OS_EVENT_DEF'
+ #define OS_EVENT_DEF(Event, Mask)                                                Event## = Mask,
+                                                                                  ^~~~~
+../include/OsGenMac.h:105:82: error: redeclaration of enumerator 'INVALID_EVENT'
+ #define OS_EVENT_END                                                             INVALID_EVENT};
+                                                                                  ^
+../include/OsCfg.h:32:3: note: in expansion of macro 'OS_EVENT_END'
+   OS_EVENT_END
+   ^~~~~~~~~~~~
+../include/OsGenMac.h:105:82: note: previous definition of 'INVALID_EVENT' was here
+ #define OS_EVENT_END                                                             INVALID_EVENT};
+                                                                                  ^
+../include/OsCfg.h:32:3: note: in expansion of macro 'OS_EVENT_END'
+   OS_EVENT_END
+   ^~~~~~~~~~~~
+../include/OsCfg.h:35:17: error: pasting "ALARM_BLUE_LED" and "," does not give a valid preprocessing token
+    OS_ALARM_DEF(ALARM_BLUE_LED        ,ALARM_SET_EVENT ,EVT_BLINK_BLUE_LED        ,ALARM_NO_AUTOSTART ,T1   ,0)
+                 ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:35:17: error: redeclaration of enumerator 'ALARM_BLUE_LED'
+    OS_ALARM_DEF(ALARM_BLUE_LED        ,ALARM_SET_EVENT ,EVT_BLINK_BLUE_LED        ,ALARM_NO_AUTOSTART ,T1   ,0)
+                 ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:35:17: note: previous definition of 'ALARM_BLUE_LED' was here
+    OS_ALARM_DEF(ALARM_BLUE_LED        ,ALARM_SET_EVENT ,EVT_BLINK_BLUE_LED        ,ALARM_NO_AUTOSTART ,T1   ,0)
+                 ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:36:18: error: pasting "ALARM_GREEN_LED" and "," does not give a valid preprocessing token
+     OS_ALARM_DEF(ALARM_GREEN_LED       ,ALARM_SET_EVENT ,EVT_BLINK_GREEN_LED       ,ALARM_NO_AUTOSTART ,Idle ,0)
+                  ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:36:18: error: redeclaration of enumerator 'ALARM_GREEN_LED'
+     OS_ALARM_DEF(ALARM_GREEN_LED       ,ALARM_SET_EVENT ,EVT_BLINK_GREEN_LED       ,ALARM_NO_AUTOSTART ,Idle ,0)
+                  ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:36:18: note: previous definition of 'ALARM_GREEN_LED' was here
+     OS_ALARM_DEF(ALARM_GREEN_LED       ,ALARM_SET_EVENT ,EVT_BLINK_GREEN_LED       ,ALARM_NO_AUTOSTART ,Idle ,0)
+                  ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:37:16: error: pasting "ALARM_FASTER_BLUE_LED" and "," does not give a valid preprocessing token
+   OS_ALARM_DEF(ALARM_FASTER_BLUE_LED ,ALARM_SET_EVENT ,EVT_BLINK_FASTER_BLUE_LED ,ALARM_NO_AUTOSTART ,T2   ,0)
+                ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:37:16: error: redeclaration of enumerator 'ALARM_FASTER_BLUE_LED'
+   OS_ALARM_DEF(ALARM_FASTER_BLUE_LED ,ALARM_SET_EVENT ,EVT_BLINK_FASTER_BLUE_LED ,ALARM_NO_AUTOSTART ,T2   ,0)
+                ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:37:16: note: previous definition of 'ALARM_FASTER_BLUE_LED' was here
+   OS_ALARM_DEF(ALARM_FASTER_BLUE_LED ,ALARM_SET_EVENT ,EVT_BLINK_FASTER_BLUE_LED ,ALARM_NO_AUTOSTART ,T2   ,0)
+                ^
+../include/OsGenMac.h:110:82: note: in definition of macro 'OS_ALARM_DEF'
+ #define OS_ALARM_DEF(Name,Action,Event,AutoStart,task,Callback)                  Name##,
+                                                                                  ^~~~
+../include/OsGenMac.h:111:82: error: redeclaration of enumerator 'INVALID_ALARM'
+ #define OS_ALARM_END                                                             INVALID_ALARM};
+                                                                                  ^
+../include/OsCfg.h:38:2: note: in expansion of macro 'OS_ALARM_END'
+  OS_ALARM_END
+  ^~~~~~~~~~~~
+../include/OsGenMac.h:111:82: note: previous definition of 'INVALID_ALARM' was here
+ #define OS_ALARM_END                                                             INVALID_ALARM};
+                                                                                  ^
+../include/OsCfg.h:38:2: note: in expansion of macro 'OS_ALARM_END'
+  OS_ALARM_END
+  ^~~~~~~~~~~~
+../include/OsCfg.h:41:19: error: pasting "RES_SCHEDULER" and "," does not give a valid preprocessing token
+   OS_RESOURCE_DEF(RES_SCHEDULER ,RES_SCHEDULER_PRIO , {1,1,1,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:41:19: error: redeclaration of enumerator 'RES_SCHEDULER'
+   OS_RESOURCE_DEF(RES_SCHEDULER ,RES_SCHEDULER_PRIO , {1,1,1,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:41:19: note: previous definition of 'RES_SCHEDULER' was here
+   OS_RESOURCE_DEF(RES_SCHEDULER ,RES_SCHEDULER_PRIO , {1,1,1,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:42:19: error: pasting "RES_TRACE" and "," does not give a valid preprocessing token
+   OS_RESOURCE_DEF(RES_TRACE     ,RES_TRACE_PRIO     , {1,0,0,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:42:19: error: redeclaration of enumerator 'RES_TRACE'
+   OS_RESOURCE_DEF(RES_TRACE     ,RES_TRACE_PRIO     , {1,0,0,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:42:19: note: previous definition of 'RES_TRACE' was here
+   OS_RESOURCE_DEF(RES_TRACE     ,RES_TRACE_PRIO     , {1,0,0,1})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:43:19: error: pasting "RES_R2" and "," does not give a valid preprocessing token
+   OS_RESOURCE_DEF(RES_R2        ,0                  , {0,0,0,0})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:43:19: error: redeclaration of enumerator 'RES_R2'
+   OS_RESOURCE_DEF(RES_R2        ,0                  , {0,0,0,0})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsCfg.h:43:19: note: previous definition of 'RES_R2' was here
+   OS_RESOURCE_DEF(RES_R2        ,0                  , {0,0,0,0})
+                   ^
+../include/OsGenMac.h:116:82: note: in definition of macro 'OS_RESOURCE_DEF'
+ #define OS_RESOURCE_DEF(Name,CeilingPrio,AuthorizedTasks...)                     Name##,
+                                                                                  ^~~~
+../include/OsGenMac.h:117:82: error: redeclaration of enumerator 'INVALID_RESOURCE'
+ #define OS_RESOURCE_END                                                          INVALID_RESOURCE};
+                                                                                  ^
+../include/OsCfg.h:44:2: note: in expansion of macro 'OS_RESOURCE_END'
+  OS_RESOURCE_END
+  ^~~~~~~~~~~~~~~
+../include/OsGenMac.h:117:82: note: previous definition of 'INVALID_RESOURCE' was here
+ #define OS_RESOURCE_END                                                          INVALID_RESOURCE};
+                                                                                  ^
+../include/OsCfg.h:44:2: note: in expansion of macro 'OS_RESOURCE_END'
+  OS_RESOURCE_END
+  ^~~~~~~~~~~~~~~
+../include/OsCfg.h:47:30: error: pasting "SysTickTimer" and "," does not give a valid preprocessing token
+     OS_INTERRUPT_CAT2_DEF(15,SysTickTimer)
+                              ^
+../include/OsGenMac.h:122:81: note: in definition of macro 'OS_INTERRUPT_CAT2_DEF'
+ #define OS_INTERRUPT_CAT2_DEF(IsrNbr,IsrFunc)                                   IsrFunc##,
+                                                                                 ^~~~~~~
+../include/OsCfg.h:47:30: error: redeclaration of enumerator 'SysTickTimer'
+     OS_INTERRUPT_CAT2_DEF(15,SysTickTimer)
+                              ^
+../include/OsGenMac.h:122:81: note: in definition of macro 'OS_INTERRUPT_CAT2_DEF'
+ #define OS_INTERRUPT_CAT2_DEF(IsrNbr,IsrFunc)                                   IsrFunc##,
+                                                                                 ^~~~~~~
+../include/OsCfg.h:47:30: note: previous definition of 'SysTickTimer' was here
+     OS_INTERRUPT_CAT2_DEF(15,SysTickTimer)
+                              ^
+../include/OsGenMac.h:122:81: note: in definition of macro 'OS_INTERRUPT_CAT2_DEF'
+ #define OS_INTERRUPT_CAT2_DEF(IsrNbr,IsrFunc)                                   IsrFunc##,
+                                                                                 ^~~~~~~
+../include/OsGenMac.h:123:81: error: redeclaration of enumerator 'INVALID_ISR'
+ #define OS_INTERRUPT_END                                                        INVALID_ISR};
+                                                                                 ^
+../include/OsCfg.h:48:3: note: in expansion of macro 'OS_INTERRUPT_END'
+   OS_INTERRUPT_END
+   ^~~~~~~~~~~~~~~~
+../include/OsGenMac.h:123:81: note: previous definition of 'INVALID_ISR' was here
+ #define OS_INTERRUPT_END                                                        INVALID_ISR};
+                                                                                 ^
+../include/OsCfg.h:48:3: note: in expansion of macro 'OS_INTERRUPT_END'
+   OS_INTERRUPT_END
+   ^~~~~~~~~~~~~~~~
+../src/OS.c: In function 'OS_StartOS':
+../src/OS.c:61:22: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+    for(int Idx=0;Idx < stack_size;Idx++)
+                      ^
+../src/OS.c: In function 'OsRunCat2Isr':
+../src/OS.c:570:6: error: 'IsrLookupTable' undeclared (first use in this function)
+   if(IsrLookupTable[IsrIdx].IsrNum == (uint32)(CurrentPsr & EXCEPTION_CODE_MASK))
+      ^~~~~~~~~~~~~~
+../src/OS.c:570:6: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [src/subdir.mk:47: src/OS.o] Error 1
+
+16:41:48 Build Finished (took 465ms)
+

@@ -1,0 +1,63 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 22/8/2020 		*/
+/*version : v02			*/
+/***************************/
+
+
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
+
+#include "EXTI_interface.h"
+#include "EXTI_config.h"
+#include "EXTI_private.h"
+
+
+void MEXTI_VoidInit(void)
+{
+#if EXTI_LINE==EXTI_LINE0
+	SET_BIT(EXTI -> IMR , 0);
+#elif EXTI_LINE==EXTI_LINE1
+
+#elif EXTI_LINE==EXTI_LINE2
+
+
+#else
+#error("Wrong External interrupt line")
+
+#endif
+
+#if EXTI_SENSE_MODE==FALLING_EDGE
+
+#elif EXTI_SENSE_MODE==RISING_EDGE
+
+#elif EXTI_SENSE_MODE==ON_CHANGE
+
+
+#else
+#error("Wrong External interrupt Mode")
+
+#endif
+}
+void MEXTI_VoidSetSignalLatch(u8 Copy_U8EXTILine, u8 Copy_U8EXTISenseMode)
+{
+
+}
+void MEXTI_VoidEnable(u8 Copy_U8EXTILine)
+{
+
+}
+void MEXTI_VoidDisnable(u8 Copy_U8EXTILine)
+{
+
+}
+void MEXTI_VoidSoftwareTrigger(u8 Copy_U8EXTILine)
+{
+
+}
+
+void MEXTI_VoidSetCallBack(void (*ptr) (void))
+{
+
+}
+

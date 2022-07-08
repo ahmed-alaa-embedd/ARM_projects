@@ -1,0 +1,18 @@
+/***************************/
+/*Author : ahmed alaa	*/
+/*date : 22/8/2020 		*/
+/*version : v02			*/
+/***************************/
+
+
+#ifndef EXTI_INTERFACE_H
+#define EXTI_INTERFACE_H
+
+void MEXTI_VoidInit(void);
+void MEXTI_VoidSetSignalLatch(u8 Copy_U8EXTILine, u8 Copy_U8EXTISenseMode);
+void MEXTI_VoidEnable(void);
+void MEXTI_VoidDisnable(void);
+
+
+
+#endif

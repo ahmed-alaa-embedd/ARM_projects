@@ -1,0 +1,11 @@
+17:47:11 **** Incremental Build of configuration Debug for project LED_Driver ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "LED_Driver.elf"
+   text	   data	    bss	    dec	    hex	filename
+   6611	    180	    488	   7279	   1c6f	LED_Driver.elf
+Finished building: LED_Driver.siz
+ 
+
+17:47:12 Build Finished (took 344ms)
+

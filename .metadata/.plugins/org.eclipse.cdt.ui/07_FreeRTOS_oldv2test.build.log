@@ -1,0 +1,11 @@
+00:05:21 **** Incremental Build of configuration Debug for project 07_FreeRTOS_oldv2test ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "07_FreeRTOS_oldv2test.elf"
+   text	   data	    bss	    dec	    hex	filename
+   9223	    184	  18216	  27623	   6be7	07_FreeRTOS_oldv2test.elf
+Finished building: 07_FreeRTOS_oldv2test.siz
+ 
+
+00:05:21 Build Finished (took 360ms)
+

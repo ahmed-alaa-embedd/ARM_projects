@@ -1,0 +1,11 @@
+22:26:43 **** Incremental Build of configuration Debug for project Servo ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "Servo.elf"
+   text	   data	    bss	    dec	    hex	filename
+   2162	     76	    276	   2514	    9d2	Servo.elf
+Finished building: Servo.siz
+ 
+
+22:26:44 Build Finished (took 380ms)
+

@@ -1,0 +1,11 @@
+10:14:33 **** Build of configuration Debug for project GPIOARM ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "GPIOARM.elf"
+   text	   data	    bss	    dec	    hex	filename
+   5051	    176	    416	   5643	   160b	GPIOARM.elf
+Finished building: GPIOARM.siz
+ 
+
+10:14:34 Build Finished (took 1s.8ms)
+
